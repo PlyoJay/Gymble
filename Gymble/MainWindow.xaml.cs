@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Gymble.Services;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,9 +18,30 @@ namespace Gymble
     /// </summary>
     public partial class MainWindow : Window
     {
+        SQLiteManager sqliteManager = null;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            CreateDataFolder();
+
+            sqliteManager = new SQLiteManager();
+            
+        }
+
+        private void CreateDataFolder()
+        {
+            string dataFolderPath = System.IO.Path.Combine(Utils.Utils.CurrentDirectory, "data_folder");
+            if (Directory.Exists(dataFolderPath))
+                return;
+
+            Directory.CreateDirectory(dataFolderPath);
         }
     }
 }
