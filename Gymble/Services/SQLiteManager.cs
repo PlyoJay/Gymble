@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using Gymble.Repositories;
 using Gymble.Utils;
 using System.Data.SQLite;
+using System.IO;
 
 namespace Gymble.Services
 {
@@ -74,6 +75,54 @@ namespace Gymble.Services
             cmd.ExecuteNonQuery();
 
             CloseConnection();
+        }
+
+        public void UseMemberRepository()
+        {
+            OpenConnection();
+
+            var repo = new MemberRepository(connection);
+            var all = repo.GetAllMembers();
+
+            CloseConnection();
+        }
+
+        public void UseMembershipRepository()
+        {
+            OpenConnection();
+
+            var repo = new MemberRepository(connection);
+            var all = repo.GetAllMembers();
+
+            CloseConnection();
+        }
+
+        public void UseAttendaceRepository()
+        {
+            OpenConnection();
+
+            var repo = new MemberRepository(connection);
+            var all = repo.GetAllMembers();
+
+            CloseConnection();
+        }
+
+        public void UseProductRepository()
+        {
+            OpenConnection();
+
+            var repo = new MemberRepository(connection);
+            var all = repo.GetAllMembers();
+
+            CloseConnection();
+        }
+
+        public void GetAllRepositories()
+        {
+            UseMemberRepository();
+            UseMembershipRepository();
+            UseAttendaceRepository();
+            UseProductRepository();
         }
     }
 }
