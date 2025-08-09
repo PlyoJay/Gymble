@@ -17,6 +17,18 @@ namespace Gymble.ViewModels
     {
         public ObservableCollection<NavigationItemModel> NavigationItems { get; }
 
+        private object? _currentViewModel;
+        public object? CurrentViewModel
+        {
+            get => _currentViewModel;
+            set
+            {
+                _currentViewModel = value;
+                Console.WriteLine($"CurrentViewModel changed to: {_currentViewModel?.GetType().Name}");
+                OnPropertyChanged();
+            }
+        }
+
         private bool _isDrawerOpen;
         public bool IsDrawerOpen
         {
@@ -47,11 +59,13 @@ namespace Gymble.ViewModels
             ToMembershipViewCommand = new RelayCommand(SwapView);
             ToSettingsViewCommand = new RelayCommand(SwapView);
 
+            CurrentViewModel = new DashboardViewModel();
+
             NavigationItems = new ObservableCollection<NavigationItemModel>()
             {
                 new NavigationItemModel { IconKind = PackIconKind.MonitorDashboard, Label = "대쉬보드", TagName="dashboard", Command = ToDashboardViewCommand },
                 new NavigationItemModel { IconKind = PackIconKind.ViewList, Label = "회원 목록", TagName="memberlist", Command = ToMemberLIstViewCommand },
-                new NavigationItemModel { IconKind = PackIconKind.ListStatus, Label = "출석 목록", TagName="attendace", Command = ToAttendaceViewCommand },
+                new NavigationItemModel { IconKind = PackIconKind.ListStatus, Label = "출석 목록", TagName="attendance", Command = ToAttendaceViewCommand },
                 new NavigationItemModel { IconKind = PackIconKind.Gym, Label = "상품", TagName="product", Command = ToProductViewCommand },
                 new NavigationItemModel { IconKind = PackIconKind.CardMembership, Label = "멤버쉽", TagName="membership", Command = ToMembershipViewCommand },
                 new NavigationItemModel { IconKind = PackIconKind.Settings, Label = "설정", TagName="settings", Command = ToSettingsViewCommand }
@@ -61,7 +75,30 @@ namespace Gymble.ViewModels
         private void SwapView(object obj)
         {
             string tag = obj as string;
-            Console.WriteLine(tag);
+
+            switch (tag)
+            {
+                case "dashboard":
+                    CurrentViewModel = new DashboardViewModel();
+                    break;
+                case "memberlist":
+                    CurrentViewModel = new MemberListViewModel();
+                    break;
+                case "attendance":
+                    CurrentViewModel = new AttendanceViewModel();
+                    break;
+                case "membership":
+                    CurrentViewModel = new MembershipViewModel();
+                    break;
+                case "product":
+                    CurrentViewModel = new ProductViewModel();
+                    break;
+                case "settings":
+                    CurrentViewModel = new SettingsViewModel();
+                    break;
+                default:
+                    break;
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
