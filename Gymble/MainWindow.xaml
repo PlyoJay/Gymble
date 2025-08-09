@@ -4,9 +4,58 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gymble"
+        xmlns:vm="clr-namespace:Gymble.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="960" Width="1280">
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+    
+    <materialDesign:DialogHost DialogTheme="Inherit" Background="Transparent">
+        <materialDesign:DrawerHost x:Name="RootDrawer" IsLeftDrawerOpen="{Binding IsDrawerOpen, Mode=TwoWay}" OpenMode="Default">
+            <materialDesign:DrawerHost.LeftDrawerContent>
+                <DockPanel MinWidth="200" Background="White"
+                           DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type materialDesign:DrawerHost}}}">
+                    <Grid Height="55" DockPanel.Dock="Top">
+                        <ToggleButton Margin="10 0"
+                            HorizontalAlignment="Right"                           
+                            IsChecked="{Binding IsDrawerOpen, Mode=TwoWay}"
+                            Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+                    </Grid>
 
-    </Grid>
+                    <ListBox ItemsSource="{Binding NavigationItems}"
+                             BorderThickness="0"
+                             Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding Command}" CommandParameter="{Binding TagName}" 
+                                        Style="{StaticResource MaterialDesignFlatButton}" Background="Transparent" BorderThickness="0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="{Binding IconKind}" Width="24" Height="24" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Label}" FontSize="16" FontWeight="Bold" Margin="10 0"/>
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </materialDesign:DrawerHost.LeftDrawerContent>
+
+            <Border>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="55"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ToggleButton x:Name="MenuToggleButton" AutomationProperties.Name="HamburgerToggleButton" 
+                                  IsChecked="{Binding IsDrawerOpen, Mode=TwoWay}"
+                                  HorizontalAlignment="Left" Margin="10 0"
+                                  Style="{StaticResource MaterialDesignHamburgerToggleButton}"/>
+
+                    <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}"/>
+                </Grid>
+            </Border>
+        </materialDesign:DrawerHost>
+    </materialDesign:DialogHost>
 </Window>
