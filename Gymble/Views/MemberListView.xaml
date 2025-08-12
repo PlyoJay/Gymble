@@ -7,7 +7,38 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBlock Text="MEMBERLIST" VerticalAlignment="Center" HorizontalAlignment="Center"
-               FontSize="30"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 검색/액션 바 -->
+        <DockPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <TextBox Width="200" Margin="0,0,8,0" Text="이름/연락처 검색"/>
+                <Button Content="검색" Command="{Binding SearchCommand}" Margin="5 0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <Button Content="추가" Command="{Binding AddCommand}"/>
+                <Button Content="수정" Command="{Binding EditCommand}" Margin="5 0"/>
+                <Button Content="삭제" Command="{Binding DeleteCommand}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <Separator Grid.Row="1" Height="20"/>
+
+        <!-- 리스트 -->
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Members}" SelectedItem="{Binding SelectedMember}"
+                  AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="이름" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="성별" Binding="{Binding Gender}" Width="70"/>
+                <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber}" Width="120"/>
+                <DataGridTextColumn Header="등록일" Binding="{Binding RegisterDate}" Width="110"/>
+                <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

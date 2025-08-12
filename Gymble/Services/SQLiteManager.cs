@@ -91,8 +91,8 @@ namespace Gymble.Services
         {
             OpenConnection();
 
-            var repo = new MemberRepository(connection);
-            var all = repo.GetAllMembers();
+            var repo = new MembershipRepository(connection);
+            var all = repo.GetAllMembership();
 
             CloseConnection();
         }
@@ -101,8 +101,8 @@ namespace Gymble.Services
         {
             OpenConnection();
 
-            var repo = new MemberRepository(connection);
-            var all = repo.GetAllMembers();
+            var repo = new AttendanceRepository(connection);
+            var all = repo.GetAllAttendace();
 
             CloseConnection();
         }
@@ -111,8 +111,8 @@ namespace Gymble.Services
         {
             OpenConnection();
 
-            var repo = new MemberRepository(connection);
-            var all = repo.GetAllMembers();
+            var repo = new ProductRepository(connection);
+            var all = repo.GetAllProducts();
 
             CloseConnection();
         }

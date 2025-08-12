@@ -18,16 +18,16 @@ namespace Gymble.Repositories
             _connection = connection;
         }
 
-        public void InsertAttendace(Attendance attendace)
+        public void InsertAttendace(Attendance attendance)
         {
-            var sql = @"INSERT INTO tb_attendace (member_id, datetime)
+            var sql = @"INSERT INTO tb_attendance (member_id, datetime)
                     VALUES (@MemberId, @DateTime)";
-            _connection.Execute(sql, attendace);
+            _connection.Execute(sql, attendance);
         }
 
         public List<Attendance> GetAllAttendace()
         {
-            var sql = "SELECT * FROM tb_attendace";
+            var sql = "SELECT * FROM tb_attendance";
             return _connection.Query<Attendance>(sql).ToList();
         }
     }

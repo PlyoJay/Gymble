@@ -18,14 +18,14 @@ namespace Gymble.Repositories
             _connection = connection;
         }
 
-        public void InsertMember(Product product)
+        public void InsertProduct(Product product)
         {
             var sql = @"INSERT INTO tb_product (name, type, duration_days, total_count, price)
                     VALUES (@Name, @Type, @DurationDays, @TotalCount, @Price)";
             _connection.Execute(sql, product);
         }
 
-        public List<Product> GetAllMembers()
+        public List<Product> GetAllProducts()
         {
             var sql = "SELECT * FROM tb_product";
             return _connection.Query<Product>(sql).ToList();

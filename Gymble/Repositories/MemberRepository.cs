@@ -30,5 +30,28 @@ namespace Gymble.Repositories
             var sql = "SELECT * FROM tb_member";
             return _connection.Query<Member>(sql).ToList();
         }
+
+        public void DeleteMember(Member member)
+        {
+            var sql = 
+                "DELETE tb_member" +
+                "WHERE id = @Id";
+            _connection.Execute(sql, member);
+        }
+
+        public void UpdateMember(Member member)
+        {
+            var sql = 
+                "UPDATE tb_member" +
+                "SET name = @Name, gender = @Gender, phone_number = @PhoneNumber, " +
+                "birthdate = @BirthDate, register_date = @RegisterDate, memo = @Memo" +
+                "WHERE id = @Id";
+            _connection.Execute(sql, member);
+        }
+
+        public void SearchMember()
+        {
+
+        }
     }
 }
