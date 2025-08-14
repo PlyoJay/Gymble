@@ -1,4 +1,6 @@
-﻿using Gymble.Models;
+﻿using Gymble.Controls;
+using Gymble.Models;
+using Gymble.Views.Popup;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +24,13 @@ namespace Gymble.ViewModels
 
         public MemberListViewModel()
         {
+            AddCommand = new RelayCommand(AddMember);
+        }
 
+        private void AddMember(object obj)
+        {
+            AddMemberWIndow addMemberWIndow = new AddMemberWIndow();
+            addMemberWIndow.Show();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

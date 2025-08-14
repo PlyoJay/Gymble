@@ -15,7 +15,7 @@ namespace Gymble.Repositories
 
         public MemberRepository(SQLiteConnection connection)
         {
-            _connection = connection;
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
 
         public void InsertMember(Member member)
@@ -33,9 +33,7 @@ namespace Gymble.Repositories
 
         public void DeleteMember(Member member)
         {
-            var sql = 
-                "DELETE tb_member" +
-                "WHERE id = @Id";
+            var sql = "DELETE FROM tb_member WHERE id = @Id";
             _connection.Execute(sql, member);
         }
 
