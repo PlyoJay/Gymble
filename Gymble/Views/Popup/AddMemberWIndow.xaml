@@ -14,8 +14,8 @@
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
             <Grid DockPanel.Dock="Top">
-                <TextBox Text="회원 추가" Margin="12 0"
-                         FontWeight="Bold" FontSize="20"/>
+                <TextBlock Text="회원 추가" Margin="12 0"
+                           FontWeight="Bold" FontSize="20" VerticalAlignment="Center"/>
                 <Button Content="X" Style="{StaticResource WIndowChromeButtonStyle}"
                         Foreground="Black" FontSize="18" FontWeight="Bold"
                         HorizontalAlignment="Right"
@@ -41,15 +41,73 @@
                            Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
                 <TextBlock Grid.Row="2" Text="전화번호" 
                            Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                <TextBlock Grid.Row="3" Text="생일" 
+                <TextBlock Grid.Row="3" Text="생년월일" 
                            Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
                 <TextBlock Grid.Row="4" Text="등록일" 
                            Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
                 <TextBlock Grid.Row="5" Text="메모" 
                            Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
 
-                <TextBox Grid.Column="1" Margin="12 10" Text="4545"
+                <TextBox Grid.Column="1" Margin="12 10" Text="이름"
                          FontSize="18" Style="{StaticResource MaterialDesignTextBox}"/>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
+                    <RadioButton Content="남성" GroupName="gender"
+                                 Foreground="Black" FontWeight="Bold" FontSize="14"
+                                 Width="100" Margin="20 0"
+                                 Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"/>
+                    <RadioButton Content="여성" GroupName="gender"
+                                 Foreground="Black" FontWeight="Bold" FontSize="14"
+                                 Width="100" Margin="20 0"
+                                 Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
+                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             BorderThickness="1" BorderBrush="Gray"
+                             Margin="0 10" Padding="0" HorizontalContentAlignment="Center" Width="70" Text="010"
+                             Foreground="Black" FontSize="16"/>
+                    <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
+                               FontWeight="Bold" FontSize="16"/>
+                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             BorderThickness="1" BorderBrush="Gray"
+                             Margin="0 10" Padding="0" HorizontalContentAlignment="Center" Width="70"
+                             Foreground="Black" FontSize="16"/>
+                    <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
+                               FontWeight="Bold" FontSize="16"/>
+                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             BorderThickness="1" BorderBrush="Gray"
+                             Margin="0 10" Padding="0" HorizontalContentAlignment="Center" Width="70"
+                             Foreground="Black" FontSize="16"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center">
+                    <ComboBox Text="연도" Width="90" Margin="0 10"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                              BorderThickness="1" BorderBrush="Gray"
+                              Foreground="Black" FontSize="16"
+                              ItemsSource="{Binding Years}"
+                              SelectedItem="{Binding SelectedBirthYear, Mode=OneWayToSource}"/>
+                    <ComboBox Text="월" Width="70" Margin="17 10"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                              BorderThickness="1" BorderBrush="Gray"
+                              Foreground="Black" FontSize="16"
+                              ItemsSource="{Binding Months}"
+                              SelectedItem="{Binding SelectedBirthMonth, Mode=OneWayToSource}"/>
+                    <ComboBox Text="일" Width="70" Margin="0 10"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                              BorderThickness="1" BorderBrush="Gray"
+                              Foreground="Black" FontSize="16"
+                              ItemsSource="{Binding Days}"
+                              SelectedItem="{Binding SelectedBirthDay, Mode=OneWayToSource}"/>
+                </StackPanel>
+
+                <TextBlock Text="{Binding Today}" Foreground="Black" FontSize="16"
+                           Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center"/>
+
+                <TextBlock Text="{Binding Memo, Mode=OneWayToSource}" Foreground="Black" FontSize="16"
+                           Grid.Row="5" Grid.Column="1" Margin="12 10"
+                           Style="{StaticResource MaterialDesignTextBlock}"/>
             </Grid>
             
             <StackPanel Grid.Row="7" Margin="12 0"
