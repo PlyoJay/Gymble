@@ -1,11 +1,16 @@
-﻿using System;
+﻿using Gymble.Controls;
+using Gymble.Models;
+using Gymble.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Gymble.ViewModels.Popup
@@ -13,8 +18,7 @@ namespace Gymble.ViewModels.Popup
     public class AddMemberViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<int>? Years { get; }
-        public ObservableCollection<int>? Months { get; }
-        public ObservableCollection<int>? Days { get; set; }
+        public ObservableCollection<int>? Months { get; set; }
 
         private string? _name;
         public string? Name
@@ -44,8 +48,8 @@ namespace Gymble.ViewModels.Popup
             }
         }
 
-        private int? _phoneFirst;
-        public int? PhoneFirst
+        private string? _phoneFirst;
+        public string? PhoneFirst
         {
             get => _phoneFirst;
             set
@@ -58,8 +62,8 @@ namespace Gymble.ViewModels.Popup
             }
         }
 
-        private int? _phoneMIddle;
-        public int? PhoneMiddle
+        private string? _phoneMIddle;
+        public string? PhoneMiddle
         {
             get => _phoneMIddle;
             set
@@ -72,8 +76,8 @@ namespace Gymble.ViewModels.Popup
             }
         }
 
-        private int? _phoneLast;
-        public int? PhoneLast
+        private string? _phoneLast;
+        public string? PhoneLast
         {
             get => _phoneLast;
             set
@@ -83,6 +87,17 @@ namespace Gymble.ViewModels.Popup
                     _phoneLast = value;
                     OnPropertyChanged();
                 }
+            }
+        }
+
+        private ObservableCollection<int> _days;
+        public ObservableCollection<int> Days
+        {
+            get => _days;
+            set
+            {
+                _days = value;
+                OnPropertyChanged(nameof(Days));
             }
         }
 
@@ -110,8 +125,7 @@ namespace Gymble.ViewModels.Popup
                 {
                     _selectedMonth = value;
                     OnPropertyChanged();
-
-                    Days = GenerateDays(SelectedYear, SelectedMonth);
+                    UpdateDays();
                 }
             }
         }
@@ -130,8 +144,8 @@ namespace Gymble.ViewModels.Popup
             }
         }
 
-        private DateTime? _registerDate;
-        public DateTime? RegisterDate
+        private DateTime _registerDate;
+        public DateTime RegisterDate
         {
             get => _registerDate;
             set
@@ -150,7 +164,7 @@ namespace Gymble.ViewModels.Popup
             get => _memo;
             set
             {
-                if (string.IsNullOrEmpty(value))
+                if (value != _memo)
                 {
                     _memo = value;
                     OnPropertyChanged();
@@ -162,35 +176,53 @@ namespace Gymble.ViewModels.Popup
         public ICommand? AddCommand { get; }
 
         public AddMemberViewModel()
-        {
-            int currentYear = DateTime.Now.Year;
-            
-            
+        {        
             Years = new ObservableCollection<int>();
             Months = new ObservableCollection<int>();
+            Days = new ObservableCollection<int>();
 
             for (int i = 0; i < 100; i++)
-                Years.Add(new DateTime(currentYear - i, 1, 1).Year);
+                Years.Add(new DateTime(DateTime.Now.Year - i, 1, 1).Year);
 
             for (int i = 1; i <= 12; i++)
                 Months.Add(i);
 
             RegisterDate = DateTime.Today;
+
+            CloseCommand = new RelayCommand<Window>(w => Close(w, false), w => w != null);
+            AddCommand = new RelayCommand(AddMember);
         }
 
-        private ObservableCollection<int> GenerateDays(int? year, int? month)
+        private void Close(Window w, bool result)
         {
-            var days = new ObservableCollection<int>();
+            w.DialogResult = result;
+            w.Close();
+        }
 
-            // 해당 연·월의 마지막 날 구하기
-            int daysInMonth = DateTime.DaysInMonth((int)year, (int)month);
+        private void AddMember(object obj)
+        {
+            var phone = $"{PhoneFirst}-{PhoneMiddle}-{PhoneLast}";
+            var birthDate = new DateTime((int)SelectedYear, (int)SelectedMonth, (int)SelectedDay);
 
-            for (int day = 1; day <= daysInMonth; day++)
+            Member member = new Member()
             {
-                days.Add(day);
-            }
+                Name = this.Name,
+                Gender = this.SelectedGender,
+                PhoneNumber = phone,
+                BirthDate = birthDate,
+                RegisterDate = this.RegisterDate,
+                Memo = this.Memo
+            };
 
-            return days;
+            SQLiteManager.Instance.InsertMember(member);
+        }
+
+        private void UpdateDays()
+        {
+            Days.Clear();
+            int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, (int)SelectedMonth == 0 ? 1 : (int)SelectedMonth);
+            for (int i = 1; i <= daysInMonth; i++)
+                Days.Add(i);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

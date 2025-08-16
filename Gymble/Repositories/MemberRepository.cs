@@ -21,7 +21,7 @@ namespace Gymble.Repositories
         public void InsertMember(Member member)
         {
             var sql = @"INSERT INTO tb_member (name, gender, phone_number, birthdate, register_date, memo)
-                    VALUES (@Name, @Gender, @PhoneNumber, @Birthdate, @RegisterDate, @Memo)";
+                    VALUES (@Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Memo)";
             _connection.Execute(sql, member);
         }
 

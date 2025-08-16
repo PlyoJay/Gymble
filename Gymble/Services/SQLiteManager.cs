@@ -1,4 +1,5 @@
-﻿using Gymble.Repositories;
+﻿using Gymble.Models;
+using Gymble.Repositories;
 using Gymble.Utils;
 using System.Data.SQLite;
 using System.IO;
@@ -7,13 +8,28 @@ namespace Gymble.Services
 {
     public class SQLiteManager
     {
+        private static SQLiteManager _instance;
+        public static SQLiteManager Instance
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _instance ?? (_instance = new SQLiteManager());
+                }
+            }
+        }
+
         public string DatabaseName = Constants.Database.FileName;
         public string FolderName = Constants.Database.FolderName;
         public SQLiteConnection connection = null;
 
+        private static readonly object _lock = new object();
+
         public SQLiteManager()
         {
             CreateDatabaseFile();
+            GetAllRepositories();
         }
 
         private string GetFolderPath()
@@ -83,6 +99,16 @@ namespace Gymble.Services
 
             var repo = new MemberRepository(connection);
             var all = repo.GetAllMembers();
+
+            CloseConnection();
+        }
+
+        public void InsertMember(Member member)
+        {
+            OpenConnection();
+
+            var repo = new MemberRepository(connection);
+            repo.InsertMember(member);
 
             CloseConnection();
         }

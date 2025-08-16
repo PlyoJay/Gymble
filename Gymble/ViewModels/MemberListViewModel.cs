@@ -30,7 +30,7 @@ namespace Gymble.ViewModels
         private void AddMember(object obj)
         {
             AddMemberWIndow addMemberWIndow = new AddMemberWIndow();
-            addMemberWIndow.Show();
+            addMemberWIndow.ShowDialog();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
