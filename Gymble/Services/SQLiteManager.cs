@@ -13,10 +13,10 @@ namespace Gymble.Services
         {
             get
             {
-                lock (_lock)
-                {
-                    return _instance ?? (_instance = new SQLiteManager());
-                }
+                if (_instance == null)
+                    _instance = new SQLiteManager();
+
+                return _instance;
             }
         }
 
@@ -29,7 +29,6 @@ namespace Gymble.Services
         public SQLiteManager()
         {
             CreateDatabaseFile();
-            GetAllRepositories();
         }
 
         private string GetFolderPath()
@@ -99,6 +98,7 @@ namespace Gymble.Services
 
             var repo = new MemberRepository(connection);
             var all = repo.GetAllMembers();
+            Datas.SetMemberList(all);
 
             CloseConnection();
         }

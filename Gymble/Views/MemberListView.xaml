@@ -29,7 +29,7 @@
         <Separator Grid.Row="1" Height="20"/>
 
         <!-- 리스트 -->
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Members}" SelectedItem="{Binding SelectedMember}"
+        <DataGrid Grid.Row="2" ItemsSource="{Binding MemberList}" SelectedItem="{Binding SelectedMember}"
                   AutoGenerateColumns="False" IsReadOnly="True"
                   EnableRowVirtualization="True"
                   EnableColumnVirtualization="True"

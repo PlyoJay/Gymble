@@ -20,7 +20,7 @@ namespace Gymble.Repositories
 
         public void InsertMember(Member member)
         {
-            var sql = @"INSERT INTO tb_member (name, gender, phone_number, birthdate, register_date, memo)
+            var sql = @"INSERT INTO tb_member (name, gender, phonenumber, birthdate, registerdate, memo)
                     VALUES (@Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Memo)";
             _connection.Execute(sql, member);
         }
@@ -41,8 +41,8 @@ namespace Gymble.Repositories
         {
             var sql = 
                 "UPDATE tb_member" +
-                "SET name = @Name, gender = @Gender, phone_number = @PhoneNumber, " +
-                "birthdate = @BirthDate, register_date = @RegisterDate, memo = @Memo" +
+                "SET name = @Name, gender = @Gender, phonenumber = @PhoneNumber, " +
+                "birthdate = @BirthDate, registerdate = @RegisterDate, memo = @Memo" +
                 "WHERE id = @Id";
             _connection.Execute(sql, member);
         }

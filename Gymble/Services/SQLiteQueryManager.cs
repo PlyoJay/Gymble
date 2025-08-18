@@ -21,9 +21,9 @@ namespace Gymble.Services
                             "[id] INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "[name] TEXT NOT NULL,  " +
                             "[gender] TEXT NOT NULL,  " +
-                            "[phone_number] TEXT,  " +
+                            "[phonenumber] TEXT,  " +
                             "[birthdate] TEXT,  " +
-                            "[register_date] TEXT NOT NULL,  " +
+                            "[registerdate] TEXT NOT NULL,  " +
                             "[memo] TEXT  " +
                         ")";
     }
@@ -42,8 +42,8 @@ namespace Gymble.Services
                             "[id] INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "[name] TEXT NOT NULL,  " +
                             "[type] TEXT NOT NULL CHECK(type IN ('기간제', '횟수제')),  " +
-                            "[duration_days] INTEGER DEFAULT 0,  " +
-                            "[total_count] INTEGER DEFAULT 0,  " +
+                            "[durationdays] INTEGER DEFAULT 0,  " +
+                            "[totalcount] INTEGER DEFAULT 0,  " +
                             "[price] INTEGER NOT NULL  " +
                         ")";
     }

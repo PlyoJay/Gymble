@@ -1,5 +1,6 @@
 ﻿using Gymble.Controls;
 using Gymble.Models;
+using Gymble.Services;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,8 @@ namespace Gymble.ViewModels
                 new NavigationItemModel { IconKind = PackIconKind.CardMembership, Label = "멤버쉽", TagName="membership", Command = ToMembershipViewCommand },
                 new NavigationItemModel { IconKind = PackIconKind.Settings, Label = "설정", TagName="settings", Command = ToSettingsViewCommand }
             };
+
+            SQLiteManager.Instance.GetAllRepositories();
         }
 
         private void SwapView(object obj)
