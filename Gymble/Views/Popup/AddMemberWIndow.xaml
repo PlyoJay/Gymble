@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Gymble.Views.Popup"
         xmlns:converter="clr-namespace:Gymble.Converter"
         xmlns:vms="clr-namespace:Gymble.ViewModels.Popup"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="AddMemberWIndow" Height="450" Width="400" ResizeMode="NoResize"
         Style="{StaticResource WindowChromeStyle}" WindowStartupLocation="CenterScreen">
@@ -83,41 +84,38 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
-                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}"
                              Text="{Binding PhoneFirst, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             BorderThickness="1" BorderBrush="Gray"
-                             Margin="0 10" Padding="0" HorizontalContentAlignment="Center" Width="70"
-                             Foreground="Black" FontSize="16"/>
+                             PreviewTextInput="NumberOnly_PreviewTextInput"
+                             MaxLength="3" TextChanged="TextBox_TextChanged"/>
                     <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
                                FontWeight="Bold" FontSize="16"/>
-                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}"
                              Text="{Binding PhoneMiddle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             BorderThickness="1" BorderBrush="Gray"
-                             Margin="0 10" Padding="0" HorizontalContentAlignment="Center" Width="70"
-                             Foreground="Black" FontSize="16"/>
+                             PreviewTextInput="NumberOnly_PreviewTextInput"
+                             MaxLength="4" TextChanged="TextBox_TextChanged"/>
                     <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
                                FontWeight="Bold" FontSize="16"/>
-                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding PhoneLast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             BorderThickness="1" BorderBrush="Gray"
-                             Margin="0 10" Padding="0" HorizontalContentAlignment="Center" Width="70"
-                             Foreground="Black" FontSize="16"/>
+                    <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}"
+                             Text="{Binding PhoneLast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                            
+                             PreviewTextInput="NumberOnly_PreviewTextInput"
+                             MaxLength="4"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center">
-                    <ComboBox Text="연도" Width="90" Margin="0 10" Padding="10 0" Height="35"
-                              Style="{StaticResource MaterialDesignComboBox}"
+                    <ComboBox Text="연도" Width="95" Margin="0 10" Padding="10 0" Height="35"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               BorderThickness="1" BorderBrush="Gray"
                               Foreground="Black" FontSize="16"
                               ItemsSource="{Binding Years}"
                               SelectedItem="{Binding SelectedYear, Mode=OneWayToSource}"/>
-                    <ComboBox Text="월" Width="70" Margin="17 10" Padding="10 0" Height="35"
+                    <ComboBox Text="월" Width="75" Margin="17 10" Padding="10 0" Height="35"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               BorderThickness="1" BorderBrush="Gray"
                               Foreground="Black" FontSize="16"
                               ItemsSource="{Binding Months}"
                               SelectedItem="{Binding SelectedMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <ComboBox Text="일" Width="70" Margin="0 10" Padding="10 0" Height="35"
+                    <ComboBox Text="일" Width="75" Margin="0 10" Padding="10 0" Height="35"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               BorderThickness="1" BorderBrush="Gray"
                               Foreground="Black" FontSize="16"
