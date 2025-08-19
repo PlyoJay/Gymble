@@ -4,8 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gymble.Views"
+             xmlns:converter="clr-namespace:Gymble.Converter"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converter:GenderToKoreanConverter x:Key="GenderToKoreanConverter"/>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -39,10 +45,10 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="이름" Binding="{Binding Name}"/>
-                <DataGridTextColumn Header="성별" Binding="{Binding Gender}" Width="70"/>
-                <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber}" Width="120"/>
-                <DataGridTextColumn Header="생일" Binding="{Binding BirthDate}" Width="110"/>
-                <DataGridTextColumn Header="등록일" Binding="{Binding RegisterDate}" Width="110"/>
+                <DataGridTextColumn Header="성별" Binding="{Binding Gender, Converter={StaticResource GenderToKoreanConverter}}" Width="Auto"/>
+                <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber}" Width="Auto"/>
+                <DataGridTextColumn Header="생일" Binding="{Binding BirthDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
+                <DataGridTextColumn Header="등록일" Binding="{Binding RegisterDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
                 <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
