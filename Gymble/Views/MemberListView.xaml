@@ -10,6 +10,7 @@
 
     <UserControl.Resources>
         <converter:GenderToKoreanConverter x:Key="GenderToKoreanConverter"/>
+        <converter:PlusOneConverter x:Key="PlusOneConverter"/>
     </UserControl.Resources>
     
     <Grid>
@@ -41,9 +42,35 @@
                   EnableColumnVirtualization="True"
                   VirtualizingPanel.IsVirtualizing="True"
                   VirtualizingPanel.VirtualizationMode="Recycling"
-                  ScrollViewer.CanContentScroll="True">
+                  ScrollViewer.CanContentScroll="True"
+                  AlternationCount="2147483647">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <!-- 보기 쉬운 하이라이트 색 -->
+                            <Setter Property="Background" Value="#FFE3F2FD"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FFEAF2FE"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="50"/>
+                <DataGridTemplateColumn Header="#" Width="50">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow},
+                                               Path=AlternationIndex,
+                                               Converter={StaticResource PlusOneConverter}}"
+                                HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="이름" Binding="{Binding Name}"/>
                 <DataGridTextColumn Header="성별" Binding="{Binding Gender, Converter={StaticResource GenderToKoreanConverter}}" Width="Auto"/>
                 <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber}" Width="Auto"/>

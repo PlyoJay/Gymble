@@ -113,6 +113,16 @@ namespace Gymble.Services
             CloseConnection();
         }
 
+        public void DeleteMember(Member member)
+        {
+            OpenConnection();
+
+            var repo = new MemberRepository(connection);
+            repo.DeleteMember(member);
+
+            CloseConnection();
+        }
+
         public void UseMembershipRepository()
         {
             OpenConnection();

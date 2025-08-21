@@ -19,6 +19,20 @@ namespace Gymble.ViewModels
     {
         public ObservableCollection<Member>? MemberList { get; }
 
+        private Member _selectedMember;
+        public Member SelectedMember
+        {
+            get => _selectedMember;
+            set
+            {
+                if (_selectedMember != value)
+                {
+                    _selectedMember = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ICommand? SearchCommand { get; }
         public ICommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
@@ -29,6 +43,8 @@ namespace Gymble.ViewModels
             MemberList = new ObservableCollection<Member>(Datas.GetMemberList());
 
             AddCommand = new RelayCommand(AddMember);
+
+            DeleteCommand = new RelayCommand(DeleteMember);
         }
 
         private void AddMember(object obj)
@@ -46,13 +62,21 @@ namespace Gymble.ViewModels
             UpdateMemberList();
         }
 
+        private void DeleteMember(object obj)
+        {
+            var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
+
+            if (msgResult == MessageBoxResult.No) return;
+            
+            SQLiteManager.Instance.DeleteMember(SelectedMember);
+            SQLiteManager.Instance.UseMemberRepository();
+            UpdateMemberList();            
+        }
+
         private void UpdateMemberList()
         {
             MemberList.Clear();
-            foreach (var m in Datas.GetMemberList())
-            {
-                MemberList.Add(m);
-            }
+            foreach (var m in Datas.GetMemberList()) MemberList.Add(m);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

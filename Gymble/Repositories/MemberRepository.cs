@@ -25,6 +25,47 @@ namespace Gymble.Repositories
             _connection.Execute(sql, member);
         }
 
+        public int InsertMemberFillingHoles(Member member)
+        {
+            using var tx = _connection.BeginTransaction();
+
+            // 1) 최소 누락 ID 확보
+            const string sqlNextId = @"
+                SELECT CASE
+                  WHEN NOT EXISTS (SELECT 1 FROM tb_member WHERE id = 1) THEN 1
+                  ELSE (
+                    SELECT m1.id + 1
+                    FROM tb_member AS m1
+                    LEFT JOIN tb_member AS m2 ON m2.id = m1.id + 1
+                    WHERE m2.id IS NULL
+                    ORDER BY m1.id
+                    LIMIT 1
+                  )
+                END AS next_id;";
+
+            int nextId = _connection.ExecuteScalar<int>(sqlNextId, transaction: tx);
+
+            // 2) 명시적 ID로 INSERT
+            const string sqlInsert = @"
+                INSERT INTO tb_member (id, name, gender, phone_number, birthdate, register_date, memo)
+                VALUES (@Id, @Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Memo);";
+
+            // 컬럼명은 실제 스키마에 맞추세요 (phone_number / register_date 등)
+            _connection.Execute(sqlInsert, new
+            {
+                Id = nextId,
+                member.Name,
+                member.Gender,
+                member.PhoneNumber,
+                member.BirthDate,
+                member.RegisterDate,
+                member.Memo
+            }, tx);
+
+            tx.Commit();
+            return nextId;
+        }
+
         public List<Member> GetAllMembers()
         {
             var sql = "SELECT * FROM tb_member";

@@ -189,7 +189,7 @@ namespace Gymble.ViewModels.Popup
 
             RegisterDate = DateTime.Today;
 
-            CloseCommand = new RelayCommand<Window>(w => Close(w, false), w => w != null);
+            CloseCommand = new RelayCommand<Window>(w => Close(w, true), w => w != null);
             AddCommand = new RelayCommand<Window>(w => AddMember(w), w => CanAdd());
         }
 
