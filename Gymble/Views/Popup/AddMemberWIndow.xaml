@@ -18,8 +18,8 @@
         <converter:TagMatchConverter x:Key="TagMatchConverter" />
         <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
     </Window.Resources>
-    
-    <Border BorderBrush="Black" BorderThickness="1">
+
+    <Border BorderBrush="Gray" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
@@ -27,9 +27,15 @@
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
             <Grid WindowChrome.IsHitTestVisibleInChrome="True">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Color="DeepSkyBlue" Offset="0.25" />
+                        <GradientStop Color="LightBlue" Offset="0.75" />
+                    </LinearGradientBrush>
+                </Grid.Background>
                 <TextBlock Text="회원 추가" Margin="12 0"
-                           FontWeight="Bold" FontSize="20" VerticalAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                           FontWeight="Bold" FontSize="18" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Button Content="X" Style="{StaticResource WIndowChromeButtonStyle}"
                             Foreground="Black" FontSize="18" FontWeight="Bold"
                             HorizontalAlignment="Right"

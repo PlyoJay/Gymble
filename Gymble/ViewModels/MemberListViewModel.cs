@@ -1,6 +1,7 @@
 ﻿using Gymble.Controls;
 using Gymble.Models;
 using Gymble.Services;
+using Gymble.ViewModels.Popup;
 using Gymble.Views.Popup;
 using System;
 using System.Collections.Generic;
@@ -43,8 +44,8 @@ namespace Gymble.ViewModels
             MemberList = new ObservableCollection<Member>(Datas.GetMemberList());
 
             AddCommand = new RelayCommand(AddMember);
-
             DeleteCommand = new RelayCommand(DeleteMember);
+            EditCommand = new RelayCommand(EditMember);
         }
 
         private void AddMember(object obj)
@@ -73,9 +74,19 @@ namespace Gymble.ViewModels
             UpdateMemberList();            
         }
 
+        private void EditMember(object obj)
+        {
+            EditMemberViewModel editMemberViewModel = new EditMemberViewModel(SelectedMember);
+            EditMemberWindow editMemberWindow = new EditMemberWindow()
+            {
+                DataContext = editMemberViewModel,
+            };
+            editMemberWindow.ShowDialog();
+        }
+
         private void UpdateMemberList()
         {
-            MemberList.Clear();
+            MemberList!.Clear();
             foreach (var m in Datas.GetMemberList()) MemberList.Add(m);
         }
 
