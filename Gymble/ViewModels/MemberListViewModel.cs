@@ -59,7 +59,6 @@ namespace Gymble.ViewModels
                 return;
             }
 
-            SQLiteManager.Instance.UseMemberRepository();
             UpdateMemberList();
         }
 
@@ -70,22 +69,26 @@ namespace Gymble.ViewModels
             if (msgResult == MessageBoxResult.No) return;
             
             SQLiteManager.Instance.DeleteMember(SelectedMember);
-            SQLiteManager.Instance.UseMemberRepository();
             UpdateMemberList();            
         }
 
         private void EditMember(object obj)
         {
+            if (SelectedMember == null) return;
+
             EditMemberViewModel editMemberViewModel = new EditMemberViewModel(SelectedMember);
             EditMemberWindow editMemberWindow = new EditMemberWindow()
             {
                 DataContext = editMemberViewModel,
             };
             editMemberWindow.ShowDialog();
+
+            UpdateMemberList();
         }
 
         private void UpdateMemberList()
         {
+            SQLiteManager.Instance.UseMemberRepository();
             MemberList!.Clear();
             foreach (var m in Datas.GetMemberList()) MemberList.Add(m);
         }

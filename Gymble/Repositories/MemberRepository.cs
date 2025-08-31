@@ -80,11 +80,16 @@ namespace Gymble.Repositories
 
         public void UpdateMember(Member member)
         {
-            var sql = 
-                "UPDATE tb_member" +
-                "SET name = @Name, gender = @Gender, phonenumber = @PhoneNumber, " +
-                "birthdate = @BirthDate, registerdate = @RegisterDate, memo = @Memo" +
-                "WHERE id = @Id";
+            const string sql = @"
+                UPDATE tb_member
+                SET
+                    name          = @Name,
+                    gender        = @Gender,
+                    phonenumber   = @PhoneNumber,
+                    birthdate     = @BirthDate,
+                    registerdate  = @RegisterDate,
+                    memo          = @Memo
+                WHERE id = @Id;";
             _connection.Execute(sql, member);
         }
 

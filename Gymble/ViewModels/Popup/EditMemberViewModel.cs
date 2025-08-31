@@ -1,4 +1,6 @@
-﻿using Gymble.Models;
+﻿using Gymble.Controls;
+using Gymble.Models;
+using Gymble.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,13 +9,30 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace Gymble.ViewModels.Popup
 {
     public class EditMemberViewModel : INotifyPropertyChanged
     {
         public Member TargetMember { get; set; }
+
+        private string? _name;
+        public string? Name
+        {
+            get => _name;
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private string? _selectedGender;
         public string? SelectedGender
@@ -128,6 +147,23 @@ namespace Gymble.ViewModels.Popup
             }
         }
 
+        private string? _memo;
+        public string? Memo
+        {
+            get => _memo;
+            set
+            {
+                if (value != _memo)
+                {
+                    _memo = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand? CloseCommand { get; }
+        public ICommand? EditCommand { get; }
+
         public EditMemberViewModel(Member member)
         {
             this.TargetMember = member;
@@ -142,6 +178,17 @@ namespace Gymble.ViewModels.Popup
             for (int i = 1; i <= 12; i++)
                 Months.Add(i);
 
+            MemberInit();
+
+            CloseCommand = new RelayCommand<Window>(w => Close(w, true), w => w != null);
+            EditCommand = new RelayCommand<Window>(w => EditMember(w), w => CanUpdate());
+        }
+
+        private void MemberInit()
+        {
+            Name = TargetMember.Name;
+            SelectedGender = TargetMember.Gender;
+
             PhoneFirst = TargetMember.PhoneNumber!.Split('-')[0];
             PhoneMiddle = TargetMember.PhoneNumber!.Split('-')[1];
             PhoneLast = TargetMember.PhoneNumber!.Split('-')[2];
@@ -149,12 +196,53 @@ namespace Gymble.ViewModels.Popup
             SelectedYear = TargetMember.BirthDate.Year;
             SelectedMonth = TargetMember.BirthDate.Month;
             SelectedDay = TargetMember.BirthDate.Day;
+
+            Memo = TargetMember.Memo;
+        }
+
+        private void EditMember(Window w)
+        {
+            var phone = $"{PhoneFirst}-{PhoneMiddle}-{PhoneLast}";
+
+            var birthDate = new DateTime((int)SelectedYear!, (int)SelectedMonth!, (int)SelectedDay!);
+
+            Member UpdatedMember = new Member()
+            {
+                Id = TargetMember.Id,
+                Name = Name,
+                Gender = SelectedGender,
+                PhoneNumber = phone,
+                BirthDate = birthDate,
+                RegisterDate = TargetMember.RegisterDate,
+                Memo = Memo
+            };
+
+            SQLiteManager.Instance.UpdateMember(UpdatedMember);
+
+            if (w != null)
+            {
+                w.DialogResult = true;
+                w.Close();
+            }
+        }
+
+        private void Close(Window w, bool result)
+        {
+            w.DialogResult = result;
+            w.Close();
+        }
+
+        private bool CanUpdate()
+        {
+            return !string.IsNullOrWhiteSpace(TargetMember.Name)
+                && !string.IsNullOrWhiteSpace(SelectedGender)
+                && SelectedYear.HasValue && SelectedMonth.HasValue && SelectedDay.HasValue;
         }
 
         private void UpdateDays()
         {
             Days.Clear();
-            int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, (int)SelectedMonth == 0 ? 1 : (int)SelectedMonth);
+            int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, (int)SelectedMonth! == 0 ? 1 : (int)SelectedMonth);
             for (int i = 1; i <= daysInMonth; i++)
                 Days.Add(i);
         }

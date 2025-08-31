@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Gymble.ViewModels
@@ -44,6 +45,7 @@ namespace Gymble.ViewModels
             }
         }
 
+        public ICommand CloseCommand { get; }
         public ICommand ToDashboardViewCommand { get; }
         public ICommand ToMemberLIstViewCommand { get; }
         public ICommand ToAttendaceViewCommand { get; }
@@ -53,6 +55,7 @@ namespace Gymble.ViewModels
 
         public MainWindowViewModel()
         {
+            CloseCommand = new RelayCommand<Window>(w => Close(w, true), w => w != null);
             ToDashboardViewCommand = new RelayCommand(SwapView);
             ToMemberLIstViewCommand = new RelayCommand(SwapView);
             ToAttendaceViewCommand = new RelayCommand(SwapView);
@@ -73,6 +76,12 @@ namespace Gymble.ViewModels
             };
 
             SQLiteManager.Instance.GetAllRepositories();
+        }
+
+        private void Close(Window w, bool result)
+        {
+            w.DialogResult = result;
+            w.Close();
         }
 
         private void SwapView(object obj)

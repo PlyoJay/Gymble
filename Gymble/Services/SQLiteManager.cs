@@ -8,7 +8,7 @@ namespace Gymble.Services
 {
     public class SQLiteManager
     {
-        private static SQLiteManager _instance;
+        private static SQLiteManager? _instance;
         public static SQLiteManager Instance
         {
             get
@@ -119,6 +119,16 @@ namespace Gymble.Services
 
             var repo = new MemberRepository(connection);
             repo.DeleteMember(member);
+
+            CloseConnection();
+        }
+
+        public void UpdateMember(Member member)
+        {
+            OpenConnection();
+
+            var repo = new MemberRepository (connection);
+            repo.UpdateMember(member);
 
             CloseConnection();
         }
