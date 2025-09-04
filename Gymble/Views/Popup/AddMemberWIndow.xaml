@@ -91,18 +91,21 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
                     <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}"
+                             Width="75"
                              Text="{Binding PhoneFirst, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PreviewTextInput="NumberOnly_PreviewTextInput"
                              MaxLength="3" TextChanged="TextBox_TextChanged"/>
                     <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
                                FontWeight="Bold" FontSize="16"/>
                     <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}"
+                             Width="75"
                              Text="{Binding PhoneMiddle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PreviewTextInput="NumberOnly_PreviewTextInput"
                              MaxLength="4" TextChanged="TextBox_TextChanged"/>
                     <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
                                FontWeight="Bold" FontSize="16"/>
                     <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}"
+                             Width="75"
                              Text="{Binding PhoneLast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                            
                              PreviewTextInput="NumberOnly_PreviewTextInput"
                              MaxLength="4"/>
