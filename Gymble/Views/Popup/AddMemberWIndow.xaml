@@ -112,22 +112,16 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center">
-                    <ComboBox Text="연도" Width="95" Margin="0 10" Padding="10 0" Height="35"
-                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                              BorderThickness="1" BorderBrush="Gray"
-                              Foreground="Black" FontSize="16"
+                    <ComboBox Text="연도" Width="95" Margin="0 10" Height="35"
+                              Style="{StaticResource ComboBoxStyle}"
                               ItemsSource="{Binding Years}"
-                              SelectedItem="{Binding SelectedYear, Mode=OneWayToSource}"/>
-                    <ComboBox Text="월" Width="75" Margin="17 10" Padding="10 0" Height="35"
-                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                              BorderThickness="1" BorderBrush="Gray"
-                              Foreground="Black" FontSize="16"
+                              SelectedItem="{Binding SelectedYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox Text="월" Width="75" Margin="17 10" Height="35"
+                              Style="{StaticResource ComboBoxStyle}"
                               ItemsSource="{Binding Months}"
                               SelectedItem="{Binding SelectedMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <ComboBox Text="일" Width="75" Margin="0 10" Padding="10 0" Height="35"
-                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                              BorderThickness="1" BorderBrush="Gray"
-                              Foreground="Black" FontSize="16"
+                    <ComboBox Text="일" Width="75" Margin="0 10" Height="35"
+                              Style="{StaticResource ComboBoxStyle}"
                               ItemsSource="{Binding Days}"
                               SelectedItem="{Binding SelectedDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>

@@ -187,6 +187,12 @@ namespace Gymble.ViewModels.Popup
             for (int i = 1; i <= 12; i++)
                 Months.Add(i);
 
+            SelectedGender = "Male";
+
+            SelectedYear = Years.FirstOrDefault(y => y.Equals(2000));
+            SelectedMonth = 1;
+            SelectedDay = 1;
+
             RegisterDate = DateTime.Today;
 
             CloseCommand = new RelayCommand<Window>(w => Close(w, true), w => w != null);

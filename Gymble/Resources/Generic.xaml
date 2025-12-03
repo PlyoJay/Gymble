@@ -186,6 +186,7 @@
         </Setter>
     </Style>
 
+    
 
     <Style x:Key="CustomComboBoxStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}">
         <Setter Property="Padding" Value="10 0"/>
@@ -194,5 +195,159 @@
         <Setter Property="Foreground" Value="Black"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="Height" Value="40"/>
+    </Style>
+
+    <!-- ▼ 기본 배경 / 텍스트 -->
+    <SolidColorBrush x:Key="LineComboBg" Color="#FFFFFF"/>
+    <!-- 전체 ComboBox 배경 -->
+    <SolidColorBrush x:Key="LineComboBorder" Color="#121212"/>
+    <!-- 전체 ComboBox 배경 -->
+    <SolidColorBrush x:Key="LineComboText" Color="#000000"/>
+    <!-- 선택된 텍스트 색 -->
+
+    <!-- ▼ 토글 버튼 (드롭다운 버튼) -->
+    <SolidColorBrush x:Key="LineComboHover" Color="#767676"/>
+    <!-- 드롭다운 버튼 Hover 배경 -->
+    <SolidColorBrush x:Key="LineComboArrow" Color="#3F3F3F"/>
+    <!-- 드롭다운 화살표 Stroke -->
+
+    <!-- ▼ 아이템 배경 -->
+    <SolidColorBrush x:Key="LineComboItemHover" Color="#999"/>
+    <!-- 아이템 hover -->
+    <SolidColorBrush x:Key="LineComboItemSelected" Color="#767676"/>
+    <!-- 아이템 선택 -->
+
+    <Style x:Key="ComboDropToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- 마우스 올렸을 때 살짝만 진하게, 싫으면 이 트리거 삭제 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background"
+                                    Value="{StaticResource LineComboHover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="LineComboBoxItemStyle" TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource LineComboText}" />
+        <Setter Property="Background" Value="{StaticResource LineComboBg}" />
+        <Setter Property="Padding" Value="10,4" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0 0 0 1"
+                            BorderBrush="#264A60"
+                            Height="34"
+                            Width="{Binding ActualWidth,
+                                            RelativeSource={RelativeSource TemplatedParent}}">
+                        <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background"
+                                Value="{StaticResource LineComboItemHover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background"
+                                Value="{StaticResource LineComboItemSelected}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="{StaticResource LineComboBg}"/>
+        <Setter Property="Foreground" Value="{StaticResource LineComboText}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="10 0" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource LineComboBoxItemStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Border BorderBrush="{StaticResource LineComboBorder}" BorderThickness="1" 
+                            Background="{TemplateBinding Background}" CornerRadius="4">
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="32" />
+                            </Grid.ColumnDefinitions>
+
+                            <ContentPresenter x:Name="ContentSite"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              RecognizesAccessKey="True"/>
+
+                            <ToggleButton x:Name="DropDownToggle"
+                                      Grid.Column="1"
+                                      Style="{StaticResource ComboDropToggleStyle}"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                          RelativeSource={RelativeSource TemplatedParent}}">
+                                <Path Stroke="{StaticResource LineComboArrow}"
+                                      StrokeThickness="1.6"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      Data="M 3 4 L 8 9 L 13 4" />
+                            </ToggleButton>
+
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   PopupAnimation="Fade"
+                                   PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                <Border Background="{StaticResource LineComboBg}"
+                                        BorderThickness="1" BorderBrush="{StaticResource LineComboBorder}"
+                                        Width="{Binding ActualWidth,
+                                                    RelativeSource={RelativeSource TemplatedParent}}"
+                                        Height="350" CornerRadius="4">
+                                    <!-- 🔴 여기: 흰 배경 안 나오게 -->
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                                        <StackPanel IsItemsHost="True"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>
