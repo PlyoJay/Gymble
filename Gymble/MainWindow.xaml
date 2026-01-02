@@ -19,7 +19,7 @@
                 <RowDefinition Height="35"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Grid>
+            <Grid WindowChrome.IsHitTestVisibleInChrome="True">
                 <Grid.Background>
                     <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                         <GradientStop Color="DeepSkyBlue" Offset="0.25" />

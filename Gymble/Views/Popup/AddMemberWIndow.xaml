@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gymble.Views.Popup"
-        xmlns:converter="clr-namespace:Gymble.Converter"
         xmlns:vms="clr-namespace:Gymble.ViewModels.Popup"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
@@ -14,10 +13,6 @@
     <Window.DataContext>
         <vms:AddMemberViewModel/>
     </Window.DataContext>
-    <Window.Resources>
-        <converter:TagMatchConverter x:Key="TagMatchConverter" />
-        <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
-    </Window.Resources>
 
     <Border BorderBrush="Gray" BorderThickness="1">
         <Grid>

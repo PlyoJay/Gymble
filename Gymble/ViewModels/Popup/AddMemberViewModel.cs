@@ -1,6 +1,7 @@
 ﻿using Gymble.Controls;
 using Gymble.Models;
 using Gymble.Services;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -195,8 +196,8 @@ namespace Gymble.ViewModels.Popup
 
             RegisterDate = DateTime.Today;
 
-            CloseCommand = new RelayCommand<Window>(w => Close(w, true), w => w != null);
-            AddCommand = new RelayCommand<Window>(w => AddMember(w), w => CanAdd());
+            CloseCommand = new RelayCommand(_ => Close());
+            AddCommand = new RelayCommand<Window>(_ => AddMember());
         }
 
         private bool CanAdd()
@@ -206,13 +207,12 @@ namespace Gymble.ViewModels.Popup
                 && SelectedYear.HasValue && SelectedMonth.HasValue && SelectedDay.HasValue;
         }
 
-        private void Close(Window w, bool result)
+        private void Close()
         {
-            w.DialogResult = result;
-            w.Close();
+            DialogHost.Close("MainDialog", "Cancel");
         }
 
-        private void AddMember(Window w)
+        private void AddMember()
         {
             var phone = $"{PhoneFirst}-{PhoneMiddle}-{PhoneLast}";
             var birthDate = new DateTime((int)SelectedYear, (int)SelectedMonth, (int)SelectedDay);
@@ -229,11 +229,8 @@ namespace Gymble.ViewModels.Popup
 
             SQLiteManager.Instance.InsertMember(member);
 
-            if (w != null)
-            {
-                w.DialogResult = true;
-                w.Close();
-            }
+            if (CanAdd())
+                DialogHost.Close("MainDialog", "Ok");
         }
 
         private void UpdateDays()

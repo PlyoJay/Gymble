@@ -55,7 +55,7 @@ namespace Gymble.ViewModels
 
         public MainWindowViewModel()
         {
-            CloseCommand = new RelayCommand<Window>(w => Close(w, true), w => w != null);
+            CloseCommand = new RelayCommand<Window>(w => Close(w), w => w != null);
             ToDashboardViewCommand = new RelayCommand(SwapView);
             ToMemberLIstViewCommand = new RelayCommand(SwapView);
             ToAttendaceViewCommand = new RelayCommand(SwapView);
@@ -78,9 +78,9 @@ namespace Gymble.ViewModels
             SQLiteManager.Instance.GetAllRepositories();
         }
 
-        private void Close(Window w, bool result)
+        private void Close(Window w)
         {
-            w.DialogResult = result;
+            //w.DialogResult = result;
             w.Close();
         }
 

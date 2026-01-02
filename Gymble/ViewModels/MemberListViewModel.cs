@@ -2,7 +2,9 @@
 using Gymble.Models;
 using Gymble.Services;
 using Gymble.ViewModels.Popup;
+using Gymble.Views;
 using Gymble.Views.Popup;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,16 +52,19 @@ namespace Gymble.ViewModels
 
         private void AddMember(object obj)
         {
-            AddMemberWIndow addMemberWIndow = new AddMemberWIndow();
-            var isAddMemberSuccess = addMemberWIndow.ShowDialog();
+            AddMemberView addMemberWindow = new AddMemberView();
+            DialogHost.Show(addMemberWindow, "MainDialog");
 
-            if (isAddMemberSuccess == false)
-            {
-                MessageBox.Show("회원 추가 실패");
-                return;
-            }
+            //AddMemberWIndow addMemberWIndow = new AddMemberWIndow();
+            //var isAddMemberSuccess = addMemberWIndow.ShowDialog();
 
-            UpdateMemberList();
+            //if (isAddMemberSuccess == false)
+            //{
+            //    MessageBox.Show("회원 추가 실패");
+            //    return;
+            //}
+
+            //UpdateMemberList();
         }
 
         private void DeleteMember(object obj)
