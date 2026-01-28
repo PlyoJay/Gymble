@@ -16,16 +16,12 @@
     <materialDesign:DialogHost DialogTheme="Inherit" Background="Transparent">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
+                <RowDefinition Height="40"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Grid WindowChrome.IsHitTestVisibleInChrome="True">
-                <Grid.Background>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Color="DeepSkyBlue" Offset="0.25" />
-                        <GradientStop Color="LightBlue" Offset="0.75" />
-                    </LinearGradientBrush>
-                </Grid.Background>
+
+            <Grid Grid.ColumnSpan="2" WindowChrome.IsHitTestVisibleInChrome="True"
+                  Background="{StaticResource TitleBarBgColor}">
                 <TextBlock Text="GYMBLE" Margin="20 0"
                            FontWeight="Bold" FontSize="18" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -67,18 +63,35 @@
                     </DockPanel>
                 </materialDesign:DrawerHost.LeftDrawerContent>
 
-                <Border BorderBrush="Gray" BorderThickness="1">
+                <Border>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="55"/>
+                            <RowDefinition Height="50"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
                         <ToggleButton x:Name="MenuToggleButton" AutomationProperties.Name="HamburgerToggleButton" 
                                       IsChecked="{Binding IsDrawerOpen, Mode=TwoWay}"
-                                      Grid.Row="0" HorizontalAlignment="Left" Margin="10 0"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
                                       Style="{StaticResource MaterialDesignHamburgerToggleButton}"/>
 
-                        <ContentControl Grid.Row="1" Margin="10" 
+                        <Border Grid.ColumnSpan="2" 
+                                BorderBrush="{StaticResource DefaultBorderBrushColor}"
+                                BorderThickness="0 1">
+                            
+                        </Border>
+
+                        <Border Grid.RowSpan="2"
+                                BorderBrush="{StaticResource DefaultBorderBrushColor}"
+                                BorderThickness="0 0 1 0">
+                            
+                        </Border>
+
+                        <ContentControl Grid.Row="1" Grid.Column="1" Margin="12" 
                                         Content="{Binding CurrentViewModel}"/>
                     </Grid>
                 </Border>

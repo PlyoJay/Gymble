@@ -7,11 +7,21 @@
     <converter:TagMatchConverter x:Key="TagMatchConverter" />
     <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
 
+    <SolidColorBrush x:Key="ApplicationBgColor" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ApplicationBorderColor" Color="#D0D0D0"/>
+
+    <SolidColorBrush x:Key="TitleBarBgColor" Color="#DFDFDF"/>
+
+    <SolidColorBrush x:Key="DefaultBorderBrushColor" Color="#DFDFDF"/>
+
     <Style x:Key="WindowChromeStyle" TargetType="{x:Type Window}">
+        <Setter Property="Background" Value="{StaticResource ApplicationBgColor}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ApplicationBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="shell:WindowChrome.WindowChrome">
             <Setter.Value>
                 <shell:WindowChrome CaptionHeight="35"
-                                    CornerRadius="10"
+                                    CornerRadius="20"
                                     GlassFrameThickness="0"
                                     NonClientFrameEdges="None"
                                     ResizeBorderThickness="0"
