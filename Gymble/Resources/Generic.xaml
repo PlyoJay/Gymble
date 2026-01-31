@@ -4,16 +4,26 @@
                     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:converter="clr-namespace:Gymble.Converter">
 
-    <converter:TagMatchConverter x:Key="TagMatchConverter" />
-    <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
+    <!-- 폰트 -->
+    <FontFamily x:Key="Pretendard.ExtraLight">pack://application:,,,/Resources/Fonts/#Pretendard ExtraLight</FontFamily>
+    <FontFamily x:Key="Pretendard.Light">pack://application:,,,/Resources/Fonts/#Pretendard Light</FontFamily>
+    <FontFamily x:Key="Pretendard.Thin">pack://application:,,,/Resources/Fonts/#Pretendard Thin</FontFamily>
+    <FontFamily x:Key="Pretendard.Regular">pack://application:,,,/Resources/Fonts/#Pretendard</FontFamily>
+    <FontFamily x:Key="Pretendard.Medium">pack://application:,,,/Resources/Fonts/#Pretendard Medium</FontFamily>
+    <FontFamily x:Key="Pretendard.SemiBold">pack://application:,,,/Resources/Fonts/#Pretendard SemiBold</FontFamily>
+    <FontFamily x:Key="Pretendard.ExtraBold">pack://application:,,,/Resources/Fonts/#Pretendard ExtraBold</FontFamily>
+    <FontFamily x:Key="Pretendard.Black">pack://application:,,,/Resources/Fonts/#Pretendard Black</FontFamily>
 
+    <!-- SolidColorBrush -->
     <SolidColorBrush x:Key="ApplicationBgColor" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="ApplicationBorderColor" Color="#D0D0D0"/>
 
     <SolidColorBrush x:Key="TitleBarBgColor" Color="#DFDFDF"/>
 
     <SolidColorBrush x:Key="DefaultBorderBrushColor" Color="#DFDFDF"/>
+    <SolidColorBrush x:Key="SeperatorBorderBrushColor" Color="#999999"/>
 
+    <!-- 윈도우 -->
     <Style x:Key="WindowChromeStyle" TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{StaticResource ApplicationBgColor}"/>
         <Setter Property="BorderBrush" Value="{StaticResource ApplicationBorderColor}"/>
@@ -30,6 +40,7 @@
         </Setter>
     </Style>
 
+    <!-- 윈도우 상단 버튼 -->
     <Style x:Key="WIndowChromeButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="#00000000"/>
         <Setter Property="Foreground" Value="White"/>
@@ -56,6 +67,13 @@
         </Style.Triggers>
     </Style>
 
+    <!-- TextBlock -->
+    <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
+    </Style>
+
     <Style x:Key="AddMemberWindowTextBlockStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -73,7 +91,7 @@
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="md:TextFieldAssist.CharacterCounterVisibility" Value="Collapsed"/>
     </Style>
-    
+
     <Style x:Key="ComboDropToggle" TargetType="ToggleButton">
         <!-- 암묵 스타일 영향 제거 -->
         <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -199,16 +217,6 @@
         </Setter>
     </Style>
 
-    
-
-    <Style x:Key="CustomComboBoxStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}">
-        <Setter Property="Padding" Value="10 0"/>
-        <Setter Property="BorderBrush" Value="Gray"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="FontSize" Value="16"/>
-        <Setter Property="Height" Value="40"/>
-    </Style>
 
     <!-- ▼ 기본 배경 / 텍스트 -->
     <SolidColorBrush x:Key="LineComboBg" Color="#FFFFFF"/>
@@ -388,4 +396,17 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <DataTemplate x:Key="SideBarListBoxItemTemplate">
+        <StackPanel Orientation="Horizontal" Height="40" Margin="15 0">
+            <md:PackIcon Kind="{Binding IconKind}" 
+                                 Width="30" Height="30" 
+                                 VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Label}" 
+                       FontFamily="{StaticResource Pretendard.Regular}"
+                       FontSize="20" FontWeight="Bold" 
+                       Margin="15 0"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+    </DataTemplate>
 </ResourceDictionary>

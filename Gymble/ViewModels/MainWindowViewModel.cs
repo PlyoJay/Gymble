@@ -18,6 +18,35 @@ namespace Gymble.ViewModels
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<NavigationItemModel> NavigationItems { get; }
+        public ObservableCollection<NavigationItemModel> SettingsItem { get; }
+
+        private NavigationItemModel _selectedNavItem;
+        public NavigationItemModel SelectedNavItem
+        {
+            get => _selectedNavItem;
+            set
+            {
+                _selectedNavItem = value;
+                OnPropertyChanged();
+
+                if (_selectedNavItem?.Command?.CanExecute(_selectedNavItem.TagName) == true)
+                    _selectedNavItem.Command.Execute(_selectedNavItem.TagName);
+            }
+        }
+
+        private NavigationItemModel _selectedSettings;
+        public NavigationItemModel SelectedSettings
+        {
+            get => _selectedSettings;
+            set
+            {
+                _selectedSettings = value;
+                OnPropertyChanged();
+
+                if (_selectedSettings?.Command?.CanExecute(_selectedSettings.TagName) == true)
+                    _selectedSettings.Command.Execute(_selectedSettings.TagName);
+            }
+        }
 
         private object? _currentViewModel;
         public object? CurrentViewModel
@@ -60,18 +89,21 @@ namespace Gymble.ViewModels
             ToMemberLIstViewCommand = new RelayCommand(SwapView);
             ToAttendaceViewCommand = new RelayCommand(SwapView);
             ToProductViewCommand = new RelayCommand(SwapView);
-            ToMembershipViewCommand = new RelayCommand(SwapView);
             ToSettingsViewCommand = new RelayCommand(SwapView);
 
             CurrentViewModel = new DashboardViewModel();
 
             NavigationItems = new ObservableCollection<NavigationItemModel>()
             {
-                new NavigationItemModel { IconKind = PackIconKind.MonitorDashboard, Label = "대쉬보드", TagName="dashboard", Command = ToDashboardViewCommand },
-                new NavigationItemModel { IconKind = PackIconKind.ViewList, Label = "회원 목록", TagName="memberlist", Command = ToMemberLIstViewCommand },
-                new NavigationItemModel { IconKind = PackIconKind.ListStatus, Label = "출석 목록", TagName="attendance", Command = ToAttendaceViewCommand },
-                new NavigationItemModel { IconKind = PackIconKind.Gym, Label = "상품", TagName="product", Command = ToProductViewCommand },
-                new NavigationItemModel { IconKind = PackIconKind.CardMembership, Label = "멤버쉽", TagName="membership", Command = ToMembershipViewCommand },
+                new NavigationItemModel { IconKind = PackIconKind.MonitorDashboard, Label = "대시보드", TagName="dashboard", Command = ToDashboardViewCommand },
+                new NavigationItemModel { IconKind = PackIconKind.ViewList, Label = "회원관리", TagName="memberlist", Command = ToMemberLIstViewCommand },
+                new NavigationItemModel { IconKind = PackIconKind.ListStatus, Label = "출석관리", TagName="attendance", Command = ToAttendaceViewCommand },
+                new NavigationItemModel { IconKind = PackIconKind.Gym, Label = "상품관리", TagName="product", Command = ToProductViewCommand },
+                //new NavigationItemModel { IconKind = PackIconKind.CardMembership, Label = "멤버쉽", TagName="membership", Command = ToMembershipViewCommand },                
+            };
+
+            SettingsItem = new ObservableCollection<NavigationItemModel>()
+            {
                 new NavigationItemModel { IconKind = PackIconKind.Settings, Label = "설정", TagName="settings", Command = ToSettingsViewCommand }
             };
 
@@ -86,7 +118,7 @@ namespace Gymble.ViewModels
 
         private void SwapView(object obj)
         {
-            string tag = obj as string;
+            string? tag = obj as string;
 
             switch (tag)
             {
@@ -99,9 +131,9 @@ namespace Gymble.ViewModels
                 case "attendance":
                     CurrentViewModel = new AttendanceViewModel();
                     break;
-                case "membership":
-                    CurrentViewModel = new MembershipViewModel();
-                    break;
+                //case "membership":
+                //    CurrentViewModel = new MembershipViewModel();
+                //    break;
                 case "product":
                     CurrentViewModel = new ProductViewModel();
                     break;

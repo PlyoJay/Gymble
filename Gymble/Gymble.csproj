@@ -21,4 +21,16 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Resources\Fonts\Pretendard-Black.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-Bold.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-ExtraBold.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-ExtraLight.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-Light.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-Medium.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-Regular.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-SemiBold.otf" />
+    <Resource Include="Resources\Fonts\Pretendard-Thin.otf" />
+  </ItemGroup>
+
 </Project>

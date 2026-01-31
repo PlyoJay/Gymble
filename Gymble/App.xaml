@@ -4,9 +4,34 @@
              xmlns:local="clr-namespace:Gymble"
              xmlns:views="clr-namespace:Gymble.Views"
              xmlns:vms="clr-namespace:Gymble.ViewModels"
+             xmlns:converter="clr-namespace:Gymble.Converter"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Converter Classes -->
+            <converter:TagMatchConverter x:Key="TagMatchConverter" />
+            <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
+
+            <!-- ViewModel -> View 연결 -->
+            <DataTemplate DataType="{x:Type vms:DashboardViewModel}">
+                <views:DashboardView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:MemberListViewModel}">
+                <views:MemberListView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:AttendanceViewModel}">
+                <views:AttendanceView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:ProductViewModel}">
+                <views:ProductView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:MembershipViewModel}">
+                <views:MembershipView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:SettingsViewModel}">
+                <views:SettingsView/>
+            </DataTemplate>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
@@ -29,26 +54,6 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.SplitButton.xaml" />
                 <ResourceDictionary Source="/Resources/Generic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-            <!-- ViewModel -> View 연결 -->
-            <DataTemplate DataType="{x:Type vms:DashboardViewModel}">
-                <views:DashboardView/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:MemberListViewModel}">
-                <views:MemberListView/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:AttendanceViewModel}">
-                <views:AttendanceView/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:ProductViewModel}">
-                <views:ProductView/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:MembershipViewModel}">
-                <views:MembershipView/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:SettingsViewModel}">
-                <views:SettingsView/>
-            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
