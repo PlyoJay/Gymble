@@ -95,6 +95,10 @@
                         <Border Grid.ColumnSpan="2" 
                                 BorderBrush="{StaticResource DefaultBorderBrushColor}"
                                 BorderThickness="0 0 0 1">
+                            <TextBlock Style="{StaticResource TitleTextBlockStyle}"
+                                       Text="{Binding CurrentViewModel.PageTitle}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
                         </Border>
 
                         <ContentControl Grid.Row="1" Grid.ColumnSpan="2" Margin="12" 

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Gymble.ViewModels
 {
-    internal class ProductViewModel
+    public class ProductViewModel
     {
+        public string PageTitle { get; set; } = "상품 관리";
     }
 }
