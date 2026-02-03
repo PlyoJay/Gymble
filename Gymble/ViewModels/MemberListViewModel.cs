@@ -5,6 +5,7 @@ using Gymble.ViewModels.Popup;
 using Gymble.Views;
 using Gymble.Views.Popup;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,8 +44,16 @@ namespace Gymble.ViewModels
         public ICommand? EditCommand { get; }
         public ICommand? DeleteCommand { get; }
 
-        public MemberListViewModel()
+        #region Fields
+
+        private readonly IMemberService _memberService;
+
+        #endregion
+
+        public MemberListViewModel(IMemberService memberService)
         {
+            _memberService = memberService;
+
             MemberList = new ObservableCollection<Member>(Datas.GetMemberList());
 
             AddCommand = new RelayCommand(AddMember);
@@ -54,19 +63,11 @@ namespace Gymble.ViewModels
 
         private void AddMember(object obj)
         {
-            AddMemberView addMemberWindow = new AddMemberView();
-            DialogHost.Show(addMemberWindow, "MainDialog");
+            var vm = App.Services.GetRequiredService<AddMemberViewModel>();
 
-            //AddMemberWIndow addMemberWIndow = new AddMemberWIndow();
-            //var isAddMemberSuccess = addMemberWIndow.ShowDialog();
+            var view = new AddMemberView { DataContext = vm };
 
-            //if (isAddMemberSuccess == false)
-            //{
-            //    MessageBox.Show("회원 추가 실패");
-            //    return;
-            //}
-
-            //UpdateMemberList();
+            DialogHost.Show(view, "MainDialog");
         }
 
         private void DeleteMember(object obj)
@@ -75,7 +76,7 @@ namespace Gymble.ViewModels
 
             if (msgResult == MessageBoxResult.No) return;
             
-            SQLiteManager.Instance.DeleteMember(SelectedMember);
+            //SQLiteManager.Instance.DeleteMember(SelectedMember);
             UpdateMemberList();            
         }
 
@@ -95,7 +96,7 @@ namespace Gymble.ViewModels
 
         private void UpdateMemberList()
         {
-            SQLiteManager.Instance.UseMemberRepository();
+            //SQLiteManager.Instance.UseMemberRepository();
             MemberList!.Clear();
             foreach (var m in Datas.GetMemberList()) MemberList.Add(m);
         }

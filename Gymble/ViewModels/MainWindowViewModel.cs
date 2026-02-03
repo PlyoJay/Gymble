@@ -123,8 +123,6 @@ namespace Gymble.ViewModels
             {
                 new NavigationItemModel { IconKind = PackIconKind.Settings, Label = "설정", TagName="settings", Command = ToSettingsViewCommand }
             };
-
-            SQLiteManager.Instance.GetAllRepositories();
         }
 
         private void Close(Window w)

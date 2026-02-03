@@ -217,7 +217,7 @@ namespace Gymble.ViewModels.Popup
                 Memo = Memo
             };
 
-            SQLiteManager.Instance.UpdateMember(UpdatedMember);
+            //SQLiteManager.Instance.UpdateMember(UpdatedMember);
 
             if (w != null)
             {

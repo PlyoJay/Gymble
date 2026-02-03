@@ -2,6 +2,7 @@
 using Gymble.Repositories;
 using Gymble.Services;
 using Gymble.ViewModels;
+using Gymble.ViewModels.Popup;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -46,6 +47,9 @@ namespace Gymble
             services.AddTransient<ProductViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<MainWindowViewModel>();
+
+            services.AddTransient<AddMemberViewModel>();
+            services.AddTransient<EditMemberViewModel>();
 
             Services = services.BuildServiceProvider();
         }

@@ -58,7 +58,7 @@ namespace Gymble.Services
         public static string EXPIRE_DATE = "expire_date";
         public static string REMAINING_COUNT = "remaining_count";
 
-        public static string CREATE_MEMBERSHIP_TABLE = "CREATE TABLE [tb_membership] " +
+        public static string CREATE_MEMBERSHIP_TABLE = "CREATE TABLE IF NOT EXISTS [tb_membership] " +
                         "(" +
                             "[id] INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "[member_id] INTEGER NOT NULL,  " +
@@ -78,7 +78,7 @@ namespace Gymble.Services
         public static string MEMBER_ID = "member_id";
         public static string DATETIME = "datetime";
 
-        public static string CREATE_ATTENDANCE_TABLE = "CREATE TABLE [tb_attendance] " +
+        public static string CREATE_ATTENDANCE_TABLE = "CREATE TABLE IF NOT EXISTS [tb_attendance] " +
                         "(" +
                             "[id] INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "[member_id] INTEGER NOT NULL,  " +

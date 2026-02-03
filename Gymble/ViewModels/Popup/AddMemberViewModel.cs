@@ -173,11 +173,26 @@ namespace Gymble.ViewModels.Popup
             }
         }
 
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set { _isBusy = value; OnPropertyChanged(); }
+        }
+
         public ICommand? CloseCommand { get; }
         public ICommand? AddCommand { get; }
 
-        public AddMemberViewModel()
+        #region Fields
+
+        private readonly IMemberService _memberService;
+
+        #endregion
+
+        public AddMemberViewModel(IMemberService memberService)
         {        
+            _memberService = memberService;
+
             Years = new ObservableCollection<int>();
             Months = new ObservableCollection<int>();
             Days = new ObservableCollection<int>();
@@ -197,48 +212,82 @@ namespace Gymble.ViewModels.Popup
             RegisterDate = DateTime.Today;
 
             CloseCommand = new RelayCommand(_ => Close());
-            AddCommand = new RelayCommand<Window>(_ => AddMember());
+            AddCommand = new RelayCommand(async _ => await AddMemberAsync(), _ => CanAdd() && !IsBusy);
         }
 
         private bool CanAdd()
         {
+            // 전화번호 3칸도 최소한 체크하는 걸 추천
             return !string.IsNullOrWhiteSpace(Name)
                 && !string.IsNullOrWhiteSpace(SelectedGender)
-                && SelectedYear.HasValue && SelectedMonth.HasValue && SelectedDay.HasValue;
+                && SelectedYear.HasValue && SelectedMonth.HasValue && SelectedDay.HasValue
+                && !string.IsNullOrWhiteSpace(PhoneFirst)
+                && !string.IsNullOrWhiteSpace(PhoneMiddle)
+                && !string.IsNullOrWhiteSpace(PhoneLast);
         }
 
         private void Close()
         {
+            if (IsBusy) return;
             DialogHost.Close("MainDialog", "Cancel");
         }
 
-        private void AddMember()
+        private async Task AddMemberAsync()
         {
-            var phone = $"{PhoneFirst}-{PhoneMiddle}-{PhoneLast}";
-            var birthDate = new DateTime((int)SelectedYear, (int)SelectedMonth, (int)SelectedDay);
-
-            Member member = new Member()
+            if (!CanAdd())
             {
-                Name = this.Name,
-                Gender = this.SelectedGender,
-                PhoneNumber = phone,
-                BirthDate = birthDate,
-                RegisterDate = this.RegisterDate,
-                Memo = this.Memo
-            };
+                MessageBox.Show("필수 입력값을 확인해주세요.");
+                return;
+            }
 
-            SQLiteManager.Instance.InsertMember(member);
+            try
+            {
+                IsBusy = true;
 
-            if (CanAdd())
+                var phone = $"{PhoneFirst}-{PhoneMiddle}-{PhoneLast}";
+                var birthDate = new DateTime(SelectedYear!.Value, SelectedMonth!.Value, SelectedDay!.Value);
+
+                var member = new Member
+                {
+                    Name = Name,
+                    Gender = SelectedGender,
+                    PhoneNumber = phone,
+                    BirthDate = birthDate,
+                    RegisterDate = RegisterDate,
+                    Memo = Memo
+                };
+
+                await _memberService.AddAsync(member);
+
+                // 저장 성공 후 닫기
                 DialogHost.Close("MainDialog", "Ok");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }            
         }
 
         private void UpdateDays()
         {
             Days.Clear();
-            int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, (int)SelectedMonth == 0 ? 1 : (int)SelectedMonth);
-            for (int i = 1; i <= daysInMonth; i++)
-                Days.Add(i);
+
+            if (!SelectedYear.HasValue || !SelectedMonth.HasValue)
+                return;
+
+            int y = SelectedYear.Value;
+            int m = SelectedMonth.Value;
+
+            int daysInMonth = DateTime.DaysInMonth(y, m);
+            for (int d = 1; d <= daysInMonth; d++)
+                Days.Add(d);
+
+            if (SelectedDay.HasValue && SelectedDay.Value > daysInMonth)
+                SelectedDay = daysInMonth;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

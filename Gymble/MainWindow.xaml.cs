@@ -34,8 +34,7 @@ namespace Gymble
         {
             CreateDataFolder();
 
-            //sqliteManager = new SQLiteManager();
-            //sqliteManager.GetAllRepositories();
+            sqliteManager = new SQLiteManager();
         }
 
         private void CreateDataFolder()

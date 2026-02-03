@@ -10,10 +10,6 @@
              mc:Ignorable="d"
              Height="491" Width="400">
 
-    <UserControl.DataContext>
-        <vms:AddMemberViewModel/>
-    </UserControl.DataContext>
-
     <Border BorderBrush="#D9D9D9" BorderThickness="1" CornerRadius="15" Background="#FFFFFF">
         <Grid Margin="20 25">
             <Grid.RowDefinitions>

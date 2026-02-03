@@ -22,61 +22,44 @@ namespace Gymble.Services
 
         public string DatabaseName = Constants.Database.FileName;
         public string FolderName = Constants.Database.FolderName;
-        public SQLiteConnection connection = null;
 
         private static readonly object _lock = new object();
 
         public SQLiteManager()
         {
-            CreateDatabaseFile();
+            EnsureCreated();
         }
 
         private string GetFolderPath()
-        {
-            return Path.Combine(Utils.Utils.CurrentDirectory, FolderName);
-        }
+            => Path.Combine(Utils.Utils.CurrentDirectory, FolderName);
 
         private string GetFilePath()
-        {
-            return Path.Combine(GetFolderPath(), DatabaseName);
-        }
+            => Path.Combine(GetFolderPath(), DatabaseName);
 
-        private void CreateDatabaseFile()
+        private void EnsureDbFile()
         {
-            DirectoryInfo di = new DirectoryInfo(GetFolderPath());
-            if (!di.Exists)
-            {
-                di.Create();
-                //Utils.log.Info("Create Database Folder.");
-            }
+            Directory.CreateDirectory(GetFolderPath());
 
             string filePath = GetFilePath();
             if (!File.Exists(filePath))
-            {
-                SQLiteConnection.CreateFile(GetFilePath());
-                //Utils.log.Info("Create Database.");
-                CreateTables();
-            }
+                SQLiteConnection.CreateFile(filePath);
         }
 
-        public void OpenConnection()
+        public SQLiteConnection OpenConnection()
         {
-            string s = GetFilePath();
-            connection = new SQLiteConnection($"Data Source={GetFilePath()}");
-            connection.Open();
+            var conn = new SQLiteConnection($"Data Source={GetFilePath()}");
+            conn.Open();
+            return conn;
         }
 
-        public void CloseConnection()
+        public void EnsureCreated()
         {
-            connection?.Dispose();
-            connection = null;
-        }
+            EnsureDbFile();
 
-        public void CreateTables()
-        {
-            OpenConnection();
+            using var conn = OpenConnection();
+            using var cmd = new SQLiteCommand(conn);
 
-            SQLiteCommand cmd = new SQLiteCommand(connection);
+            // ✅ 여기서 "모든 테이블/인덱스"를 책임지고 만든다
             cmd.CommandText = SqlMemberQuery.CREATE_MEMBER_TABLE;
             cmd.ExecuteNonQuery();
 
@@ -89,86 +72,19 @@ namespace Gymble.Services
             cmd.CommandText = SqlAttendanceQuery.CREATE_ATTENDANCE_TABLE;
             cmd.ExecuteNonQuery();
 
-            CloseConnection();
+            // ✅ (추천) 하루 1회 체크인 강제 인덱스도 여기서
+            // cmd.CommandText = SqlAttendanceQuery.CREATE_ATTENDANCE_UNIQUE_INDEX;
+            // cmd.ExecuteNonQuery();
         }
 
-        public void UseMemberRepository()
+        public Func<SQLiteConnection> ConnectionFactory()
         {
-            OpenConnection();
-
-            var repo = new MemberRepository(connection);
-            var all = repo.GetAllAsync();
-            //Datas.SetMemberList(all);
-
-            CloseConnection();
-        }
-
-        public void InsertMember(Member member)
-        {
-            OpenConnection();
-
-            var repo = new MemberRepository(connection);
-            repo.InsertMemberAsync(member);
-
-            CloseConnection();
-        }
-
-        public void DeleteMember(Member member)
-        {
-            OpenConnection();
-
-            var repo = new MemberRepository(connection);
-            repo.DeleteMemberAsync(member);
-
-            CloseConnection();
-        }
-
-        public void UpdateMember(Member member)
-        {
-            OpenConnection();
-
-            var repo = new MemberRepository (connection);
-            repo.UpdateMemberAsync(member);
-
-            CloseConnection();
-        }
-
-        public void UseMembershipRepository()
-        {
-            OpenConnection();
-
-            var repo = new MembershipRepository(connection);
-            var all = repo.GetAllMembership();
-
-            CloseConnection();
-        }
-
-        public void UseAttendaceRepository()
-        {
-            OpenConnection();
-
-            var repo = new AttendanceRepository(connection);
-            //var all = repo.GetAllAttendace();
-
-            CloseConnection();
-        }
-
-        public void UseProductRepository()
-        {
-            OpenConnection();
-
-            var repo = new ProductRepository(connection);
-            var all = repo.GetAllProducts();
-
-            CloseConnection();
-        }
-
-        public void GetAllRepositories()
-        {
-            UseMemberRepository();
-            UseMembershipRepository();
-            UseAttendaceRepository();
-            UseProductRepository();
+            return () =>
+            {
+                var conn = new SQLiteConnection($"Data Source={GetFilePath()}");
+                conn.Open();
+                return conn;
+            };
         }
     }
 }
