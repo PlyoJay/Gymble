@@ -9,93 +9,127 @@ using System.Threading.Tasks;
 
 namespace Gymble.Repositories
 {
-    public class MemberRepository
+    public class MemberRepository : IMemberRepository
     {
-        private readonly SQLiteConnection _connection;
+        private readonly SQLiteConnection _conn;
 
         public MemberRepository(SQLiteConnection connection)
+            => _conn = connection ?? throw new ArgumentNullException(nameof(connection));
+
+        public async Task<long> InsertMemberAsync(Member member, CancellationToken ct = default)
         {
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            const string sql = @"
+                INSERT INTO tb_member (name, gender, phone_number, birthdate, register_date, memo)
+                VALUES (@Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Memo);
+                SELECT last_insert_rowid();";
+
+            var cmd = new CommandDefinition(sql, member, cancellationToken: ct);
+            return await _conn.ExecuteScalarAsync<long>(cmd);
         }
 
-        public void InsertMember(Member member)
-        {
-            var sql = @"INSERT INTO tb_member (name, gender, phonenumber, birthdate, registerdate, memo)
-                    VALUES (@Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Memo)";
-            _connection.Execute(sql, member);
-        }
-
-        public int InsertMemberFillingHoles(Member member)
-        {
-            using var tx = _connection.BeginTransaction();
-
-            // 1) 최소 누락 ID 확보
-            const string sqlNextId = @"
-                SELECT CASE
-                  WHEN NOT EXISTS (SELECT 1 FROM tb_member WHERE id = 1) THEN 1
-                  ELSE (
-                    SELECT m1.id + 1
-                    FROM tb_member AS m1
-                    LEFT JOIN tb_member AS m2 ON m2.id = m1.id + 1
-                    WHERE m2.id IS NULL
-                    ORDER BY m1.id
-                    LIMIT 1
-                  )
-                END AS next_id;";
-
-            int nextId = _connection.ExecuteScalar<int>(sqlNextId, transaction: tx);
-
-            // 2) 명시적 ID로 INSERT
-            const string sqlInsert = @"
-                INSERT INTO tb_member (id, name, gender, phone_number, birthdate, register_date, memo)
-                VALUES (@Id, @Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Memo);";
-
-            // 컬럼명은 실제 스키마에 맞추세요 (phone_number / register_date 등)
-            _connection.Execute(sqlInsert, new
-            {
-                Id = nextId,
-                member.Name,
-                member.Gender,
-                member.PhoneNumber,
-                member.BirthDate,
-                member.RegisterDate,
-                member.Memo
-            }, tx);
-
-            tx.Commit();
-            return nextId;
-        }
-
-        public List<Member> GetAllMembers()
-        {
-            var sql = "SELECT * FROM tb_member";
-            return _connection.Query<Member>(sql).ToList();
-        }
-
-        public void DeleteMember(Member member)
-        {
-            var sql = "DELETE FROM tb_member WHERE id = @Id";
-            _connection.Execute(sql, member);
-        }
-
-        public void UpdateMember(Member member)
+        public async Task<int> UpdateMemberAsync(Member member, CancellationToken ct = default)
         {
             const string sql = @"
                 UPDATE tb_member
-                SET
-                    name          = @Name,
-                    gender        = @Gender,
-                    phonenumber   = @PhoneNumber,
-                    birthdate     = @BirthDate,
-                    registerdate  = @RegisterDate,
-                    memo          = @Memo
+                SET name = @Name,
+                    gender = @Gender,
+                    phone_number = @PhoneNumber,
+                    birthdate = @BirthDate,
+                    register_date = @RegisterDate,
+                    memo = @Memo
                 WHERE id = @Id;";
-            _connection.Execute(sql, member);
+
+            var cmd = new CommandDefinition(sql, member, cancellationToken: ct);
+            return await _conn.ExecuteAsync(cmd);
         }
 
-        public void SearchMember()
+        public async Task<int> DeleteMemberAsync(Member member, CancellationToken ct = default)
         {
+            // 추천: 소프트 삭제 컬럼이 있으면 UPDATE is_deleted=1 로 바꾸는 게 더 안전함.
+            const string sql = "DELETE FROM tb_member WHERE id = @Id;";
+            var cmd = new CommandDefinition(sql, new { Id = member.Id }, cancellationToken: ct);
+            return await _conn.ExecuteAsync(cmd);
+        }
 
+        public async Task<Member> GetByIdAsync(long id, CancellationToken ct = default)
+        {
+            const string sql = "SELECT * FROM tb_member WHERE id = @Id;";
+            var cmd = new CommandDefinition(sql, new { Id = id }, cancellationToken: ct);
+            return await _conn.QuerySingleAsync<Member>(cmd);
+        }
+
+        public async Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
+        {
+            const string sql = "SELECT * FROM tb_member ORDER BY register_date DESC;";
+            var cmd = new CommandDefinition(sql, cancellationToken: ct);
+            var rows = await _conn.QueryAsync<Member>(cmd);
+            return rows.AsList();
+        }
+
+        public async Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default)
+        {
+            q ??= new MemberSearch();
+
+            // SortBy 화이트리스트 (SQL Injection 방지)
+            string orderBy = q.SortBy switch
+            {
+                "name" => "name",
+                "phone_number" => "phone_number",
+                _ => "register_date"
+            };
+            string dir = q.Desc ? "DESC" : "ASC";
+
+            var where = new List<string>();
+            var p = new DynamicParameters();
+
+            if (!string.IsNullOrWhiteSpace(q.NameOrPhone))
+            {
+                where.Add("(name LIKE @kw OR phone_number LIKE @kw)");
+                p.Add("@kw", $"%{q.NameOrPhone}%");
+            }
+            if (q.RegFrom is not null)
+            {
+                where.Add("register_date >= @from");
+                p.Add("@from", q.RegFrom.Value);
+            }
+            if (q.RegTo is not null)
+            {
+                where.Add("register_date < @to");
+                p.Add("@to", q.RegTo.Value);
+            }
+
+            string whereSql = where.Count == 0 ? "" : "WHERE " + string.Join(" AND ", where);
+
+            int page = Math.Max(1, q.Page);
+            int pageSize = Math.Clamp(q.PageSize, 10, 500);
+            int offset = (page - 1) * pageSize;
+
+            // 1) total
+            string sqlTotal = $"SELECT COUNT(1) FROM tb_member {whereSql};";
+            // 2) rows
+            string sqlRows = $@"
+                SELECT *
+                FROM tb_member
+                {whereSql}
+                ORDER BY {orderBy} {dir}
+                LIMIT @take OFFSET @skip;";
+
+            p.Add("@take", pageSize);
+            p.Add("@skip", offset);
+
+            var totalCmd = new CommandDefinition(sqlTotal, p, cancellationToken: ct);
+            var rowsCmd = new CommandDefinition(sqlRows, p, cancellationToken: ct);
+
+            int total = await _conn.ExecuteScalarAsync<int>(totalCmd);
+            var rows = (await _conn.QueryAsync<Member>(rowsCmd)).AsList();
+
+            return new PagedResult<Member>
+            {
+                Rows = rows,
+                Total = total,
+                Page = page,
+                PageSize = pageSize
+            };
         }
     }
 }

@@ -97,8 +97,8 @@ namespace Gymble.Services
             OpenConnection();
 
             var repo = new MemberRepository(connection);
-            var all = repo.GetAllMembers();
-            Datas.SetMemberList(all);
+            var all = repo.GetAllAsync();
+            //Datas.SetMemberList(all);
 
             CloseConnection();
         }
@@ -108,7 +108,7 @@ namespace Gymble.Services
             OpenConnection();
 
             var repo = new MemberRepository(connection);
-            repo.InsertMember(member);
+            repo.InsertMemberAsync(member);
 
             CloseConnection();
         }
@@ -118,7 +118,7 @@ namespace Gymble.Services
             OpenConnection();
 
             var repo = new MemberRepository(connection);
-            repo.DeleteMember(member);
+            repo.DeleteMemberAsync(member);
 
             CloseConnection();
         }
@@ -128,7 +128,7 @@ namespace Gymble.Services
             OpenConnection();
 
             var repo = new MemberRepository (connection);
-            repo.UpdateMember(member);
+            repo.UpdateMemberAsync(member);
 
             CloseConnection();
         }
@@ -148,7 +148,7 @@ namespace Gymble.Services
             OpenConnection();
 
             var repo = new AttendanceRepository(connection);
-            var all = repo.GetAllAttendace();
+            //var all = repo.GetAllAttendace();
 
             CloseConnection();
         }

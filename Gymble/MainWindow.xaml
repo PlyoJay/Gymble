@@ -9,10 +9,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="760" Width="1280"
         Style="{StaticResource WindowChromeStyle}" WindowStartupLocation="CenterScreen">
-    <Window.DataContext>
-        <vm:MainWindowViewModel/>
-    </Window.DataContext>
-    
+
     <materialDesign:DialogHost DialogTheme="Inherit" Background="Transparent">
         <Grid>
             <Grid.RowDefinitions>
@@ -26,7 +23,7 @@
                     BorderThickness="0 0 0 1">
                 <Grid>
                     <TextBlock Text="GYMBLE" Margin="15 0"
-                               Style="{StaticResource AddMemberWindowTextBlockStyle}"
+                               Style="{StaticResource TitleTextBlockStyle}"
                                VerticalAlignment="Center"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <Button Content="X" Style="{StaticResource WIndowChromeButtonStyle}"
@@ -41,38 +38,42 @@
                 x:Name="RootDrawer" IsLeftDrawerOpen="{Binding IsDrawerOpen, Mode=TwoWay}" 
                 OpenMode="Standard" Grid.Row="1">
                 <materialDesign:DrawerHost.LeftDrawerContent>
-                    <Grid MinWidth="210" Background="#F4F7FE"
-                          DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type materialDesign:DrawerHost}}}" Cursor="">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition/>
-                            <RowDefinition Height="5"/>
-                            <RowDefinition Height="70"/>
-                        </Grid.RowDefinitions>
-                        <Border BorderBrush="{StaticResource DefaultBorderBrushColor}"
-                                BorderThickness="0 0 0 1">
+                    <Border BorderThickness="0 0 1 0" BorderBrush="#DFDFDF">
+                        <Grid MinWidth="210" Background="#F4F7FE"
+                              DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type materialDesign:DrawerHost}}}" Cursor="">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="5"/>
+                                <RowDefinition Height="70"/>
+                            </Grid.RowDefinitions>
+                            <Border BorderBrush="{StaticResource DefaultBorderBrushColor}"
+                                    BorderThickness="0 0 0 1">
+                                <TextBlock Text="메뉴" Margin="25 0"
+                                           Style="{StaticResource TitleTextBlockStyle}"
+                                           VerticalAlignment="Center"/>
+                            </Border>
 
-                        </Border>
+                            <ListBox Grid.Row="1"
+                                     ItemsSource="{Binding NavigationItems}"
+                                     SelectedItem="{Binding SelectedNavItem, Mode=TwoWay}"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     ItemTemplate="{StaticResource SideBarListBoxItemTemplate}">
+                            </ListBox>
 
-                        <ListBox Grid.Row="1" Margin="0 20"
-                                 ItemsSource="{Binding NavigationItems}"
-                                 SelectedItem="{Binding SelectedNavItem, Mode=TwoWay}"
-                                 BorderThickness="0"
-                                 Background="Transparent"
-                                 ItemTemplate="{StaticResource SideBarListBoxItemTemplate}">
-                        </ListBox>
+                            <Separator Grid.Row="2"
+                                       Height="1" Margin="10 0"
+                                       Background="{StaticResource SeperatorBorderBrushColor}"/>
 
-                        <Separator Grid.Row="2"
-                                   Height="1" Margin="10 0"
-                                   Background="{StaticResource SeperatorBorderBrushColor}"/>
-
-                        <ListBox Grid.Row="3" VerticalAlignment="Center"
-                                 BorderThickness="0"
-                                 Background="Transparent"
-                                 ItemsSource="{Binding SettingsItem}"
-                                 ItemTemplate="{StaticResource SideBarListBoxItemTemplate}">
-                        </ListBox>
-                    </Grid>
+                            <ListBox Grid.Row="3" VerticalAlignment="Center"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     ItemsSource="{Binding SettingsItem}"
+                                     ItemTemplate="{StaticResource SideBarListBoxItemTemplate}">
+                            </ListBox>
+                        </Grid>
+                    </Border>
                 </materialDesign:DrawerHost.LeftDrawerContent>
 
                 <Border>
@@ -101,7 +102,7 @@
                                        VerticalAlignment="Center"/>
                         </Border>
 
-                        <ContentControl Grid.Row="1" Grid.ColumnSpan="2" Margin="12" 
+                        <ContentControl Grid.Row="1" Grid.ColumnSpan="2" Margin="15 10" 
                                         Content="{Binding CurrentViewModel}"/>
                     </Grid>
                 </Border>

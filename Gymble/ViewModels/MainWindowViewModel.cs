@@ -2,6 +2,7 @@
 using Gymble.Models;
 using Gymble.Services;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,8 @@ namespace Gymble.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        #region Properties
+
         public ObservableCollection<NavigationItemModel> NavigationItems { get; }
         public ObservableCollection<NavigationItemModel> SettingsItem { get; }
 
@@ -74,6 +77,10 @@ namespace Gymble.ViewModels
             }
         }
 
+        #endregion
+
+        #region Command
+
         public ICommand CloseCommand { get; }
         public ICommand ToDashboardViewCommand { get; }
         public ICommand ToMemberLIstViewCommand { get; }
@@ -82,8 +89,18 @@ namespace Gymble.ViewModels
         public ICommand ToMembershipViewCommand { get; }
         public ICommand ToSettingsViewCommand { get; }
 
-        public MainWindowViewModel()
+        #endregion
+
+        #region Fields
+
+        private readonly IServiceProvider _sp;
+
+        #endregion
+
+        public MainWindowViewModel(IServiceProvider sp)
         {
+            _sp = sp;
+
             CloseCommand = new RelayCommand<Window>(w => Close(w), w => w != null);
             ToDashboardViewCommand = new RelayCommand(SwapView);
             ToMemberLIstViewCommand = new RelayCommand(SwapView);
@@ -123,24 +140,19 @@ namespace Gymble.ViewModels
             switch (tag)
             {
                 case "dashboard":
-                    CurrentViewModel = new DashboardViewModel();
+                    CurrentViewModel = _sp.GetRequiredService<DashboardViewModel>();
                     break;
                 case "memberlist":
-                    CurrentViewModel = new MemberListViewModel();
+                    CurrentViewModel = _sp.GetRequiredService<MemberListViewModel>();
                     break;
                 case "attendance":
-                    CurrentViewModel = new AttendanceViewModel();
+                    CurrentViewModel = _sp.GetRequiredService<AttendanceViewModel>();
                     break;
-                //case "membership":
-                //    CurrentViewModel = new MembershipViewModel();
-                //    break;
                 case "product":
-                    CurrentViewModel = new ProductViewModel();
+                    CurrentViewModel = _sp.GetRequiredService<ProductViewModel>();
                     break;
                 case "settings":
-                    CurrentViewModel = new SettingsViewModel();
-                    break;
-                default:
+                    CurrentViewModel = _sp.GetRequiredService<SettingsViewModel>();
                     break;
             }
         }

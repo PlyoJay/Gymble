@@ -15,73 +15,86 @@
     </UserControl.Resources>
 
     <md:DialogHost Identifier="MainDialog">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <md:DrawerHost x:Name="RootDrawer" IsRightDrawerOpen="{Binding IsDrawerOpen, Mode=TwoWay}"
+                       OpenMode="Standard" Grid.RowSpan="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
 
-            <!-- 검색/액션 바 -->
-            <DockPanel>
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                    <TextBox Width="200" Margin="0,0,8,0" Text="이름/연락처 검색"/>
-                    <Button Content="검색" Command="{Binding SearchCommand}" Margin="5 0"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
-                    <Button Content="추가" Command="{Binding AddCommand}"/>
-                    <Button Content="수정" Command="{Binding EditCommand}" Margin="5 0"/>
-                    <Button Content="삭제" Command="{Binding DeleteCommand}"/>
-                </StackPanel>
-            </DockPanel>
+                <!-- 검색/액션 바 -->
+                <DockPanel Margin="0 0 0 10">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                        <TextBox Width="200" Margin="0,0,8,0" Text="이름/연락처 검색"/>
+                        <Button Content="검색" Command="{Binding SearchCommand}" Margin="5 0"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}" Height="40"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                        <Button Content="추가" Command="{Binding AddCommand}"/>
+                        <Button Content="수정" Command="{Binding EditCommand}" Margin="5 0"/>
+                        <Button Content="삭제" Command="{Binding DeleteCommand}"/>
+                    </StackPanel>
+                </DockPanel>
 
-            <Separator Grid.Row="1" Height="20"/>
-
-            <!-- 리스트 -->
-            <DataGrid Grid.Row="2" ItemsSource="{Binding MemberList}" SelectedItem="{Binding SelectedMember}"
-                      AutoGenerateColumns="False" IsReadOnly="True"
-                      EnableRowVirtualization="True"
-                      EnableColumnVirtualization="True"
-                      VirtualizingPanel.IsVirtualizing="True"
-                      VirtualizingPanel.VirtualizationMode="Recycling"
-                      ScrollViewer.CanContentScroll="True"
-                      AlternationCount="2147483647">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <!-- 보기 쉬운 하이라이트 색 -->
-                                <Setter Property="Background" Value="#FFE3F2FD"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#FFEAF2FE"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="#" Width="50">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock 
-                                    Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow},
-                                                   Path=AlternationIndex,
-                                                   Converter={StaticResource PlusOneConverter}}"
-                                    HorizontalAlignment="Center"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="이름" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="성별" Binding="{Binding Gender, Converter={StaticResource GenderToKoreanConverter}}" Width="Auto"/>
-                    <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber}" Width="Auto"/>
-                    <DataGridTextColumn Header="생일" Binding="{Binding BirthDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
-                    <DataGridTextColumn Header="등록일" Binding="{Binding RegisterDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
-                    <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+                <!-- 리스트 -->
+                <DataGrid Grid.Row="1" ItemsSource="{Binding MemberList}" SelectedItem="{Binding SelectedMember}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          EnableRowVirtualization="True"
+                          EnableColumnVirtualization="True"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          ScrollViewer.CanContentScroll="True"
+                          AlternationCount="2147483647">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <!-- 보기 쉬운 하이라이트 색 -->
+                                    <Setter Property="Background" Value="#FFE3F2FD"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#FFEAF2FE"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="#" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock 
+                                        Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow},
+                                                       Path=AlternationIndex,
+                                                       Converter={StaticResource PlusOneConverter}}"
+                                        HorizontalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="이름" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="성별" Binding="{Binding Gender, Converter={StaticResource GenderToKoreanConverter}}" Width="Auto"/>
+                        <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber}" Width="Auto"/>
+                        <DataGridTextColumn Header="생일" Binding="{Binding BirthDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
+                        <DataGridTextColumn Header="등록일" Binding="{Binding RegisterDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
+                        <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            <md:DrawerHost.RightDrawerContent>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Separator Grid.Row="2"
+                               Width="1" Margin="10 0"
+                               Background="{StaticResource SeperatorBorderBrushColor}"/>
+                </Grid>
+            </md:DrawerHost.RightDrawerContent>
+        </md:DrawerHost>
 
     </md:DialogHost>
 </UserControl>

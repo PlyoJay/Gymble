@@ -371,6 +371,25 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <!-- 버튼 -->
+    <Style x:Key="BaseButtonStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
+        <Setter Property="Background" Value="#2E66E1"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="#DEDEDE"/>
+        <Setter Property="Width" Value="75"/>
+        <Setter Property="Height" Value="40"/>
+    </Style>
+
+    <Style x:Key="BorderedButtonStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource BaseButtonStyle}">
+        <Setter Property="Background" Value="#FAFAFA"/>
+        <Setter Property="Foreground" Value="#000000"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#DDDDDD"/>
+    </Style>
 
     <Style x:Key="AddMemberWindowButton" TargetType="Button">
         <Setter Property="Background" Value="#2E66E1"/>

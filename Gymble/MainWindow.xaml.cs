@@ -1,4 +1,6 @@
 ﻿using Gymble.Services;
+using Gymble.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -23,6 +25,7 @@ namespace Gymble
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = App.Services.GetRequiredService<MainWindowViewModel>();
 
             Loaded += MainWindow_Loaded;
         }

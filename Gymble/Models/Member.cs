@@ -41,7 +41,7 @@ namespace Gymble.Models
     {
         Task<long> InsertMemberAsync(Member member, CancellationToken ct = default);
         Task<int> UpdateMemberAsync(Member member, CancellationToken ct = default);
-        Task<int> DeleteMemberAsync(long id, CancellationToken ct = default);
+        Task<int> DeleteMemberAsync(Member member, CancellationToken ct = default);
         Task<Member> GetByIdAsync(long id, CancellationToken ct = default);
         Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default);
         Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default);
