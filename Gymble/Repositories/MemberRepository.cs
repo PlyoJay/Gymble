@@ -72,7 +72,17 @@ namespace Gymble.Repositories
         {
             using var conn = _connFactory();
 
-            const string sql = "SELECT * FROM tb_member ORDER BY register_date DESC;";
+            const string sql = @"
+                SELECT
+                  id,
+                  name,
+                  gender,
+                  phone_number AS PhoneNumber,
+                  birthdate,
+                  register_date AS RegisterDate,
+                  memo
+                FROM tb_member;
+                ";
             var cmd = new CommandDefinition(sql, cancellationToken: ct);
             var rows = await conn.QueryAsync<Member>(cmd);
             return rows.AsList();

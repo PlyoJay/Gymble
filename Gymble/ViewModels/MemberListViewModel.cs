@@ -23,7 +23,7 @@ namespace Gymble.ViewModels
     {
         public string PageTitle { get; set; } = "회원 관리";
 
-        public ObservableCollection<Member>? MemberList { get; }
+        public ObservableCollection<Member> MemberList { get; } = new();
 
         private Member _selectedMember;
         public Member SelectedMember
@@ -54,20 +54,20 @@ namespace Gymble.ViewModels
         {
             _memberService = memberService;
 
-            MemberList = new ObservableCollection<Member>(Datas.GetMemberList());
-
-            AddCommand = new RelayCommand(AddMember);
+            AddCommand = new RelayCommand(_ => AddMember());
             DeleteCommand = new RelayCommand(DeleteMember);
             EditCommand = new RelayCommand(EditMember);
         }
 
-        private void AddMember(object obj)
+        private async void AddMember()
         {
             var vm = App.Services.GetRequiredService<AddMemberViewModel>();
 
             var view = new AddMemberView { DataContext = vm };
 
-            DialogHost.Show(view, "MainDialog");
+            await DialogHost.Show(view, "MainDialog");
+
+            await UpdateMemberList();
         }
 
         private void DeleteMember(object obj)
@@ -94,11 +94,19 @@ namespace Gymble.ViewModels
             UpdateMemberList();
         }
 
-        private void UpdateMemberList()
+        public async Task InitializeAsync()
+        {
+            await UpdateMemberList();
+        }
+
+        private async Task UpdateMemberList()
         {
             //SQLiteManager.Instance.UseMemberRepository();
             MemberList!.Clear();
-            foreach (var m in Datas.GetMemberList()) MemberList.Add(m);
+
+            var members = await _memberService.GetAllAsync();
+            foreach (var item in members)            
+                MemberList.Add(item);            
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

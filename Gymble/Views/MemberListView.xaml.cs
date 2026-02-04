@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gymble.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,14 @@ namespace Gymble.Views
         public MemberListView()
         {
             InitializeComponent();
+
+            Loaded += MemberListView_Loaded;
+        }
+
+        private async void MemberListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MemberListViewModel vm)
+                await vm.InitializeAsync();
         }
     }
 }
