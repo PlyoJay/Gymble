@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gymble.Views"
+             xmlns:controls="clr-namespace:Gymble.Views.Controls"
              xmlns:converter="clr-namespace:Gymble.Converter"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
@@ -56,7 +57,9 @@
                 </DockPanel>
 
                 <!-- 리스트 -->
-                <DataGrid Grid.Row="1" ItemsSource="{Binding MemberList}" SelectedItem="{Binding SelectedMember}"
+                <DataGrid Grid.Row="1" 
+                          ItemsSource="{Binding MemberList}" 
+                          SelectedItem="{Binding SelectedMember}"
                           AutoGenerateColumns="False" IsReadOnly="True"
                           EnableRowVirtualization="True"
                           EnableColumnVirtualization="True"
@@ -104,11 +107,12 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="480"/>
                     </Grid.ColumnDefinitions>
-                    <Separator Grid.Row="2"
-                               Width="1" Margin="10 0"
-                               Background="{StaticResource SeperatorBorderBrushColor}"/>
+                    <GridSplitter Width="1" HorizontalAlignment="Center"
+                                  Background="{StaticResource SeperatorBorderBrushColor}"/>
+
+                    <controls:DetailMemberInfoView Grid.Column="1"/>
                 </Grid>
             </md:DrawerHost.RightDrawerContent>
         </md:DrawerHost>

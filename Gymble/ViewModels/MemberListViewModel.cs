@@ -35,6 +35,22 @@ namespace Gymble.ViewModels
                 {
                     _selectedMember = value;
                     OnPropertyChanged();
+
+                    IsDrawerOpen = true;
+                }
+            }
+        }
+
+        private bool _isDrawerOpen;
+        public bool IsDrawerOpen
+        {
+            get => _isDrawerOpen;
+            set
+            {
+                if (_isDrawerOpen != value)
+                {
+                    _isDrawerOpen = value;
+                    OnPropertyChanged();
                 }
             }
         }

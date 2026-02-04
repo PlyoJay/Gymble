@@ -25,6 +25,7 @@
                 <Grid>
                     <TextBlock Text="GYMBLE" Margin="15 0"
                                Style="{StaticResource TitleTextBlockStyle}"
+                               FontSize="20"
                                VerticalAlignment="Center"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                                 WindowChrome.IsHitTestVisibleInChrome="True">

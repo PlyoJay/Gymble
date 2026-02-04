@@ -72,7 +72,7 @@
 
     <!-- TextBlock -->
     <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
     </Style>
@@ -444,6 +444,25 @@
         </Setter>
     </Style>
 
+    <!-- Border -->
+
+    <Style x:Key="StatusBorderStyle" TargetType="Border">
+        
+    </Style>
+    <ControlTemplate x:Key="StatusControlTemplate" TargetType="Control">
+        <Border Background="{TemplateBinding Background}"
+                CornerRadius="12">
+            <TextBlock
+                Foreground="{TemplateBinding Foreground}"
+                FontSize="16"
+                FontFamily="{StaticResource Pretendard.SemiBold}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+        </Border>
+    </ControlTemplate>
+    
+    <!-- DataTemplate -->
+    
     <DataTemplate x:Key="SideBarListBoxItemTemplate">
         <StackPanel Orientation="Horizontal" Height="40" Margin="15 0">
             <md:PackIcon Kind="{Binding IconKind}" 

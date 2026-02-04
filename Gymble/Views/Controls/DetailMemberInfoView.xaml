@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="Gymble.Views.Controls.DetailMemberInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Gymble.Views.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="640" d:DesignWidth="480">
+    <Border BorderThickness="1" BorderBrush="{StaticResource DefaultBorderBrushColor}"
+            CornerRadius="8">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="108"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="20"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="김형준" Style="{StaticResource TitleTextBlockStyle}"/>
+                    <Control Template="{StaticResource StatusControlTemplate}" 
+                             Width="80" Height="25"
+                             Background="#3EB08C" >
+                        
+                    </Control>
+                </StackPanel>
+            </StackPanel>
+            
+            <Separator Grid.Row="1" VerticalAlignment="Center"
+                       BorderThickness="1" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
+            <Separator Grid.Row="4" VerticalAlignment="Center"
+                       BorderThickness="1" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
+        </Grid>
+    </Border>
+</UserControl>
