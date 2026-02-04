@@ -77,11 +77,23 @@
         <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
     </Style>
 
+    <Style x:Key="SearchTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="10 0"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{StaticResource SearchTextBoxGuideForeground}"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+    </Style>
+
     <Style x:Key="AddMemberWindowTextBlockStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
+    
+    
 
     <!-- TextBox -->
     <Style x:Key="SearchTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">

@@ -101,7 +101,6 @@ namespace Gymble.ViewModels
 
         private async Task UpdateMemberList()
         {
-            //SQLiteManager.Instance.UseMemberRepository();
             MemberList!.Clear();
 
             var members = await _memberService.GetAllAsync();
