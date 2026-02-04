@@ -32,6 +32,14 @@ namespace Gymble
                 return conn;
             });
 
+            services.AddSingleton(SQLiteManager.Instance);
+
+            services.AddTransient<Func<SQLiteConnection>>(sp =>
+            {
+                var mgr = SQLiteManager.Instance;
+                return mgr.ConnectionFactory();
+            });
+
             // Repository
             services.AddSingleton<IMemberRepository, MemberRepository>();
             services.AddSingleton<IAttendanceRepository, AttendanceRepository>();

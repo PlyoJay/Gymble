@@ -1,8 +1,10 @@
 ﻿using Dapper;
 using Gymble.Models;
+using Gymble.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,24 +13,28 @@ namespace Gymble.Repositories
 {
     public class MemberRepository : IMemberRepository
     {
-        private readonly SQLiteConnection _conn;
+        private readonly Func<SQLiteConnection> _connFactory;
 
-        public MemberRepository(SQLiteConnection connection)
-            => _conn = connection ?? throw new ArgumentNullException(nameof(connection));
+        public MemberRepository(Func<SQLiteConnection> connFactory)
+            => _connFactory = connFactory;
 
         public async Task<long> InsertMemberAsync(Member member, CancellationToken ct = default)
         {
+            using var conn = _connFactory();
+
             const string sql = @"
                 INSERT INTO tb_member (name, gender, phone_number, birthdate, register_date, memo)
                 VALUES (@Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Memo);
                 SELECT last_insert_rowid();";
 
             var cmd = new CommandDefinition(sql, member, cancellationToken: ct);
-            return await _conn.ExecuteScalarAsync<long>(cmd);
+            return await conn.ExecuteScalarAsync<long>(cmd);
         }
 
         public async Task<int> UpdateMemberAsync(Member member, CancellationToken ct = default)
         {
+            using var conn = _connFactory();
+
             const string sql = @"
                 UPDATE tb_member
                 SET name = @Name,
@@ -40,34 +46,42 @@ namespace Gymble.Repositories
                 WHERE id = @Id;";
 
             var cmd = new CommandDefinition(sql, member, cancellationToken: ct);
-            return await _conn.ExecuteAsync(cmd);
+            return await conn.ExecuteAsync(cmd);
         }
 
         public async Task<int> DeleteMemberAsync(Member member, CancellationToken ct = default)
         {
+            using var conn = _connFactory();
+
             // 추천: 소프트 삭제 컬럼이 있으면 UPDATE is_deleted=1 로 바꾸는 게 더 안전함.
             const string sql = "DELETE FROM tb_member WHERE id = @Id;";
             var cmd = new CommandDefinition(sql, new { Id = member.Id }, cancellationToken: ct);
-            return await _conn.ExecuteAsync(cmd);
+            return await conn.ExecuteAsync(cmd);
         }
 
         public async Task<Member> GetByIdAsync(long id, CancellationToken ct = default)
         {
+            using var conn = _connFactory();
+
             const string sql = "SELECT * FROM tb_member WHERE id = @Id;";
             var cmd = new CommandDefinition(sql, new { Id = id }, cancellationToken: ct);
-            return await _conn.QuerySingleAsync<Member>(cmd);
+            return await conn.QuerySingleAsync<Member>(cmd);
         }
 
         public async Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
         {
+            using var conn = _connFactory();
+
             const string sql = "SELECT * FROM tb_member ORDER BY register_date DESC;";
             var cmd = new CommandDefinition(sql, cancellationToken: ct);
-            var rows = await _conn.QueryAsync<Member>(cmd);
+            var rows = await conn.QueryAsync<Member>(cmd);
             return rows.AsList();
         }
 
         public async Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default)
         {
+            using var conn = _connFactory();
+
             q ??= new MemberSearch();
 
             // SortBy 화이트리스트 (SQL Injection 방지)
@@ -120,8 +134,8 @@ namespace Gymble.Repositories
             var totalCmd = new CommandDefinition(sqlTotal, p, cancellationToken: ct);
             var rowsCmd = new CommandDefinition(sqlRows, p, cancellationToken: ct);
 
-            int total = await _conn.ExecuteScalarAsync<int>(totalCmd);
-            var rows = (await _conn.QueryAsync<Member>(rowsCmd)).AsList();
+            int total = await conn.ExecuteScalarAsync<int>(totalCmd);
+            var rows = (await conn.QueryAsync<Member>(rowsCmd)).AsList();
 
             return new PagedResult<Member>
             {
