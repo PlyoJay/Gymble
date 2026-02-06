@@ -25,7 +25,7 @@
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
 
-                <!-- 검색/액션 바 -->
+                            <!-- 검색/액션 바 -->
                 <DockPanel Margin="0 0 0 10">
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                         <Grid>
@@ -56,7 +56,7 @@
                     </StackPanel>
                 </DockPanel>
 
-                <!-- 리스트 -->
+                            <!-- 리스트 -->
                 <DataGrid Grid.Row="1" 
                           ItemsSource="{Binding MemberList}" 
                           SelectedItem="{Binding SelectedMember}"
@@ -107,7 +107,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="480"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <GridSplitter Width="1" HorizontalAlignment="Center"
                                   Background="{StaticResource SeperatorBorderBrushColor}"/>

@@ -4,35 +4,100 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gymble.Views.Controls"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="640" d:DesignWidth="480">
     <Border BorderThickness="1" BorderBrush="{StaticResource DefaultBorderBrushColor}"
             CornerRadius="8">
-        <Grid Margin="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="108"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition Height="20"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+        <StackPanel Margin="20">
 
+                     <!--회원 정보-->
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="김형준" Style="{StaticResource TitleTextBlockStyle}"/>
-                    <Control Template="{StaticResource StatusControlTemplate}" 
-                             Width="80" Height="25"
-                             Background="#3EB08C" >
-                        
-                    </Control>
+                    <ContentControl Template="{StaticResource StatusControlTemplate}" 
+                                    Width="80" Height="25" Margin="20 0"
+                                    Background="#3EB08C" Foreground="White"
+                                    Content="사용중">
+                    </ContentControl>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 10">
+                    <TextBlock Text="남" Style="{StaticResource InfoTextBlockStyle}"/>
+                    <TextBlock Text=" / " Style="{StaticResource InfoTextBlockStyle}"/>
+                    <TextBlock Text="010-2388-8731" Style="{StaticResource InfoTextBlockStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="이용권 추가" Command="{Binding AddProductCommand}"
+                            Style="{StaticResource BaseButtonStyle}"
+                            Width="220"/>
+                    <Button Content="수정"
+                            Style="{StaticResource BorderedButtonStyle}"
+                            Width="100" Margin="10 0"/>
+                    <Button Content="삭제" Command="{Binding DeleteCommand}"
+                            Style="{StaticResource BorderedButtonStyle}"
+                            Width="100"/>
                 </StackPanel>
             </StackPanel>
             
-            <Separator Grid.Row="1" VerticalAlignment="Center"
-                       BorderThickness="1" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
-            <Separator Grid.Row="4" VerticalAlignment="Center"
-                       BorderThickness="1" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
-        </Grid>
+            <Separator Margin="0 20"
+                       BorderThickness="1" 
+                       BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
+
+            <StackPanel>
+                <TextBlock Text="현재 이용권" Style="{StaticResource TitleTextBlockStyle}"/>
+                <ContentControl Template="{StaticResource DefaultCardTemplate}"
+                                Margin="0 10"
+                                MinHeight="150">
+                    <Grid>
+                        <TextBlock Text="이용중인 이용권이 없습니다."
+                                   Style="{StaticResource NoDataTextBlockStyle}"/>
+                        <StackPanel Margin="15">
+                            <StackPanel>
+                                <TextBlock Text="3개월 헬스권" 
+                                           FontSize="18"
+                                           Style="{StaticResource ContentDataTextBlockStyle}"/>
+                                <TextBlock Text="2026-02-05 ~ 2026-05-05" 
+                                           Style="{StaticResource ContentDataTextBlockStyle}"
+                                           Margin="0 10"/>
+                                <ContentControl Template="{StaticResource StatusControlTemplate}" 
+                                                Width="90" Height="30"
+                                                Background="#FF7700" Foreground="White"
+                                                Content="만료-91"
+                                                HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </ContentControl>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="메모" Style="{StaticResource TitleTextBlockStyle}"/>
+                <ContentControl Template="{StaticResource DefaultCardTemplate}"
+                                Margin="0 10" MinHeight="50"
+                                VerticalContentAlignment="Center">
+                    <Grid Margin="15 0">
+                        <TextBlock Text="통풍 있음, 콜레스트롤 높음" MaxWidth="300"
+                                   Style="{StaticResource ContentDataTextBlockStyle}"
+                                   HorizontalAlignment="Left"/>
+                        <Button HorizontalAlignment="Right"
+                                Style="{StaticResource ReadMoreButtonStyle}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="더보기"
+                                           VerticalAlignment="Center"
+                                           Margin="0 0 5 0"/>
+                                <md:PackIcon Kind="ChevronRight"
+                                             Width="25" Height="25"
+                                             VerticalAlignment="Center"
+                                             Foreground="Black"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </ContentControl>
+            </StackPanel>
+            
+            <Separator Margin="0 10 0 20"
+                       BorderThickness="1" 
+                       BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
+        </StackPanel>
     </Border>
 </UserControl>

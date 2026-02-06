@@ -26,6 +26,15 @@
     <SolidColorBrush x:Key="SearchTextBoxBgColor" Color="#F2F2F2"/>
     <SolidColorBrush x:Key="SearchTextBoxGuideForeground" Color="#989898"/>
 
+    <SolidColorBrush x:Key="NoDataTextBlockForeground" Color="#A9A9A9"/>
+
+    <SolidColorBrush x:Key="BaseButtonBgColor" Color="#2E66E1"/>
+    <SolidColorBrush x:Key="BaseButtonBorderBrushColor" Color="#2E66E1"/>
+    <SolidColorBrush x:Key="BorderedButtonBgColor" Color="#B2DCFF"/>
+    <SolidColorBrush x:Key="BorderedButtonBorderBrushColor" Color="#94B6FF"/>
+
+    <SolidColorBrush x:Key="ReadMoreFgColor" Color="#2E66E1"/>
+
     <!-- 윈도우 -->
     <Style x:Key="WindowChromeStyle" TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{StaticResource ApplicationBgColor}"/>
@@ -71,7 +80,7 @@
     </Style>
 
     <!-- TextBlock -->
-    <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock">
+    <Style x:Key="TitleTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
@@ -87,7 +96,26 @@
         <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
 
-    <Style x:Key="AddMemberWindowTextBlockStyle" TargetType="TextBlock">
+    <Style x:Key="InfoTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
+    </Style>
+
+    <Style x:Key="NoDataTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.Medium}"/>
+        <Setter Property="Foreground" Value="{StaticResource NoDataTextBlockForeground}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="ContentDataTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.Medium}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="AddMemberWindowTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
@@ -403,20 +431,32 @@
     <!-- 버튼 -->
     <Style x:Key="BaseButtonStyle" TargetType="{x:Type Button}"
            BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
-        <Setter Property="Background" Value="#2E66E1"/>
+        <Setter Property="Background" Value="{StaticResource BaseButtonBgColor}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="BorderBrush" Value="#DEDEDE"/>
         <Setter Property="Width" Value="75"/>
         <Setter Property="Height" Value="40"/>
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.SemiBold}"/>
+        <Setter Property="FontSize" Value="18"/>
     </Style>
 
     <Style x:Key="BorderedButtonStyle" TargetType="{x:Type Button}"
            BasedOn="{StaticResource BaseButtonStyle}">
-        <Setter Property="Background" Value="#FAFAFA"/>
+        <Setter Property="Background" Value="{StaticResource BorderedButtonBgColor}"/>
         <Setter Property="Foreground" Value="#000000"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="#DDDDDD"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderedButtonBorderBrushColor}"/>
+    </Style>
+
+    <Style x:Key="ReadMoreButtonStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource BaseButtonStyle}">
+        <Setter Property="Foreground" Value="{StaticResource ReadMoreFgColor}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Padding" Value="3"/>
     </Style>
 
     <Style x:Key="AddMemberWindowButton" TargetType="Button">
@@ -444,15 +484,13 @@
         </Setter>
     </Style>
 
-    <!-- Border -->
-
-    <Style x:Key="StatusBorderStyle" TargetType="Border">
-        
-    </Style>
-    <ControlTemplate x:Key="StatusControlTemplate" TargetType="Control">
+    <!-- ControlTemplate -->
+    
+    <ControlTemplate x:Key="StatusControlTemplate" TargetType="{x:Type ContentControl}">
         <Border Background="{TemplateBinding Background}"
                 CornerRadius="12">
             <TextBlock
+                Text="{TemplateBinding Content}"
                 Foreground="{TemplateBinding Foreground}"
                 FontSize="16"
                 FontFamily="{StaticResource Pretendard.SemiBold}"
@@ -460,7 +498,20 @@
                 HorizontalAlignment="Center"/>
         </Border>
     </ControlTemplate>
-    
+
+    <ControlTemplate x:Key="DefaultCardTemplate" TargetType="{x:Type ContentControl}">
+        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{StaticResource DefaultBorderBrushColor}" 
+                BorderThickness="1"
+                CornerRadius="12">
+            <ContentPresenter 
+                Content="{TemplateBinding Content}"
+                ContentTemplate="{TemplateBinding ContentTemplate}"
+                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                Margin="{TemplateBinding Padding}"/>
+        </Border>
+    </ControlTemplate>
+
     <!-- DataTemplate -->
     
     <DataTemplate x:Key="SideBarListBoxItemTemplate">
