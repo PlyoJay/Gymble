@@ -224,18 +224,26 @@
         <Setter Property="FontFamily" Value="{StaticResource Pretendard.SemiBold}"/>
         <Setter Property="Foreground" Value="{StaticResource TabUnselectedFg}"/>
         <Setter Property="Background" Value="{StaticResource TabUnselectedBrush}"/>
+        <Setter Property="BorderThickness" Value="1 0 0 0"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DefaultBorderBrushColor}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
                     <Border x:Name="Bd"
                             Background="{TemplateBinding Background}"
-                            SnapsToDevicePixels="True">
+                            SnapsToDevicePixels="True"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
                         <ContentPresenter VerticalAlignment="Center"
                                           HorizontalAlignment="Center"
                                           ContentSource="Header"/>
                     </Border>
 
                     <ControlTemplate.Triggers>
+                        <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                        </Trigger>
+                        
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{StaticResource TabSelectedBrush}"/>
                             <Setter Property="Foreground" Value="{StaticResource TabSelectedFg}"/>

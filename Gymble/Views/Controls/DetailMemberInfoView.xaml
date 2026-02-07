@@ -113,6 +113,12 @@
                         
                     </Border>
                 </TabItem>
+                <TabItem Header="출석 기록"
+         Style="{StaticResource GymbleTabItemStyle}">
+                    <Border BorderBrush="{StaticResource DefaultBorderBrushColor}">
+
+                    </Border>
+                </TabItem>
             </TabControl>
         </StackPanel>
     </Border>
