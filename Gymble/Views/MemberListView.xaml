@@ -59,7 +59,7 @@
                             <!-- 리스트 -->
                 <DataGrid Grid.Row="1" 
                           ItemsSource="{Binding MemberList}" 
-                          SelectedItem="{Binding SelectedMember}"
+                          SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
                           AutoGenerateColumns="False" IsReadOnly="True"
                           EnableRowVirtualization="True"
                           EnableColumnVirtualization="True"
@@ -112,7 +112,9 @@
                     <GridSplitter Width="1" HorizontalAlignment="Center"
                                   Background="{StaticResource SeperatorBorderBrushColor}"/>
 
-                    <controls:DetailMemberInfoView Grid.Column="1"/>
+                    <controls:DetailMemberInfoView x:Name="detailMemberInfoView" 
+                                                   Grid.Column="1"
+                                                   Member="{Binding SelectedMember}"/>
                 </Grid>
             </md:DrawerHost.RightDrawerContent>
         </md:DrawerHost>

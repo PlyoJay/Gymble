@@ -9,6 +9,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <!-- Converter Classes -->
+            <converter:GenderToKoreanConverter x:Key="GenderToKoreanConverter" />
             <converter:TagMatchConverter x:Key="TagMatchConverter" />
             <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
             <converter:PhoneNumberConverter x:Key="PhoneNumberConverter"/>

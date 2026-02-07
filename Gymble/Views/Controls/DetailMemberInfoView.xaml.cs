@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gymble.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,15 @@ namespace Gymble.Views.Controls
         {
             InitializeComponent();
         }
+
+        public Member? Member
+        {
+            get => (Member?)GetValue(MemberProperty);
+            set => SetValue(MemberProperty, value);
+        }
+
+        public static readonly DependencyProperty MemberProperty =
+            DependencyProperty.Register(nameof(Member), typeof(Member),
+                typeof(DetailMemberInfoView), new PropertyMetadata(null));
     }
 }
