@@ -254,6 +254,7 @@ namespace Gymble.ViewModels.Popup
                     PhoneNumber = phone,
                     BirthDate = birthDate,
                     RegisterDate = RegisterDate,
+                    State = MemberState.Using,
                     Memo = Memo
                 };
 

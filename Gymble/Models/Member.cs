@@ -4,6 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+public enum MemberState
+{
+    Using,
+    Paused,
+    Expired
+}
+
 namespace Gymble.Models
 {
     public class Member
@@ -14,6 +21,7 @@ namespace Gymble.Models
         public string? PhoneNumber { get; set; }
         public DateTime BirthDate { get; set; }
         public DateTime RegisterDate { get; set; }
+        public MemberState State { get; set; }
         public string? Memo { get; set; }
     }
 

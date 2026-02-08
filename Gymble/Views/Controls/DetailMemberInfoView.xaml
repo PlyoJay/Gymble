@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Gymble.Views.Controls"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="790" d:DesignWidth="480"
+             d:DesignHeight="790" d:DesignWidth="484"
              x:Name="root">
     <Border BorderThickness="1" BorderBrush="{StaticResource DefaultBorderBrushColor}"
             CornerRadius="8">
@@ -20,8 +20,7 @@
                     <ContentControl Template="{StaticResource StatusControlTemplate}" 
                                     Width="80" Height="25" Margin="20 0"
                                     Background="#3EB08C" Foreground="White"
-                                    Content="사용중">
-                    </ContentControl>
+                                    Content="사용중"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0 10">
                     <TextBlock Text="{Binding ElementName=root, Path=Member.Gender,
@@ -57,7 +56,7 @@
                     <Grid>
                         <TextBlock Text="이용중인 이용권이 없습니다."
                                    Style="{StaticResource NoDataTextBlockStyle}"/>
-                        <StackPanel Margin="15">
+                        <StackPanel Margin="15" Visibility="Collapsed">
                             <StackPanel>
                                 <TextBlock Text="3개월 헬스권" 
                                            FontSize="18"
@@ -82,9 +81,12 @@
                                 Margin="0 10" MinHeight="50"
                                 VerticalContentAlignment="Center">
                     <Grid Margin="15 0">
-                        <TextBlock Text="통풍 있음, 콜레스트롤 높음" MaxWidth="300"
+                        <TextBlock Text="{Binding ElementName=root, Path=Member.Memo}" 
+                                   MaxWidth="300"
                                    Style="{StaticResource ContentDataTextBlockStyle}"
-                                   HorizontalAlignment="Left"/>
+                                   HorizontalAlignment="Left"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"/>
                         <Button HorizontalAlignment="Right"
                                 Style="{StaticResource ReadMoreButtonStyle}">
                             <StackPanel Orientation="Horizontal">
@@ -109,11 +111,17 @@
                         AlternationCount="1000000">
                 <TabItem Header="이용권/결제 이력"
                          Style="{StaticResource GymbleTabItemStyle}">
-                    
+                    <Grid>
+                        <TextBlock Text="이력이 없습니다."
+                                   Style="{StaticResource NoDataTextBlockStyle}"/>
+                    </Grid>
                 </TabItem>
                 <TabItem Header="출석 기록"
                          Style="{StaticResource GymbleTabItemStyle}">
-                    
+                    <Grid>
+                        <TextBlock Text="출석 기록이 없습니다."
+                                   Style="{StaticResource NoDataTextBlockStyle}"/>
+                    </Grid>
                 </TabItem>
             </TabControl>
         </StackPanel>
