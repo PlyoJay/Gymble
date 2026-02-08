@@ -32,15 +32,18 @@
                                Style="{StaticResource InfoTextBlockStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="이용권 추가" Command="{Binding AddProductCommand}"
+                    <Button Content="이용권 추가" 
+                            Command="{Binding AddProductCommand}"
                             Style="{StaticResource BaseButtonStyle}"
                             Width="220"/>
                     <Button Content="수정"
+                            Command="{Binding EditCommand}"
                             Style="{StaticResource BorderedButtonStyle}"
                             Width="100" Margin="10 0"/>
-                    <Button Content="삭제" Command="{Binding DeleteCommand}"
+                    <Button Content="삭제" 
+                            Command="{Binding DeleteCommand}"
                             Style="{StaticResource BorderedButtonStyle}"
-                            Width="100"/>
+                            Width="100" Cursor="Hand"/>
                 </StackPanel>
             </StackPanel>
             

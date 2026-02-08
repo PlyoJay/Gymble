@@ -86,16 +86,6 @@ namespace Gymble.ViewModels
             await UpdateMemberList();
         }
 
-        private void DeleteMember(object obj)
-        {
-            var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
-
-            if (msgResult == MessageBoxResult.No) return;
-            
-            //SQLiteManager.Instance.DeleteMember(SelectedMember);
-            UpdateMemberList();            
-        }
-
         private void EditMember(object obj)
         {
             if (SelectedMember == null) return;
@@ -109,6 +99,17 @@ namespace Gymble.ViewModels
 
             UpdateMemberList();
         }
+
+        private void DeleteMember(object obj)
+        {
+            var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
+
+            if (msgResult == MessageBoxResult.No) return;
+            
+            //SQLiteManager.Instance.DeleteMember(SelectedMember);
+            UpdateMemberList();            
+        }
+
 
         public async Task InitializeAsync()
         {

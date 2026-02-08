@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 public enum MemberState
 {
-    Using,
-    Paused,
-    Expired
+    Normal = 0,     // 정상
+    Dormant = 1,    // 휴면
+    Suspended = 2,  // 정지
+    Withdrawn = 3   // 탈퇴
 }
 
 namespace Gymble.Models

@@ -12,7 +12,7 @@
         Style="{StaticResource WindowChromeStyle}" WindowStartupLocation="CenterScreen">
 
     <materialDesign:DialogHost DialogTheme="Inherit" Background="Transparent">
-        <Grid>
+        <Grid Cursor="">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition/>

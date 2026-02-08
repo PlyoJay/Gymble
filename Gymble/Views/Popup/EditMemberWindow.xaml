@@ -8,7 +8,7 @@
         xmlns:vms="clr-namespace:Gymble.ViewModels.Popup"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="EditMemberWindow" Height="450" Width="400" ResizeMode="NoResize"
+        Title="EditMemberWindow" Height="395" Width="400" ResizeMode="NoResize"
         Style="{StaticResource WindowChromeStyle}" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -16,33 +16,47 @@
         <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
     </Window.Resources>
 
-    <md:DialogHost DialogTheme="Light">
+    <md:DialogHost DialogTheme="Light" Background="Transparent">
         <Border BorderBrush="Gray" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
                     <RowDefinition/>
-                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="70"/>
                 </Grid.RowDefinitions>
-                <Grid WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Grid.Background>
-                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                            <GradientStop Color="DeepSkyBlue" Offset="0.25" />
-                            <GradientStop Color="LightBlue" Offset="0.75" />
-                        </LinearGradientBrush>
-                    </Grid.Background>
-                    <TextBlock Text="회원 수정" Margin="12 0"
-                               FontWeight="Bold" FontSize="18" VerticalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <Button Content="X" Style="{StaticResource WIndowChromeButtonStyle}"
-                                Foreground="Black" FontSize="18" FontWeight="Bold"
-                                HorizontalAlignment="Right"
-                                Command="{Binding CloseCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-                    </StackPanel>
-                </Grid>
+                <Border Background="{StaticResource TitleBarBgColor}"
+                        BorderBrush="{StaticResource DefaultBorderBrushColor}"
+                        BorderThickness="0 0 0 1">
+                    <Grid>
+                        <TextBlock Text="회원 수정" Margin="20 0"
+                                   Style="{StaticResource TitleTextBlockStyle}"
+                                   FontSize="20"
+                                   VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button Content="X" Style="{StaticResource WIndowChromeButtonStyle}"
+                                    Foreground="Black" FontSize="18" FontWeight="Bold"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding CloseCommand}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
-                <Grid Grid.Row="1">
+                <StackPanel Grid.Row="1" Margin="20 15 20 0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="이름" 
+                                   Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
+                    </Grid>
+                </StackPanel>
+
+                <!--<Grid Grid.Row="1" Margin="20 0">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -51,51 +65,34 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="90"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="이름" 
                                Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                    <TextBlock Grid.Row="1" Text="성별" 
+                    <TextBlock Grid.Row="1" Text="전화번호" 
                                Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                    <TextBlock Grid.Row="2" Text="전화번호" 
+                    <TextBlock Grid.Row="2" Text="회원 상태" 
                                Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                    <TextBlock Grid.Row="3" Text="생년월일" 
-                               Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                    <TextBlock Grid.Row="4" Text="메모" 
+                    <TextBlock Grid.Row="3" Text="메모" 
                                Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
 
-                    <TextBox Grid.Column="1" Margin="12 0" Height="40"
+                    <TextBox Grid.Column="1"
                              Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             FontSize="18" Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             BorderBrush="Gray" BorderThickness="1"
-                             Padding="10 0"/>
+                             Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
-                        <RadioButton Content="남성" GroupName="gender" Tag="Male"
-                                     Foreground="Black" FontWeight="Bold" FontSize="14"
-                                     Width="100" Margin="20 0"
-                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
-                                     IsChecked="{Binding SelectedGender, Converter={StaticResource TagMatchConverter}, ConverterParameter=Male, Mode=TwoWay}"/>
-                        <RadioButton Content="여성" GroupName="gender" Tag="Female"
-                                     Foreground="Black" FontWeight="Bold" FontSize="14"
-                                     Width="100" Margin="20 0"
-                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
-                                     IsChecked="{Binding SelectedGender, Converter={StaticResource TagMatchConverter}, ConverterParameter=Female, Mode=TwoWay}"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
                         <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
                                  Text="{Binding PhoneFirst, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PreviewTextInput="NumberOnly_PreviewTextInput"
                                  MaxLength="3" TextChanged="TextBox_TextChanged"/>
-                        <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
+                        <TextBlock Text="-" VerticalAlignment="Center" Margin="7 0"
                                    FontWeight="Bold" FontSize="16"/>
                         <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
                                  Text="{Binding PhoneMiddle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PreviewTextInput="NumberOnly_PreviewTextInput"
                                  MaxLength="4" TextChanged="TextBox_TextChanged"/>
-                        <TextBlock Text="-" VerticalAlignment="Center" Margin="10 0"
+                        <TextBlock Text="-" VerticalAlignment="Center" Margin="7 0"
                                    FontWeight="Bold" FontSize="16"/>
                         <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
                                  Text="{Binding PhoneLast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                            
@@ -103,7 +100,7 @@
                                  MaxLength="4"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
                         <StackPanel.Resources>
                             <SolidColorBrush x:Key="MaterialDesignPaper" Color="Red"/>
                         </StackPanel.Resources>
@@ -126,11 +123,13 @@
                     </StackPanel>
 
                     <TextBox Text="{Binding Memo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                             Grid.Row="4" Grid.Column="1" Margin="12 10" Padding="10 0"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
-                </Grid>
+                             Grid.Row="3" Grid.RowSpan="2" Grid.Column="1"
+                             Height="85"
+                             Style="{StaticResource AddMemberWindowTextBoxStyle}"
+                             VerticalAlignment="Bottom"/>
+                </Grid>-->
                 
-                <StackPanel Grid.Row="2" Margin="12 0"
+                <StackPanel Grid.Row="2" Margin="20 0"
                             HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Button Content="완료" Command="{Binding EditCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
