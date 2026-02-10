@@ -11,13 +11,9 @@
         Title="EditMemberWindow" Height="395" Width="400" ResizeMode="NoResize"
         Style="{StaticResource WindowChromeStyle}" WindowStartupLocation="CenterScreen">
 
-    <Window.Resources>
-        <converter:TagMatchConverter x:Key="TagMatchConverter" />
-        <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
-    </Window.Resources>
-
-    <md:DialogHost DialogTheme="Light" Background="Transparent">
-        <Border BorderBrush="Gray" BorderThickness="1">
+    <md:DialogHost>
+        <Border BorderBrush="{StaticResource ApplicationBorderColor}" BorderThickness="1"
+                CornerRadius="15" Background="{StaticResource ApplicationBgColor}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
@@ -54,84 +50,69 @@
                                  Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
                     </Grid>
+
+                    <Grid Margin="0 19">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="전화번호" 
+                                   Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
+                            <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
+                                     Text="{Binding PhoneFirst, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     PreviewTextInput="NumberOnly_PreviewTextInput"
+                                     MaxLength="3" TextChanged="TextBox_TextChanged"/>
+                            <TextBlock Text="-" VerticalAlignment="Center" Margin="2 0"
+                                       FontWeight="Bold" FontSize="16"/>
+                            <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
+                                     Text="{Binding PhoneMiddle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     PreviewTextInput="NumberOnly_PreviewTextInput"
+                                     MaxLength="4" TextChanged="TextBox_TextChanged"/>
+                            <TextBlock Text="-" VerticalAlignment="Center" Margin="2 0"
+                                       FontWeight="Bold" FontSize="16"/>
+                            <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" 
+                                     Width="75"
+                                     Text="{Binding PhoneLast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                            
+                                     PreviewTextInput="NumberOnly_PreviewTextInput"
+                                     MaxLength="4"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0 0 0 19">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="회원 상태" 
+                                   Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
+                        <ComboBox Text="연도" 
+                                  Height="39" 
+                                  Grid.Column="1"
+                                  Padding="10 0"
+                                  Style="{StaticResource ComboBoxStyle}"
+                                  ItemsSource="{Binding Years}"
+                                  SelectedItem="{Binding SelectedYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="메모" VerticalAlignment="Top" Margin="0 8"
+                                   Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
+                        <TextBox Grid.Column="1" Height="80"
+                                 Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
+                    </Grid>
                 </StackPanel>
 
-                <!--<Grid Grid.Row="1" Margin="20 0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="90"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="이름" 
-                               Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                    <TextBlock Grid.Row="1" Text="전화번호" 
-                               Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                    <TextBlock Grid.Row="2" Text="회원 상태" 
-                               Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-                    <TextBlock Grid.Row="3" Text="메모" 
-                               Style="{StaticResource AddMemberWindowTextBlockStyle}"/>
-
-                    <TextBox Grid.Column="1"
-                             Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
-
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
-                        <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
-                                 Text="{Binding PhoneFirst, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 PreviewTextInput="NumberOnly_PreviewTextInput"
-                                 MaxLength="3" TextChanged="TextBox_TextChanged"/>
-                        <TextBlock Text="-" VerticalAlignment="Center" Margin="7 0"
-                                   FontWeight="Bold" FontSize="16"/>
-                        <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
-                                 Text="{Binding PhoneMiddle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 PreviewTextInput="NumberOnly_PreviewTextInput"
-                                 MaxLength="4" TextChanged="TextBox_TextChanged"/>
-                        <TextBlock Text="-" VerticalAlignment="Center" Margin="7 0"
-                                   FontWeight="Bold" FontSize="16"/>
-                        <TextBox Style="{StaticResource AddMemberWindowTextBoxStyle}" Width="75"
-                                 Text="{Binding PhoneLast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                            
-                                 PreviewTextInput="NumberOnly_PreviewTextInput"
-                                 MaxLength="4"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
-                        <StackPanel.Resources>
-                            <SolidColorBrush x:Key="MaterialDesignPaper" Color="Red"/>
-                        </StackPanel.Resources>
-                        <ComboBox Text="연도" Width="95" Height="35" 
-                                  Margin="0 10" Padding="10 0"
-                                  Style="{StaticResource MdOutlined.PopupBg}"
-                                  ItemsSource="{Binding Years}"
-                                  SelectedItem="{Binding SelectedYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        </ComboBox>
-                        <ComboBox Text="월" Width="75" Height="35" 
-                                  Margin="17 10" Padding="10 0"
-                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                                  ItemsSource="{Binding Months}"
-                                  SelectedItem="{Binding SelectedMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <ComboBox Text="일" Width="75" Height="35" 
-                                  Margin="0 10" Padding="10 0"
-                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                                  ItemsSource="{Binding Days}"
-                                  SelectedItem="{Binding SelectedDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel>
-
-                    <TextBox Text="{Binding Memo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                             Grid.Row="3" Grid.RowSpan="2" Grid.Column="1"
-                             Height="85"
-                             Style="{StaticResource AddMemberWindowTextBoxStyle}"
-                             VerticalAlignment="Bottom"/>
-                </Grid>-->
-                
                 <StackPanel Grid.Row="2" Margin="20 0"
                             HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button Content="완료" Command="{Binding EditCommand}"
+                    <Button Content="완료" 
+                            Style="{StaticResource AddMemberWindowButton}"
+                            Command="{Binding EditCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
                             Cursor="Hand"/>
                 </StackPanel>

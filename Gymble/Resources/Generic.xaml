@@ -50,6 +50,16 @@
     <SolidColorBrush x:Key="TabBorderBrush" Color="#DFDFDF"/>
     <SolidColorBrush x:Key="TabContentBrush" Color="Transparent"/>
 
+    <SolidColorBrush x:Key="ComboBoxBgBrush" Color="#FAFAFA"/>
+    <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="#DFDFDF"/>
+    <SolidColorBrush x:Key="ComboFgBrush" Color="#000000"/>
+
+    <SolidColorBrush x:Key="ComboHoverBgBrush" Color="#767676"/>
+    <SolidColorBrush x:Key="ComboBoxArrowBrush" Color="#3F3F3F"/>
+
+    <SolidColorBrush x:Key="ComboBoxItemHoverBrush" Color="#999"/>
+    <SolidColorBrush x:Key="ComboBoxItemSelectedBrush" Color="#767676"/>
+
     <!-- 윈도우 -->
     <Style x:Key="WindowChromeStyle" TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{StaticResource ApplicationBgColor}"/>
@@ -139,7 +149,8 @@
     
 
     <!-- TextBox -->
-    <Style x:Key="SearchTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+    <Style x:Key="SearchTextBoxStyle" TargetType="{x:Type TextBox}" 
+           BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Background" Value="{StaticResource SearchTextBoxBgColor}"/>
         <Setter Property="Padding" Value="10 0"/>
@@ -151,7 +162,8 @@
         <Setter Property="md:TextFieldAssist.CharacterCounterVisibility" Value="Collapsed"/>
     </Style>
     
-    <Style x:Key="AddMemberWindowTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+    <Style x:Key="AddMemberWindowTextBoxStyle" TargetType="TextBox" 
+           BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{StaticResource WindowTextBoxBorderBrushColor}"/>
         <Setter Property="Background" Value="{StaticResource WindowTextBoxBgColor}"/>
@@ -195,29 +207,10 @@
         <Setter Property="Padding" Value="3"/>
     </Style>
 
-    <Style x:Key="AddMemberWindowButton" TargetType="Button">
-        <Setter Property="Background" Value="#2E66E1"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="BorderBrush" Value="#DEDEDE"/>
+    <Style x:Key="AddMemberWindowButton" TargetType="Button"
+           BasedOn="{StaticResource BaseButtonStyle}">
         <Setter Property="Width" Value="92"/>
         <Setter Property="Height" Value="40"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="4">
-                        <ContentPresenter
-                        TextElement.Foreground="{TemplateBinding Foreground}"
-                        TextElement.FontSize="18"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!-- TabControl -->
@@ -436,25 +429,7 @@
     </Style>
 
 
-    <!-- ▼ 기본 배경 / 텍스트 -->
-    <SolidColorBrush x:Key="LineComboBg" Color="#FFFFFF"/>
-    <!-- 전체 ComboBox 배경 -->
-    <SolidColorBrush x:Key="LineComboBorder" Color="#DEDEDE"/>
-    <!-- 전체 ComboBox 배경 -->
-    <SolidColorBrush x:Key="LineComboText" Color="#000000"/>
-    <!-- 선택된 텍스트 색 -->
-
-    <!-- ▼ 토글 버튼 (드롭다운 버튼) -->
-    <SolidColorBrush x:Key="LineComboHover" Color="#767676"/>
-    <!-- 드롭다운 버튼 Hover 배경 -->
-    <SolidColorBrush x:Key="LineComboArrow" Color="#3F3F3F"/>
-    <!-- 드롭다운 화살표 Stroke -->
-
-    <!-- ▼ 아이템 배경 -->
-    <SolidColorBrush x:Key="LineComboItemHover" Color="#999"/>
-    <!-- 아이템 hover -->
-    <SolidColorBrush x:Key="LineComboItemSelected" Color="#767676"/>
-    <!-- 아이템 선택 -->
+    
 
     <Style x:Key="ComboDropToggleStyle" TargetType="ToggleButton">
         <Setter Property="Focusable" Value="False" />
@@ -482,8 +457,8 @@
     </Style>
 
     <Style x:Key="LineComboBoxItemStyle" TargetType="ComboBoxItem">
-        <Setter Property="Foreground" Value="{StaticResource LineComboText}" />
-        <Setter Property="Background" Value="{StaticResource LineComboBg}" />
+        <Setter Property="Foreground" Value="{StaticResource ComboFgBrush}" />
+        <Setter Property="Background" Value="{StaticResource ComboBoxBgBrush}" />
         <Setter Property="Padding" Value="10,4" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -505,7 +480,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="Bd" Property="Background"
-                                Value="{StaticResource LineComboItemHover}" />
+                                Value="{StaticResource ComboBoxItemHoverBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="Opacity"
@@ -522,8 +497,8 @@
 
     <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Background" Value="{StaticResource LineComboBg}"/>
-        <Setter Property="Foreground" Value="{StaticResource LineComboText}"/>
+        <Setter Property="Background" Value="{StaticResource ComboBoxBgBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ComboFgBrush}"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="10 0" />
@@ -531,7 +506,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
-                    <Border BorderBrush="{StaticResource LineComboBorder}" BorderThickness="1" 
+                    <Border BorderBrush="{StaticResource ComboBoxBorderBrush}" BorderThickness="1" 
                             Background="{TemplateBinding Background}" CornerRadius="4">
                         <Grid >
                             <Grid.ColumnDefinitions>
@@ -552,7 +527,7 @@
                                       Style="{StaticResource ComboDropToggleStyle}"
                                       IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
                                                           RelativeSource={RelativeSource TemplatedParent}}">
-                                <Path Stroke="{StaticResource LineComboArrow}"
+                                <Path Stroke="{StaticResource ComboBoxArrowBrush}"
                                       StrokeThickness="1.6"
                                       StrokeStartLineCap="Round"
                                       StrokeEndLineCap="Round"
@@ -566,8 +541,8 @@
                                    IsOpen="{TemplateBinding IsDropDownOpen}"
                                    PopupAnimation="Fade"
                                    PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                <Border Background="{StaticResource LineComboBg}"
-                                        BorderThickness="1" BorderBrush="{StaticResource LineComboBorder}"
+                                <Border Background="{StaticResource ComboBoxBgBrush}"
+                                        BorderThickness="1" BorderBrush="{StaticResource ComboBoxBorderBrush}"
                                         Width="{Binding ActualWidth,
                                                     RelativeSource={RelativeSource TemplatedParent}}"
                                         Height="350" CornerRadius="4">
