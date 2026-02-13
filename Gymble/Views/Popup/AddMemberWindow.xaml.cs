@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gymble.ViewModels.Popup;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,19 +12,34 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Gymble.Views.Popup
 {
     /// <summary>
-    /// AddMemberView.xaml에 대한 상호 작용 논리
+    /// AddMemberWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class AddMemberView : UserControl
+    public partial class AddMemberWindow : Window
     {
-        public AddMemberView()
+        public AddMemberWindow()
         {
             InitializeComponent();
+
+            Loaded += AddMemberWindow_Loaded;
+        }
+
+        private void AddMemberWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AddMemberViewModel vm)
+            {
+                vm.RequestClose += Vm_RequestClose;
+            }
+        }
+
+        private void Vm_RequestClose(bool result)
+        {
+            DialogResult = result;
+            Close();
         }
 
         private void NumberOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)

@@ -1,4 +1,5 @@
-﻿using Gymble.Controls;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Gymble.Controls;
 using Gymble.Models;
 using Gymble.Services;
 using MaterialDesignThemes.Wpf;
@@ -16,169 +17,46 @@ using System.Windows.Input;
 
 namespace Gymble.ViewModels.Popup
 {
-    public class AddMemberViewModel : INotifyPropertyChanged
+    public partial class AddMemberViewModel : ObservableObject
     {
         public ObservableCollection<int>? Years { get; }
         public ObservableCollection<int>? Months { get; set; }
 
-        private string? _name;
-        public string? Name
-        {
-            get => _name;
-            set
-            {
-                if (_name != value)
-                {
-                    _name = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string? memberName;
 
-        private string? _selectedGender;
-        public string? SelectedGender
-        {
-            get => _selectedGender;
-            set
-            {
-                if (_selectedGender != value)
-                {
-                    _selectedGender = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string? selectedGender;
 
-        private string? _phoneFirst;
-        public string? PhoneFirst
-        {
-            get => _phoneFirst;
-            set
-            {
-                if (value != _phoneFirst)
-                {
-                    _phoneFirst = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string? phoneFirst;
 
-        private string? _phoneMIddle;
-        public string? PhoneMiddle
-        {
-            get => _phoneMIddle;
-            set
-            {
-                if (value != _phoneMIddle)
-                {
-                    _phoneMIddle = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string? phoneMiddle;
 
-        private string? _phoneLast;
-        public string? PhoneLast
-        {
-            get => _phoneLast;
-            set
-            {
-                if (value != _phoneLast)
-                {
-                    _phoneLast = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string? phoneLast; 
 
-        private ObservableCollection<int> _days;
-        public ObservableCollection<int> Days
-        {
-            get => _days;
-            set
-            {
-                _days = value;
-                OnPropertyChanged(nameof(Days));
-            }
-        }
+        [ObservableProperty]
+        private ObservableCollection<int> days;
 
-        private int? _selectedYear;
-        public int? SelectedYear
-        {
-            get => _selectedYear;
-            set
-            {
-                if (value != _selectedYear)
-                {
-                    _selectedYear = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private int? selectedYear;
 
-        private int? _selectedMonth;
-        public int? SelectedMonth
-        {
-            get => _selectedMonth;
-            set
-            {
-                if (_selectedMonth != value)
-                {
-                    _selectedMonth = value;
-                    OnPropertyChanged();
-                    UpdateDays();
-                }
-            }
-        }
+        [ObservableProperty]
+        private int? selectedMonth;
 
-        private int? _selectedDay;
-        public int? SelectedDay
-        {
-            get => _selectedDay;
-            set
-            {
-                if (_selectedDay != value)
-                {
-                    _selectedDay = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private int? selectedDay;
 
-        private DateTime _registerDate;
-        public DateTime RegisterDate
-        {
-            get => _registerDate;
-            set
-            {
-                if (_registerDate != value)
-                {
-                    _registerDate = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private DateTime registerDate;
 
-        private string? _memo;
-        public string? Memo
-        {
-            get => _memo;
-            set
-            {
-                if (value != _memo)
-                {
-                    _memo = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string memo;
 
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set { _isBusy = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool isBusy;
 
         public ICommand? CloseCommand { get; }
         public ICommand? AddCommand { get; }
@@ -186,6 +64,12 @@ namespace Gymble.ViewModels.Popup
         #region Fields
 
         private readonly IMemberService _memberService;
+
+        #endregion
+
+        #region Events
+
+        public event Action<bool>? RequestClose;
 
         #endregion
 
@@ -211,14 +95,14 @@ namespace Gymble.ViewModels.Popup
 
             RegisterDate = DateTime.Today;
 
-            CloseCommand = new RelayCommand(_ => Close());
+            CloseCommand = new RelayCommand(_ => Close(false));
             AddCommand = new RelayCommand(async _ => await AddMemberAsync(), _ => CanAdd() && !IsBusy);
         }
 
         private bool CanAdd()
         {
             // 전화번호 3칸도 최소한 체크하는 걸 추천
-            return !string.IsNullOrWhiteSpace(Name)
+            return !string.IsNullOrWhiteSpace(MemberName)
                 && !string.IsNullOrWhiteSpace(SelectedGender)
                 && SelectedYear.HasValue && SelectedMonth.HasValue && SelectedDay.HasValue
                 && !string.IsNullOrWhiteSpace(PhoneFirst)
@@ -226,10 +110,10 @@ namespace Gymble.ViewModels.Popup
                 && !string.IsNullOrWhiteSpace(PhoneLast);
         }
 
-        private void Close()
+        private void Close(bool result)
         {
             if (IsBusy) return;
-            DialogHost.Close("MainDialog", "Cancel");
+            RequestClose?.Invoke(result);
         }
 
         private async Task AddMemberAsync()
@@ -244,12 +128,12 @@ namespace Gymble.ViewModels.Popup
             {
                 IsBusy = true;
 
-                var phone = $"{PhoneFirst}-{PhoneMiddle}-{PhoneLast}";
+                var phone = $"{PhoneFirst}{PhoneMiddle}{PhoneLast}";
                 var birthDate = new DateTime(SelectedYear!.Value, SelectedMonth!.Value, SelectedDay!.Value);
 
                 var member = new Member
                 {
-                    Name = Name,
+                    Name = MemberName,
                     Gender = SelectedGender,
                     PhoneNumber = phone,
                     BirthDate = birthDate,

@@ -13,5 +13,13 @@ namespace Gymble.Utils
             public const string FolderName = "Database";
             public const string FileName = "database.db";
         }
+
+        public class MemberStateKor
+        {
+            public const string StateNormal = "정상";
+            public const string StateDormant = "휴면";
+            public const string StateSuspended = "정지";
+            public const string StateWithdrawn = "탈퇴";
+        }
     }
 }

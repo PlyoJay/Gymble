@@ -1,6 +1,9 @@
-﻿using Gymble.Controls;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Gymble.Controls;
 using Gymble.Models;
 using Gymble.Services;
+using Gymble.Utils;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,172 +19,81 @@ using System.Xml.Linq;
 
 namespace Gymble.ViewModels.Popup
 {
-    public class EditMemberViewModel : INotifyPropertyChanged
+    public partial class EditMemberViewModel : ObservableObject
     {
-        public Member TargetMember { get; set; }
+        [ObservableProperty]
+        private Member targetMember;
 
-        private string? _name;
-        public string? Name
-        {
-            get => _name;
-            set
-            {
-                if (_name != value)
-                {
-                    _name = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string name;
 
-        private string? _selectedGender;
-        public string? SelectedGender
-        {
-            get => _selectedGender;
-            set
-            {
-                if (_selectedGender != value)
-                {
-                    _selectedGender = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string selectedGender;
 
-        private string? _phoneFirst;
-        public string? PhoneFirst
-        {
-            get => _phoneFirst;
-            set
-            {
-                if (value != _phoneFirst)
-                {
-                    _phoneFirst = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string phoneFirst;
 
-        private string? _phoneMIddle;
-        public string? PhoneMiddle
-        {
-            get => _phoneMIddle;
-            set
-            {
-                if (value != _phoneMIddle)
-                {
-                    _phoneMIddle = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string phoneMiddle;
 
-        private string? _phoneLast;
-        public string? PhoneLast
-        {
-            get => _phoneLast;
-            set
-            {
-                if (value != _phoneLast)
-                {
-                    _phoneLast = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private string phoneLast;
 
-        public ObservableCollection<int>? Years { get; }
-        public ObservableCollection<int>? Months { get; set; }
+        [ObservableProperty]
+        private string selectedMemberState;
 
-        private ObservableCollection<int> _days;
-        public ObservableCollection<int> Days
-        {
-            get => _days;
-            set
-            {
-                _days = value;
-                OnPropertyChanged(nameof(Days));
-            }
-        }
+        [ObservableProperty]
+        private string memo;
 
-        private int? _selectedYear;
-        public int? SelectedYear
-        {
-            get => _selectedYear;
-            set
-            {
-                if (value != _selectedYear)
-                {
-                    _selectedYear = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        private bool isBusy;
 
-        private int? _selectedMonth;
-        public int? SelectedMonth
-        {
-            get => _selectedMonth;
-            set
-            {
-                if (_selectedMonth != value)
-                {
-                    _selectedMonth = value;
-                    OnPropertyChanged();
-                    UpdateDays();
-                }
-            }
-        }
-
-        private int? _selectedDay;
-        public int? SelectedDay
-        {
-            get => _selectedDay;
-            set
-            {
-                if (_selectedDay != value)
-                {
-                    _selectedDay = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _memo;
-        public string? Memo
-        {
-            get => _memo;
-            set
-            {
-                if (value != _memo)
-                {
-                    _memo = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public List<string> MemberStateList { get; set; } = new List<string>();
 
         public ICommand? CloseCommand { get; }
         public ICommand? EditCommand { get; }
 
-        public EditMemberViewModel(Member member)
+        private const string StateNormal = "정상";
+        private const string StateDormant = "휴면";
+        private const string StateSuspended = "정지";
+        private const string StateWithdrawn = "탈퇴";
+
+        #region Fields
+
+        private readonly IMemberService _memberService;
+
+        #endregion
+
+        #region Events
+
+        public event Action<bool>? RequestClose;
+
+        #endregion
+
+        public EditMemberViewModel(IMemberService memberService)
         {
-            this.TargetMember = member;
+            _memberService = memberService;
 
-            Years = new ObservableCollection<int>();
-            Months = new ObservableCollection<int>();
-            Days = new ObservableCollection<int>();
+            InitStateComboBox();
 
-            for (int i = 0; i < 100; i++)
-                Years.Add(new DateTime(DateTime.Now.Year - i, 1, 1).Year);
+            CloseCommand = new RelayCommand(w => Close(false));
+            EditCommand = new RelayCommand(async _ => await EditMemberAsync(), _ => CanUpdate() && !IsBusy);
+        }
 
-            for (int i = 1; i <= 12; i++)
-                Months.Add(i);
+        public void Initialize(Member member)
+        {
+            TargetMember = new Member
+            {
+                Id = member.Id,
+                Name = member.Name,
+                Gender = member.Gender,
+                PhoneNumber = member.PhoneNumber,
+                BirthDate = member.BirthDate,
+                RegisterDate = member.RegisterDate,
+                Memo = member.Memo
+            };
 
             MemberInit();
-
-            CloseCommand = new RelayCommand<Window>(w => Close(w, true), w => w != null);
-            EditCommand = new RelayCommand<Window>(w => EditMember(w), w => CanUpdate());
         }
 
         private void MemberInit()
@@ -189,66 +101,79 @@ namespace Gymble.ViewModels.Popup
             Name = TargetMember.Name;
             SelectedGender = TargetMember.Gender;
 
-            PhoneFirst = TargetMember.PhoneNumber!.Split('-')[0];
-            PhoneMiddle = TargetMember.PhoneNumber!.Split('-')[1];
-            PhoneLast = TargetMember.PhoneNumber!.Split('-')[2];
+            PhoneFirst = TargetMember.PhoneNumber!.Substring(0, 3);
+            PhoneMiddle = TargetMember.PhoneNumber!.Substring(3, 4);
+            PhoneLast = TargetMember.PhoneNumber!.Substring(7, 4);
 
-            SelectedYear = TargetMember.BirthDate.Year;
-            SelectedMonth = TargetMember.BirthDate.Month;
-            SelectedDay = TargetMember.BirthDate.Day;
+            SelectedMemberState = Utils.Utils.ConvertMeberStateToKor(TargetMember.State);
 
             Memo = TargetMember.Memo;
         }
 
-        private void EditMember(Window w)
+        private void InitStateComboBox()
         {
-            var phone = $"{PhoneFirst}-{PhoneMiddle}-{PhoneLast}";
+            MemberStateList.Clear();
 
-            var birthDate = new DateTime((int)SelectedYear!, (int)SelectedMonth!, (int)SelectedDay!);
+            MemberStateList.Add(StateNormal);
+            MemberStateList.Add(StateDormant);
+            MemberStateList.Add(StateSuspended);
+            MemberStateList.Add(StateWithdrawn);
+        }
 
-            Member UpdatedMember = new Member()
+        private async Task EditMemberAsync()
+        {
+            if (!CanUpdate())
             {
-                Id = TargetMember.Id,
-                Name = Name,
-                Gender = SelectedGender,
-                PhoneNumber = phone,
-                BirthDate = birthDate,
-                RegisterDate = TargetMember.RegisterDate,
-                Memo = Memo
-            };
+                MessageBox.Show("필수 입력값을 확인해주세요.");
+                return;
+            }
 
-            //SQLiteManager.Instance.UpdateMember(UpdatedMember);
-
-            if (w != null)
+            try
             {
-                w.DialogResult = true;
-                w.Close();
+                IsBusy = true;
+
+                var phone = $"{PhoneFirst}{PhoneMiddle}{PhoneLast}";
+
+                Member updatedMember = new Member()
+                {
+                    Id = TargetMember.Id,
+                    Name = Name,
+                    Gender = SelectedGender,
+                    PhoneNumber = phone,
+                    BirthDate = TargetMember.BirthDate,
+                    State = Utils.Utils.ConvertKorToMeberState(SelectedMemberState),
+                    RegisterDate = TargetMember.RegisterDate,
+                    Memo = Memo
+                };
+
+                await _memberService.UpdateAsync(updatedMember);
+
+                Close(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        private void Close(Window w, bool result)
+        private void Close(bool result)
         {
-            w.DialogResult = result;
-            w.Close();
+            if (IsBusy) return;
+            RequestClose?.Invoke(result);
         }
 
         private bool CanUpdate()
         {
-            return !string.IsNullOrWhiteSpace(TargetMember.Name)
+            return !string.IsNullOrWhiteSpace(Name)
                 && !string.IsNullOrWhiteSpace(SelectedGender)
-                && SelectedYear.HasValue && SelectedMonth.HasValue && SelectedDay.HasValue;
+                && !string.IsNullOrWhiteSpace(PhoneFirst)
+                && !string.IsNullOrWhiteSpace(PhoneMiddle)
+                && !string.IsNullOrWhiteSpace(PhoneLast)
+                && !string.IsNullOrWhiteSpace(SelectedMemberState);
         }
-
-        private void UpdateDays()
-        {
-            Days.Clear();
-            int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, (int)SelectedMonth! == 0 ? 1 : (int)SelectedMonth);
-            for (int i = 1; i <= daysInMonth; i++)
-                Days.Add(i);
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

@@ -24,6 +24,22 @@ namespace Gymble.Views.Popup
         public EditMemberWindow()
         {
             InitializeComponent();
+
+            Loaded += EditMemberWindow_Loaded;
+        }
+
+        private void EditMemberWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is EditMemberViewModel vm)
+            {
+                vm.RequestClose += Vm_RequestClose;
+            }
+        }
+
+        private void Vm_RequestClose(bool result)
+        {
+            DialogResult = result;
+            Close();
         }
 
         private void NumberOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)

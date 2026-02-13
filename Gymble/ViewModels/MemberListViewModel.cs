@@ -79,25 +79,35 @@ namespace Gymble.ViewModels
         {
             var vm = App.Services.GetRequiredService<AddMemberViewModel>();
 
-            var view = new AddMemberView { DataContext = vm };
+            var win = new AddMemberWindow
+            {
+                DataContext = vm,
+                Owner = Application.Current.MainWindow
+            };
 
-            await DialogHost.Show(view, "MainDialog");
+            var ok = win.ShowDialog() == true;
 
-            await UpdateMemberList();
+            if (ok)
+                await UpdateMemberList();
         }
 
-        private void EditMember(object obj)
+        private async void EditMember(object obj)
         {
             if (SelectedMember == null) return;
 
-            EditMemberViewModel editMemberViewModel = new EditMemberViewModel(SelectedMember);
-            EditMemberWindow editMemberWindow = new EditMemberWindow()
-            {
-                DataContext = editMemberViewModel,
-            };
-            editMemberWindow.ShowDialog();
+            var vm = App.Services.GetRequiredService<EditMemberViewModel>();
+            vm.Initialize(SelectedMember);
 
-            UpdateMemberList();
+            var win = new EditMemberWindow 
+            { 
+                DataContext = vm,
+                Owner = Application.Current.MainWindow
+            };
+
+            var ok = win.ShowDialog() == true;
+
+            if (ok)
+                await UpdateMemberList();
         }
 
         private void DeleteMember(object obj)
