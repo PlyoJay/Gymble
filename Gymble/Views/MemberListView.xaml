@@ -83,6 +83,8 @@
                         <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
+                
+                
             </Grid>
             <md:DrawerHost.RightDrawerContent>
                 <Grid>

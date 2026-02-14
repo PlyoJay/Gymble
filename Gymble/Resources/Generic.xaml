@@ -89,6 +89,11 @@
         </Setter>
     </Style>
 
+    <Style x:Key="PopupWindowStyle" TargetType="{x:Type Window}"
+           BasedOn="{StaticResource WindowChromeStyle}">
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
     <!-- 윈도우 상단 버튼 -->
     <Style x:Key="WIndowChromeButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="#00000000"/>

@@ -9,7 +9,7 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="EditMemberWindow" Height="395" Width="400" ResizeMode="NoResize"
-        Style="{StaticResource WindowChromeStyle}" WindowStartupLocation="CenterScreen">
+        Style="{StaticResource PopupWindowStyle}" WindowStartupLocation="CenterScreen">
 
     <Border BorderBrush="{StaticResource ApplicationBorderColor}" BorderThickness="1"
             CornerRadius="15" Background="{StaticResource ApplicationBgColor}">
