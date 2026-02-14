@@ -22,7 +22,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
                 </Grid.RowDefinitions>
 
                             <!-- 검색/액션 바 -->
@@ -60,28 +60,9 @@
                 <DataGrid Grid.Row="1" 
                           ItemsSource="{Binding MemberList}" 
                           SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
-                          AutoGenerateColumns="False" IsReadOnly="True"
-                          EnableRowVirtualization="True"
-                          EnableColumnVirtualization="True"
-                          VirtualizingPanel.IsVirtualizing="True"
-                          VirtualizingPanel.VirtualizationMode="Recycling"
-                          ScrollViewer.CanContentScroll="True"
-                          AlternationCount="2147483647">
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <!-- 보기 쉬운 하이라이트 색 -->
-                                    <Setter Property="Background" Value="#FFE3F2FD"/>
-                                </Trigger>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#FFEAF2FE"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGrid.RowStyle>
+                          Style="{StaticResource DataGridStyle}"
+                          ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                          RowStyle="{StaticResource DataGridRowStyle}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="#" Width="50">
                             <DataGridTemplateColumn.CellTemplate>
