@@ -135,8 +135,6 @@ namespace Gymble.ViewModels.Popup
                 };
 
                 await _memberService.UpdateAsync(updatedMember);
-
-                Close(true);
             }
             catch (Exception ex)
             {
@@ -145,6 +143,7 @@ namespace Gymble.ViewModels.Popup
             finally
             {
                 IsBusy = false;
+                Close(true);
             }
         }
 

@@ -40,6 +40,11 @@ namespace Gymble.ViewModels.Popup
         [ObservableProperty]
         private int? selectedMonth;
 
+        partial void OnSelectedMonthChanged(int? value)
+        {
+            UpdateDays();
+        }
+
         [ObservableProperty]
         private int? selectedDay;
 
@@ -137,9 +142,6 @@ namespace Gymble.ViewModels.Popup
                 };
 
                 await _memberService.AddAsync(member);
-
-                // 저장 성공 후 닫기
-                DialogHost.Close("MainDialog", "Ok");
             }
             catch (Exception ex)
             {
@@ -148,6 +150,7 @@ namespace Gymble.ViewModels.Popup
             finally
             {
                 IsBusy = false;
+                Close(true);
             }            
         }
 
@@ -168,9 +171,5 @@ namespace Gymble.ViewModels.Popup
             if (SelectedDay.HasValue && SelectedDay.Value > daysInMonth)
                 SelectedDay = daysInMonth;
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

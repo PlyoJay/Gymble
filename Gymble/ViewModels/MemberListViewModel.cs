@@ -1,4 +1,5 @@
-﻿using Gymble.Controls;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Gymble.Controls;
 using Gymble.Models;
 using Gymble.Services;
 using Gymble.ViewModels.Popup;
@@ -19,40 +20,21 @@ using System.Windows.Input;
 
 namespace Gymble.ViewModels
 {
-    public class MemberListViewModel : INotifyPropertyChanged
+    public partial class MemberListViewModel : ObservableObject
     {
         public string PageTitle { get; set; } = "회원 관리";
 
         public ObservableCollection<Member> MemberList { get; } = new();
 
-        private Member _selectedMember;
-        public Member SelectedMember
-        {
-            get => _selectedMember;
-            set
-            {
-                if (_selectedMember != value)
-                {
-                    _selectedMember = value;
-                    OnPropertyChanged();
+        [ObservableProperty]
+        private Member selectedMember;
 
-                    IsDrawerOpen = true;
-                }
-            }
-        }
+        [ObservableProperty]
+        private bool isDrawerOpen;
 
-        private bool _isDrawerOpen;
-        public bool IsDrawerOpen
+        partial void OnSelectedMemberChanged(Member value)
         {
-            get => _isDrawerOpen;
-            set
-            {
-                if (_isDrawerOpen != value)
-                {
-                    _isDrawerOpen = value;
-                    OnPropertyChanged();
-                }
-            }
+            IsDrawerOpen = true;
         }
 
         public ICommand? SearchCommand { get; }
@@ -134,9 +116,5 @@ namespace Gymble.ViewModels
             foreach (var item in members)            
                 MemberList.Add(item);            
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
