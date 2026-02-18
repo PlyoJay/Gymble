@@ -4,10 +4,112 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gymble.Views"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="1080"
+             Background="White">
     <Grid>
-        <TextBlock Text="PRODUCT" VerticalAlignment="Center" HorizontalAlignment="Center"
-               FontSize="30"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Margin="0 0 0 10">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <Grid>
+                    <TextBox x:Name="tbSearchInput" Width="350" Margin="0,0,10,0"
+                             Style="{StaticResource SearchTextBoxStyle}"/>
+                    <TextBlock Width="350" Margin="0,0,10,0" Text="상품명/코드, 메모 검색">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource SearchTextBlockStyle}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=tbSearchInput}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <Button Content="검색" Command="{Binding SearchCommand}" 
+                        Margin="0 0 20 0"
+                        Style="{StaticResource BaseButtonStyle}"/>
+
+                <TextBlock Text="상태:" Style="{StaticResource GeneralKeyTextBlockStyle}"
+                           Margin="0 0 10 0"/>
+                <ComboBox Width="150" Height="40"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Margin="0 0 20 0"/>
+
+                <TextBlock Text="판매중만 보기:" Style="{StaticResource GeneralKeyTextBlockStyle}"
+                           Margin="0 0 10 0"/>
+                <ToggleButton IsChecked="True"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right"
+                        HorizontalAlignment="Right">
+                <Button Content="+ 상품 추가"
+                        Width="170"
+                        Style="{StaticResource BaseButtonStyle}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <TabControl Style="{StaticResource HeaderLeftAlignedTabControlStyle}" 
+                    Grid.Row="1"
+                    AlternationCount="1000000">
+            <TabItem Header="헬스권"
+                     Style="{StaticResource GymbleTabItemStyle}">
+                
+            </TabItem>
+            <TabItem Header="PT"
+                     Style="{StaticResource GymbleTabItemStyle}">
+
+            </TabItem>
+            <TabItem Header="락커/운동복"
+                     Style="{StaticResource GymbleTabItemStyle}">
+
+            </TabItem>
+            <TabItem Header="기타"
+                     Style="{StaticResource GymbleTabItemStyle}">
+
+            </TabItem>
+        </TabControl>
+
+        <DockPanel Grid.Row="2" Margin="10">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <TextBlock Text="선택:" 
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"
+                           Foreground="{StaticResource SelectedTBFgColor}"/>
+                <TextBlock Text="3개월 헬스권" 
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"
+                           Margin="10 0 0 0"/>
+                <GridSplitter BorderThickness="1" BorderBrush="Black"
+                              Margin="10 5"/>
+                <TextBlock Text="90일" 
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
+                <GridSplitter BorderThickness="1" BorderBrush="Black"
+                              Margin="10 5"/>
+                <TextBlock Text="142,500₩" 
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
+                <GridSplitter BorderThickness="1" BorderBrush="Black"
+                              Margin="10 5"/>
+                <TextBlock Text="결제일 기준" 
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
+                <GridSplitter BorderThickness="1" BorderBrush="Black"
+                              Margin="10 5"/>
+                <TextBlock Text="상태: 사용중" 
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                        DockPanel.Dock="Right">
+                <Button Content="수정"
+                        Style="{StaticResource BorderedButtonStyle}"
+                        Width="100" Margin="10 0"/>
+                <Button Content="중지" 
+                        Style="{StaticResource BaseButtonStyle}"
+                        Width="100"/>
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </UserControl>

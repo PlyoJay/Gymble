@@ -13,7 +13,7 @@
             <converter:TagMatchConverter x:Key="TagMatchConverter" />
             <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
             <converter:PhoneNumberConverter x:Key="PhoneNumberConverter"/>
-            
+            <converter:PlusOneConverter x:Key="PlusOneConverter"/>
 
             <!-- ViewModel -> View 연결 -->
             <DataTemplate DataType="{x:Type vms:DashboardViewModel}">

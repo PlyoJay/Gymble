@@ -5,19 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gymble.Views"
              xmlns:controls="clr-namespace:Gymble.Views.Controls"
-             xmlns:converter="clr-namespace:Gymble.Converter"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <UserControl.Resources>
-        <converter:GenderToKoreanConverter x:Key="GenderToKoreanConverter"/>
-        <converter:PlusOneConverter x:Key="PlusOneConverter"/>
-    </UserControl.Resources>
-
     <md:DialogHost Identifier="MainDialog">
         <md:DrawerHost x:Name="RootDrawer" IsRightDrawerOpen="{Binding IsDrawerOpen, Mode=TwoWay}"
-                       OpenMode="Standard" Grid.RowSpan="2">
+                       OpenMode="Standard">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>

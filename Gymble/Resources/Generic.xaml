@@ -42,6 +42,7 @@
     <SolidColorBrush x:Key="BorderedButtonBgColor" Color="#B2DCFF"/>
     <SolidColorBrush x:Key="BorderedButtonBorderBrushColor" Color="#94B6FF"/>
 
+    <SolidColorBrush x:Key="SelectedTBFgColor" Color="#2E66E1"/>
     <SolidColorBrush x:Key="ReadMoreFgColor" Color="#2E66E1"/>
 
     <SolidColorBrush x:Key="TabSelectedBrush" Color="#2E66E1"/>
@@ -126,6 +127,12 @@
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
+    </Style>
+
+    <Style x:Key="GeneralKeyTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.SemiBold}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
     <Style x:Key="SearchTextBlockStyle" TargetType="{x:Type TextBlock}">
@@ -319,135 +326,61 @@
         </Setter>
     </Style>
 
-    <!-- ComboBox -->
-    <Style x:Key="ComboDropToggle" TargetType="ToggleButton">
-        <!-- 암묵 스타일 영향 제거 -->
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
+    <Style x:Key="HeaderLeftAlignedTabControlStyle" TargetType="{x:Type TabControl}">
+        <Setter Property="TabStripPlacement" Value="Top"/>
+        <Setter Property="BorderBrush" Value="#D7D7D7"/>
+        <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="Focusable" Value="False"/>
-        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="AlternationCount" Value="1000000"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="28"/>
-                        </Grid.ColumnDefinitions>
-                        <md:PackIcon x:Name="Icon"
-                                     Grid.Column="1"
-                                     Kind="ChevronDown"
-                                     Width="18" Height="18"
-                                     Opacity="0.82"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center"
-                                     RenderTransformOrigin="0.5,0.5">
-                            <md:PackIcon.RenderTransform>
-                                <RotateTransform Angle="0"/>
-                            </md:PackIcon.RenderTransform>
-                        </md:PackIcon>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Icon" Property="Opacity" Value="1"/>
-                        </Trigger>
-                        <Trigger Property="IsChecked" Value="True">
-                            <!-- 열렸을 때 살짝 위로 뒤집는 느낌 -->
-                            <Setter TargetName="Icon" Property="RenderTransform">
-                                <Setter.Value>
-                                    <RotateTransform Angle="180"/>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Icon" Property="Opacity" Value="0.45"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <SolidColorBrush x:Key="ComboPopupBackground" Color="White"/>
-
-    <Style x:Key="MdOutlined.PopupBg"
-           TargetType="ComboBox"
-           BasedOn="{StaticResource MaterialDesignOutlinedComboBox}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ComboBox">
+                <ControlTemplate TargetType="{x:Type TabControl}">
                     <Grid SnapsToDevicePixels="True">
-                        <Border x:Name="Border"
-                                Background="{TemplateBinding Background}"
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- ✅ 헤더 스트립 외곽선(Top/Left/Right)을 여기서 한 번만 -->
+                        <Border x:Name="bdrHeader" Grid.Row="0"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="28"/>
-                                </Grid.ColumnDefinitions>
-                                <ContentPresenter Grid.Column="0" 
-                                                  Margin="10 0 6 0"
-                                                  VerticalAlignment="Center"
-                                                  Content="{TemplateBinding SelectionBoxItem}"
-                                                  IsHitTestVisible="False"/>
-                                
-                                <ToggleButton x:Name="ToggleButton"
-                                              Grid.ColumnSpan="2"
-                                              Grid.ZIndex="1"
-                                              Style="{StaticResource ComboDropToggle}"
-                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                              ClickMode="Press"/>
+                                BorderThickness="1,1,1,0"
+                                CornerRadius="8,8,0,0"
+                                Background="Transparent"
+                                SnapsToDevicePixels="True"
+                                HorizontalAlignment="Left">
+                            <Grid x:Name="headerClipHost" 
+                                  SnapsToDevicePixels="True"
+                                  HorizontalAlignment="Left">
+                                <Grid.Clip>
+                                    <MultiBinding Converter="{StaticResource TopRoundRectClipConverter}"
+                                              ConverterParameter="8">
+                                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                                    </MultiBinding>
+                                </Grid.Clip>
+                                <TabPanel IsItemsHost="True"
+                                          HorizontalAlignment="Left"/>
                             </Grid>
                         </Border>
 
-                        <!-- 드롭다운 팝업 -->
-                        <Popup x:Name="PART_Popup"
-                               Placement="Bottom"
-                               PlacementTarget="{Binding ElementName=Border}"
-                               IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                               AllowsTransparency="True"
-                               Focusable="False"
-                               PopupAnimation="Slide"
-                               MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                            <Border x:Name="PopupBorder"
-                                    Background="{StaticResource ComboPopupBackground}" 
-                                    BorderThickness="1" BorderBrush="Gray"
-                                    CornerRadius="6"
-                                    Padding="4"
-                                    SnapsToDevicePixels="True">
-                                <ScrollViewer CanContentScroll="True"
-                                              HorizontalScrollBarVisibility="Disabled"
-                                              VerticalScrollBarVisibility="Auto"
-                                              MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                    <ItemsPresenter/>
-                                </ScrollViewer>
-                            </Border>
-                        </Popup>
+                        <!-- 컨텐츠 영역 -->
+                        <Border Grid.Row="1"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="0,0,8,8"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter ContentSource="SelectedContent"/>
+                        </Border>
                     </Grid>
-
-                    <!-- 트리거들(필수 ones) -->
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="HasItems" Value="False">
-                            <Setter TargetName="PopupBorder" Property="MinHeight" Value="36"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Border" Property="Opacity" Value="0.56"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-
+    <!-- ComboBox -->
     
-
     <Style x:Key="ComboDropToggleStyle" TargetType="ToggleButton">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Background" Value="Transparent" />
