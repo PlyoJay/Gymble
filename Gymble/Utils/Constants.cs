@@ -16,10 +16,10 @@ namespace Gymble.Utils
 
         public class MemberStateKor
         {
-            public const string StateNormal = "정상";
-            public const string StateDormant = "휴면";
-            public const string StateSuspended = "정지";
-            public const string StateWithdrawn = "탈퇴";
+            public const string Active = "사용중";
+            public const string Paused = "일시정지";
+            public const string Suspended = "정지";
+            public const string Expired = "만료";
         }
     }
 }

@@ -93,7 +93,7 @@ namespace Gymble.ViewModels.Popup
             PhoneMiddle = TargetMember.PhoneNumber!.Substring(3, 4);
             PhoneLast = TargetMember.PhoneNumber!.Substring(7, 4);
 
-            SelectedMemberState = Utils.Utils.ConvertMeberStateToKor(TargetMember.State);
+            SelectedMemberState = Utils.Utils.ConvertMeberStateToKor(TargetMember.Status);
 
             Memo = TargetMember.Memo;
         }
@@ -129,7 +129,7 @@ namespace Gymble.ViewModels.Popup
                     Gender = SelectedGender,
                     PhoneNumber = phone,
                     BirthDate = TargetMember.BirthDate,
-                    State = Utils.Utils.ConvertKorToMeberState(SelectedMemberState),
+                    Status = Utils.Utils.ConvertKorToMeberState(SelectedMemberState),
                     RegisterDate = TargetMember.RegisterDate,
                     Memo = Memo
                 };

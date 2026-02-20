@@ -137,7 +137,7 @@ namespace Gymble.ViewModels.Popup
                     PhoneNumber = phone,
                     BirthDate = birthDate,
                     RegisterDate = RegisterDate,
-                    State = MemberState.Normal,
+                    Status = MemberStatus.Active,
                     Memo = Memo
                 };
 

@@ -14,6 +14,7 @@
             <converter:DateTimeToKoreanDateConverter x:Key="dateTimeConverter"/>
             <converter:PhoneNumberConverter x:Key="PhoneNumberConverter"/>
             <converter:PlusOneConverter x:Key="PlusOneConverter"/>
+            <converter:MemberStatusToBadgeConverter x:Key="MemberStatusToBadgeConverter"/>
 
             <!-- ViewModel -> View 연결 -->
             <DataTemplate DataType="{x:Type vms:DashboardViewModel}">

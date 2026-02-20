@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public enum MemberState
+public enum MemberStatus
 {
-    Normal = 0,     // 정상
-    Dormant = 1,    // 휴면
+    Active = 0,     // 사용중
+    Paused = 1,    // 일시정지
     Suspended = 2,  // 정지
-    Withdrawn = 3   // 탈퇴
+    Expired = 3   // 만료
 }
 
 namespace Gymble.Models
@@ -22,7 +22,7 @@ namespace Gymble.Models
         public string? PhoneNumber { get; set; }
         public DateTime BirthDate { get; set; }
         public DateTime RegisterDate { get; set; }
-        public MemberState State { get; set; }
+        public MemberStatus Status { get; set; }
         public string? Memo { get; set; }
     }
 

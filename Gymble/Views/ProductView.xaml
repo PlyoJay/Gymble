@@ -59,18 +59,22 @@
                     Grid.Row="1"
                     AlternationCount="1000000">
             <TabItem Header="헬스권"
+                     MinWidth="150"
                      Style="{StaticResource GymbleTabItemStyle}">
                 
             </TabItem>
             <TabItem Header="PT"
+                     MinWidth="150"
                      Style="{StaticResource GymbleTabItemStyle}">
 
             </TabItem>
             <TabItem Header="락커/운동복"
+                     MinWidth="150"
                      Style="{StaticResource GymbleTabItemStyle}">
 
             </TabItem>
             <TabItem Header="기타"
+                     MinWidth="150"
                      Style="{StaticResource GymbleTabItemStyle}">
 
             </TabItem>

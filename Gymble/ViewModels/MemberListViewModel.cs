@@ -92,14 +92,14 @@ namespace Gymble.ViewModels
                 await UpdateMemberList();
         }
 
-        private void DeleteMember(object obj)
+        private async void DeleteMember(object obj)
         {
             var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
 
             if (msgResult == MessageBoxResult.No) return;
             
             //SQLiteManager.Instance.DeleteMember(SelectedMember);
-            UpdateMemberList();            
+            await UpdateMemberList();            
         }
 
 

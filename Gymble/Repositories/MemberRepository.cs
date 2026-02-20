@@ -23,8 +23,8 @@ namespace Gymble.Repositories
             using var conn = _connFactory();
 
             const string sql = @"
-                INSERT INTO tb_member (name, gender, phone_number, birthdate, register_date, state, memo)
-                VALUES (@Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @State, @Memo);
+                INSERT INTO tb_member (name, gender, phone_number, birthdate, register_date, status, memo)
+                VALUES (@Name, @Gender, @PhoneNumber, @BirthDate, @RegisterDate, @Status, @Memo);
                 SELECT last_insert_rowid();";
 
             var cmd = new CommandDefinition(sql, member, cancellationToken: ct);
@@ -42,7 +42,7 @@ namespace Gymble.Repositories
                     phone_number = @PhoneNumber,
                     birthdate = @BirthDate,
                     register_date = @RegisterDate,
-                    state = @State,
+                    status = @Status,
                     memo = @Memo
                 WHERE id = @Id;";
 
@@ -81,7 +81,7 @@ namespace Gymble.Repositories
                   phone_number AS PhoneNumber,
                   birthdate,
                   register_date AS RegisterDate,
-                  state AS State,
+                  status AS Status,
                   memo
                 FROM tb_member;
                 ";

@@ -10,35 +10,35 @@ namespace Gymble.Utils
     {
         public static readonly string CurrentDirectory = Environment.CurrentDirectory;
 
-        public static MemberState ConvertKorToMeberState(string stateKor)
+        public static MemberStatus ConvertKorToMeberState(string stateKor)
         {
             switch (stateKor)
             {
                 default:
-                case Constants.MemberStateKor.StateNormal:
-                    return MemberState.Normal;
-                case Constants.MemberStateKor.StateDormant:
-                    return MemberState.Dormant;
-                case Constants.MemberStateKor.StateSuspended:
-                    return MemberState.Suspended;
-                case Constants.MemberStateKor.StateWithdrawn:
-                    return MemberState.Withdrawn;
+                case Constants.MemberStateKor.Active:
+                    return MemberStatus.Active;
+                case Constants.MemberStateKor.Paused:
+                    return MemberStatus.Paused;
+                case Constants.MemberStateKor.Suspended:
+                    return MemberStatus.Suspended;
+                case Constants.MemberStateKor.Expired:
+                    return MemberStatus.Expired;
             }
         }
 
-        public static string ConvertMeberStateToKor(MemberState state)
+        public static string ConvertMeberStateToKor(MemberStatus state)
         {
             switch (state)
             {
                 default:
-                case MemberState.Normal:
-                    return Constants.MemberStateKor.StateNormal;
-                case MemberState.Dormant:
-                    return Constants.MemberStateKor.StateDormant;
-                case MemberState.Suspended:
-                    return Constants.MemberStateKor.StateSuspended;
-                case MemberState.Withdrawn:
-                    return Constants.MemberStateKor.StateWithdrawn;
+                case MemberStatus.Active:
+                    return Constants.MemberStateKor.Active;
+                case MemberStatus.Paused:
+                    return Constants.MemberStateKor.Paused;
+                case MemberStatus.Suspended:
+                    return Constants.MemberStateKor.Suspended;
+                case MemberStatus.Expired:
+                    return Constants.MemberStateKor.Expired;
             }
         }
     }

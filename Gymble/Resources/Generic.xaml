@@ -252,6 +252,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
                     <Border x:Name="Bd"
+                            MinWidth="{TemplateBinding MinWidth}"
                             Background="{TemplateBinding Background}"
                             SnapsToDevicePixels="True"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -572,17 +573,16 @@
     </Style>
 
     <!-- ControlTemplate -->
-    
+
     <ControlTemplate x:Key="StatusControlTemplate" TargetType="{x:Type ContentControl}">
-        <Border Background="{TemplateBinding Background}"
-                CornerRadius="12">
-            <TextBlock
-                Text="{TemplateBinding Content}"
-                Foreground="{TemplateBinding Foreground}"
-                FontSize="16"
-                FontFamily="{StaticResource Pretendard.SemiBold}"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"/>
+        <Border CornerRadius="12"
+                Background="{Binding Content.Background, RelativeSource={RelativeSource TemplatedParent}}">
+            <TextBlock Text="{Binding Content.Text, RelativeSource={RelativeSource TemplatedParent}}"
+                       Foreground="{Binding Content.Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                       FontSize="16"
+                       FontFamily="{StaticResource Pretendard.SemiBold}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
         </Border>
     </ControlTemplate>
 

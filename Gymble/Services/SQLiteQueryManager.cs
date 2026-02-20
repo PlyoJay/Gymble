@@ -24,7 +24,7 @@ namespace Gymble.Services
                             "[phone_number] TEXT,  " +
                             "[birthdate] TEXT,  " +
                             "[register_date] TEXT NOT NULL,  " +
-                            "[state] TEXT NOT NULL,  " +
+                            "[status] TEXT NOT NULL,  " +
                             "[memo] TEXT  " +
                         ")";
     }
