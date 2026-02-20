@@ -164,7 +164,7 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
-    <Style x:Key="AddMemberWindowTextBlockStyle" TargetType="{x:Type TextBlock}">
+    <Style x:Key="HeaderKeyTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontFamily" Value="{StaticResource Pretendard.SemiBold}"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
@@ -549,6 +549,7 @@
     <Style x:Key="DataGridStyle" TargetType="{x:Type DataGrid}"
            BasedOn="{StaticResource MaterialDesignDataGrid}">
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="Black"/>
 
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}"/>
