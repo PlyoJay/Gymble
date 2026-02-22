@@ -45,7 +45,105 @@
             </Border>
 
             <StackPanel Grid.Row="1" Margin="20 15 20 0">
-                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="상품명" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <TextBox Grid.Column="1" 
+                             Text="{Binding MemberName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="상품 종류" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <ComboBox Grid.Column="1" Height="37"
+                              Style="{StaticResource ComboBoxStyle}"/>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="기간/횟수" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Height="37"
+                                HorizontalAlignment="Center">
+                        <RadioButton Content="기간(일)" GroupName="periodOrCount" Tag="Period"
+                                     Foreground="Black" FontWeight="Bold" FontSize="14"
+                                     Width="110" Height="37" Margin="0 0 25 0"
+                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                                     IsChecked="{Binding SelectedGender, Converter={StaticResource TagMatchConverter}, ConverterParameter=Male, Mode=TwoWay}"/>
+                        <RadioButton Content="횟수" GroupName="periodOrCount" Tag="Count"
+                                     Foreground="Black" FontWeight="Bold" FontSize="14"
+                                     Width="110" Height="37" Margin="0"
+                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                                     IsChecked="{Binding SelectedGender, Converter={StaticResource TagMatchConverter}, ConverterParameter=Female, Mode=TwoWay}"/>
+                    </StackPanel>
+                </Grid>
+                <Grid>
+                    <TextBox Margin="110 10 0 0" Height="37"
+                             Text="{Binding MemberName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="가격(₩)" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <TextBox Grid.Column="1" Height="37"
+                             Text="{Binding MemberName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="시작기준" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <ComboBox Grid.Column="1" Height="37"
+                              Style="{StaticResource ComboBoxStyle}"/>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="상태" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Height="37"
+                                HorizontalAlignment="Center">
+                        <RadioButton Content="판매중" GroupName="status" Tag="OnSale"
+                                     Foreground="Black" FontWeight="Bold" FontSize="14"
+                                     Width="110" Height="37" Margin="0 0 25 0"
+                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                                     IsChecked="{Binding SelectedGender, Converter={StaticResource TagMatchConverter}, ConverterParameter=Male, Mode=TwoWay}"/>
+                        <RadioButton Content="판매중지" GroupName="status" Tag="NotOnSale"
+                                     Foreground="Black" FontWeight="Bold" FontSize="14"
+                                     Width="110" Height="37" Margin="0"
+                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                                     IsChecked="{Binding SelectedGender, Converter={StaticResource TagMatchConverter}, ConverterParameter=Female, Mode=TwoWay}"/>
+                    </StackPanel>
+                </Grid>
+
+                <CheckBox Content="자주 쓰는 상품으로 등록" 
+                          Height="37" Margin="0 10 0 0"
+                          Foreground="Black" FontWeight="Bold" FontSize="14"
+                          Style="{StaticResource MaterialDesignUserForegroundCheckBox}"/>
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="20 0"
