@@ -39,8 +39,7 @@
                         <Button Content="X" Style="{StaticResource WIndowChromeButtonStyle}"
                             Foreground="Black" FontSize="18" FontWeight="Bold"
                             HorizontalAlignment="Right"
-                            Command="{Binding CloseCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            Command="{Binding CloseCommand}"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -166,11 +165,9 @@
                     Style="{StaticResource AddMemberWindowButton}"
                     BorderThickness="1" Background="#FAFAFA"
                     Foreground="#202020"
-                    Command="{Binding CloseCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Cursor="Hand"/>
+                    Command="{Binding CloseCommand}" Cursor="Hand"/>
                 <Button Content="추가" Style="{StaticResource AddMemberWindowButton}"
-                    Command="{Binding AddCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Cursor="Hand"/>
+                    Command="{Binding AddCommand}" Cursor="Hand"/>
             </StackPanel>
         </Grid>
     </Border>
