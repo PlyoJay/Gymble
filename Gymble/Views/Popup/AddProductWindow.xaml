@@ -143,7 +143,7 @@
                 <CheckBox Content="자주 쓰는 상품으로 등록" 
                           Height="37" Margin="0 10 0 0"
                           Foreground="Black" FontWeight="Bold" FontSize="14"
-                          Style="{StaticResource MaterialDesignUserForegroundCheckBox}"/>
+                          Style="{StaticResource MaterialDesignUserForegroundCheckBox}" Cursor=""/>
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="20 0"
