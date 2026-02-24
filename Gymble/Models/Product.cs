@@ -60,9 +60,10 @@ namespace Gymble.Models
         public int? DurationDays { get; set; } // Period
         public int? TotalCount { get; set; }   // Count
         public ProductStartType StartType { get; set; }
-        public ProductStatus Status { get; set; }
         public DateTime? FixedStartDate { get; set; }
+        public ProductStatus Status { get; set; }
         public bool IsFavorite { get; set; } // 자주 쓰는 상품
+        public string? Note { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

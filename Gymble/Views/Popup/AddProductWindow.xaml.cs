@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Gymble.ViewModels.Popup;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Gymble.Views.Popup
 {
@@ -22,6 +11,22 @@ namespace Gymble.Views.Popup
         public AddProductWindow()
         {
             InitializeComponent();
+
+            Loaded += AddProductWindow_Loaded;
+        }
+
+        private void AddProductWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AddProductViewModel vm)
+            {
+                vm.RequestClose += Vm_RequestClose;
+            }
+        }
+
+        private void Vm_RequestClose(bool result)
+        {
+            DialogResult = result;
+            Close();
         }
     }
 }

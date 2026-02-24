@@ -51,7 +51,8 @@
                         HorizontalAlignment="Right">
                 <Button Content="+ 상품 추가"
                         Width="170"
-                        Style="{StaticResource BaseButtonStyle}"/>
+                        Style="{StaticResource BaseButtonStyle}"
+                        Command="{Binding AddCommand}" Cursor="Hand"/>
             </StackPanel>
         </DockPanel>
 
