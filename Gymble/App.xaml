@@ -15,6 +15,7 @@
             <converter:PhoneNumberConverter x:Key="PhoneNumberConverter"/>
             <converter:PlusOneConverter x:Key="PlusOneConverter"/>
             <converter:MemberStatusToBadgeConverter x:Key="MemberStatusToBadgeConverter"/>
+            <converter:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
 
             <!-- ViewModel -> View 연결 -->
             <DataTemplate DataType="{x:Type vms:DashboardViewModel}">

@@ -1,36 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 public enum ProductUsageType
 {
-    Period,     // 기간제
-    Count       // 횟수제
+    [Description("기간제")]
+    Period,
+    [Description("횟수제")]
+    Count
 }
 
 public enum ProductStartType
 {
-    Immediate,        // 결제 즉시 시작
-    SelectDate,       // 사용자가 시작일 선택
-    FirstCheckIn,     // 첫 출석 시 시작
-    FixedDate         // 고정 날짜
+    [Description("결제 즉시")]
+    Immediate,
+    [Description("직접 선택")]
+    SelectDate,
+    [Description("첫 출석 시작")]
+    FirstCheckIn,
+    [Description("고정 날짜")]
+    FixedDate
 }
 
 public enum ProductStatus
 {
+    [Description("판매중")]
     OnSale,        // 판매중
+    [Description("판매중지")]
     Stopped,       // 판매중지
+    [Description("단종")]
     Discontinued   // 단종
 }
 
 public enum ProductCategory 
-{ 
-    Gym, 
-    PT, 
-    Locker, 
-    Wear, 
+{
+    [Description("헬스권")]
+    Gym,
+    [Description("PT")]
+    PT,
+    [Description("락커")]
+    Locker,
+    [Description("운동복")]
+    Wear,
+    [Description("기타")]
     Etc 
 }
 
