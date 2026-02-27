@@ -68,6 +68,7 @@ namespace Gymble.Models
     public class Product
     {
         public int Id { get; set; }
+        public string Code { get; set; } = "";
         public string Name { get; set; } = "";
         public ProductCategory Category { get; set; }
         public int Price { get; set; }
@@ -97,5 +98,21 @@ namespace Gymble.Models
 
         public LockerAssignPolicy AssignPolicy { get; set; }
         public int? LockerGroupId { get; set; } // 남/여, 1층/2층 등 그룹
+    }
+
+    public sealed class ProductSearch
+    {
+        public string? NameOrCode { get; set; }
+        public List<ProductStatus>? Statuses { get; set; }
+        public ProductUsageType? UsageType { get; set; }
+        public int? MinUsageValue { get; set; }
+        public int? MaxUsageValue { get; set; }
+
+        public int? MinPrice { get; set; }
+        public int? MaxPrice { get; set; }
+        public ProductStartType? StartType { get; set; }
+
+        public int? Take { get; set; }
+        public int? Skip { get; set; }
     }
 }

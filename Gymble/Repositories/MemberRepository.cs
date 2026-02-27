@@ -11,6 +11,16 @@ using System.Threading.Tasks;
 
 namespace Gymble.Repositories
 {
+    public interface IMemberRepository
+    {
+        Task<long> InsertMemberAsync(Member member, CancellationToken ct = default);
+        Task<int> UpdateMemberAsync(Member member, CancellationToken ct = default);
+        Task<int> DeleteMemberAsync(Member member, CancellationToken ct = default);
+        Task<Member> GetByIdAsync(long id, CancellationToken ct = default);
+        Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default);
+        Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default);
+    }
+
     public class MemberRepository : IMemberRepository
     {
         private readonly Func<SQLiteConnection> _connFactory;

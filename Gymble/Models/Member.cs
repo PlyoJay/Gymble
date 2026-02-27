@@ -45,14 +45,4 @@ namespace Gymble.Models
         public int PageSize { get; init; }
         public int TotalPages => (int)Math.Ceiling((double)Total / Math.Max(1, PageSize));
     }
-
-    public interface IMemberRepository
-    {
-        Task<long> InsertMemberAsync(Member member, CancellationToken ct = default);
-        Task<int> UpdateMemberAsync(Member member, CancellationToken ct = default);
-        Task<int> DeleteMemberAsync(Member member, CancellationToken ct = default);
-        Task<Member> GetByIdAsync(long id, CancellationToken ct = default);
-        Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default);
-        Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default);
-    }
 }

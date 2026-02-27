@@ -1,4 +1,5 @@
 ﻿using Gymble.Models;
+using Gymble.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

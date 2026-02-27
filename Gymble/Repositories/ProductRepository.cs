@@ -9,26 +9,52 @@ using System.Threading.Tasks;
 
 namespace Gymble.Repositories
 {
-    public class ProductRepository
+    public interface IProductRepository
     {
-        private readonly SQLiteConnection _connection;
+        Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default);
+        Task<IReadOnlyList<Product>> SearchAsync(ProductSearch q, CancellationToken ct = default);
+        Task<Product?> GetByIdAsync(long productId, CancellationToken ct = default);
+        Task<long> InsertProductAsync(Product prodcut, CancellationToken ct = default);
+        Task<int> UpdateProductAsync(Product product, CancellationToken ct = default);
+        Task<int> DeleteProductAsync(long productId, CancellationToken ct = default);
+    }
 
-        public ProductRepository(SQLiteConnection connection)
+    public class ProductRepository : IProductRepository
+    {
+        private readonly Func<SQLiteConnection> _connFactory;
+
+        public ProductRepository(Func<SQLiteConnection> connFactory)
+            => _connFactory = connFactory;
+
+        public Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
         {
-            _connection = connection;
+            throw new NotImplementedException();
         }
 
-        public void InsertProduct(Product product)
+        public Task<IReadOnlyList<Product>> SearchAsync(ProductSearch q, CancellationToken ct = default)
         {
-            var sql = @"INSERT INTO tb_product (name, type, duration_days, total_count, price)
-                    VALUES (@Name, @Type, @DurationDays, @TotalCount, @Price)";
-            _connection.Execute(sql, product);
+            throw new NotImplementedException();
         }
 
-        public List<Product> GetAllProducts()
+        public Task<Product?> GetByIdAsync(long productId, CancellationToken ct = default)
         {
-            var sql = "SELECT * FROM tb_product";
-            return _connection.Query<Product>(sql).ToList();
+            throw new NotImplementedException();
+        }
+
+        public async Task<long> InsertProductAsync(Product product, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<int> UpdateProductAsync(Product product, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> DeleteProductAsync(long productId, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }
