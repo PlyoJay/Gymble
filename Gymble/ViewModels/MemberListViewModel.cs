@@ -20,7 +20,7 @@ using System.Windows.Input;
 
 namespace Gymble.ViewModels
 {
-    public partial class MemberListViewModel : ObservableObject
+    public partial class MemberListViewModel : PagingViewModel<Member>
     {
         public string PageTitle { get; set; } = "회원 관리";
 
