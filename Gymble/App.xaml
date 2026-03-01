@@ -16,6 +16,7 @@
             <converter:PlusOneConverter x:Key="PlusOneConverter"/>
             <converter:MemberStatusToBadgeConverter x:Key="MemberStatusToBadgeConverter"/>
             <converter:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
+            <converter:PageIndexToDisplayConverter x:Key="PageIndexToDisplayConverter"/>
 
             <!-- ViewModel -> View 연결 -->
             <DataTemplate DataType="{x:Type vms:DashboardViewModel}">

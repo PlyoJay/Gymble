@@ -77,8 +77,48 @@
                         <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                
-                
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Command="{Binding FirstPageCommand}"  
+                            Style="{StaticResource PageCommandButtonStyle}"
+                            Margin="4,0">
+                        <md:PackIcon Kind="PageFirst"/>
+                    </Button>
+                    <Button Command="{Binding PrevPageCommand}"   
+                            Style="{StaticResource PageCommandButtonStyle}">
+                        <md:PackIcon Kind="ChevronLeft"/>
+                    </Button>
+
+                    <ItemsControl ItemsSource="{Binding PageNumbers}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="10 0"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource PageNumButtonStyle}"
+                                        Command="{Binding DataContext.GoToPageCommand,
+                                                          RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Content>
+                                        <Binding Converter="{StaticResource PageIndexToDisplayConverter}" />
+                                    </Button.Content>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Button Command="{Binding NextPageCommand}"   
+                            Style="{StaticResource PageCommandButtonStyle}">
+                        <md:PackIcon Kind="ChevronRight"/>
+                    </Button>
+                    <Button Command="{Binding LastPageCommand}"   
+                            Style="{StaticResource PageCommandButtonStyle}">
+                        <md:PackIcon Kind="PageLast"/>
+                    </Button>
+                </StackPanel>
             </Grid>
             <md:DrawerHost.RightDrawerContent>
                 <Grid>
