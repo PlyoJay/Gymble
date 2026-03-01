@@ -17,7 +17,7 @@ namespace Gymble.Repositories
         Task<int> UpdateMemberAsync(Member member, CancellationToken ct = default);
         Task<int> DeleteMemberAsync(Member member, CancellationToken ct = default);
         Task<Member> GetByIdAsync(long id, CancellationToken ct = default);
-        Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default);
+        Task<PagedResult<Member>> GetPageAsync(int page = 1, int pageSize = 20, string? sortBy = null, bool desc = true, CancellationToken ct = default);
         Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default);
     }
 
@@ -79,25 +79,40 @@ namespace Gymble.Repositories
             return await conn.QuerySingleAsync<Member>(cmd);
         }
 
-        public async Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
-        {
-            using var conn = _connFactory();
+        //public async Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
+        //{
+        //    using var conn = _connFactory();
 
-            const string sql = @"
-                SELECT
-                  id,
-                  name,
-                  gender,
-                  phone_number AS PhoneNumber,
-                  birthdate,
-                  register_date AS RegisterDate,
-                  status AS Status,
-                  memo
-                FROM tb_member;
-                ";
-            var cmd = new CommandDefinition(sql, cancellationToken: ct);
-            var rows = await conn.QueryAsync<Member>(cmd);
-            return rows.AsList();
+        //    const string sql = @"
+        //        SELECT
+        //          id,
+        //          name,
+        //          gender,
+        //          phone_number AS PhoneNumber,
+        //          birthdate,
+        //          register_date AS RegisterDate,
+        //          status AS Status,
+        //          memo
+        //        FROM tb_member;
+        //        ";
+        //    var cmd = new CommandDefinition(sql, cancellationToken: ct);
+        //    var rows = await conn.QueryAsync<Member>(cmd);
+        //    return rows.AsList();
+        //}
+
+        public Task<PagedResult<Member>> GetPageAsync(
+            int page = 1, int pageSize = 20, string? sortBy = null, bool desc = true, CancellationToken ct = default)
+        {
+            var q = new MemberSearch
+            {
+                Page = page,
+                PageSize = pageSize,
+                SortBy = sortBy ?? "register_date",
+                Desc = desc
+                // NameOrPhone / RegFrom / RegTo 는 null => 필터 없음
+            };
+
+            return SearchAsync(q, ct);
         }
 
         public async Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default)
@@ -144,7 +159,15 @@ namespace Gymble.Repositories
             string sqlTotal = $"SELECT COUNT(1) FROM tb_member {whereSql};";
             // 2) rows
             string sqlRows = $@"
-                SELECT *
+                SELECT
+                  id,
+                  name,
+                  gender,
+                  phone_number AS PhoneNumber,
+                  birthdate AS BirthDate,
+                  register_date AS RegisterDate,
+                  status AS Status,
+                  memo AS Memo
                 FROM tb_member
                 {whereSql}
                 ORDER BY {orderBy} {dir}

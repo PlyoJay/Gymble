@@ -24,6 +24,8 @@ namespace Gymble.ViewModels
     {
         public string PageTitle { get; set; } = "회원 관리";
 
+        public MemberSearch CurrentSearch { get; private set; } = new();
+
         public ObservableCollection<Member> MemberList { get; } = new();
 
         [ObservableProperty]
@@ -55,6 +57,8 @@ namespace Gymble.ViewModels
             AddCommand = new RelayCommand(_ => AddMember());
             DeleteCommand = new RelayCommand(DeleteMember);
             EditCommand = new RelayCommand(EditMember);
+
+            RequestPage = async () => await UpdateMemberList();
         }
 
         private async void AddMember()
@@ -110,11 +114,12 @@ namespace Gymble.ViewModels
 
         private async Task UpdateMemberList()
         {
-            MemberList!.Clear();
+            CurrentSearch.Page = PageIndex + 1;   // 0-based → 1-based
+            CurrentSearch.PageSize = PageSize;
 
-            var members = await _memberService.GetAllAsync();
-            foreach (var item in members)            
-                MemberList.Add(item);            
+            var result = await _memberService.SearchAsync(CurrentSearch);
+
+            ApplyPage(result.Rows, result.Total, result.Page);
         }
     }
 }

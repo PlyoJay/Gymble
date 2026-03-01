@@ -5,9 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gymble.Views"
              xmlns:controls="clr-namespace:Gymble.Views.Controls"
+             xmlns:converter="clr-namespace:Gymble.Converter"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converter:RowHeightConverter x:Key="RowHeightConverter"
+                                  HeaderHeight="46"
+                                  RowCount="15"/>
+        <converter:RowNumberConverter x:Key="RowNumberConverter"/>
+    </UserControl.Resources>
 
     <md:DialogHost Identifier="MainDialog">
         <md:DrawerHost x:Name="RootDrawer" IsRightDrawerOpen="{Binding IsDrawerOpen, Mode=TwoWay}"
@@ -51,30 +59,73 @@
                 </DockPanel>
 
                             <!-- 리스트 -->
-                <DataGrid Grid.Row="1" 
-                          ItemsSource="{Binding MemberList}" 
+                <DataGrid Grid.Row="1"  x:Name="dgMembers"
+                          ItemsSource="{Binding Items}" 
                           SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
                           Style="{StaticResource DataGridStyle}"
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                          RowStyle="{StaticResource DataGridRowStyle}">
+                          RowStyle="{StaticResource DataGridRowStyle}"
+                          RowHeight="{Binding RelativeSource={RelativeSource Self},
+                                              Path=ActualHeight,
+                                              Converter={StaticResource RowHeightConverter}}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="#" Width="50">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock 
-                                        Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow},
-                                                       Path=AlternationIndex,
-                                                       Converter={StaticResource PlusOneConverter}}"
-                                        HorizontalAlignment="Center"/>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource RowNumberConverter}">
+                                                <Binding RelativeSource="{RelativeSource AncestorType=DataGridRow}" Path="AlternationIndex"/>
+                                                <Binding Path="DataContext.PageIndex" ElementName="dgMembers"/>
+                                                <Binding Path="DataContext.PageSize" ElementName="dgMembers"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="이름" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="성별" Binding="{Binding Gender, Converter={StaticResource GenderToKoreanConverter}}" Width="Auto"/>
-                        <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber, Converter={StaticResource PhoneNumberConverter}}" Width="Auto"/>
-                        <DataGridTextColumn Header="생일" Binding="{Binding BirthDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
-                        <DataGridTextColumn Header="등록일" Binding="{Binding RegisterDate, StringFormat='yyyy-MM-dd'}" Width="Auto"/>
-                        <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*"/>
+                        <DataGridTextColumn Header="이름" Binding="{Binding Name}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="성별" Binding="{Binding Gender, Converter={StaticResource GenderToKoreanConverter}}" Width="Auto">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber, Converter={StaticResource PhoneNumberConverter}}" Width="Auto">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="생일" Binding="{Binding BirthDate, StringFormat='yyyy-MM-dd'}" Width="Auto">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="등록일" Binding="{Binding RegisterDate, StringFormat='yyyy-MM-dd'}" Width="Auto">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="메모" Binding="{Binding Memo}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 

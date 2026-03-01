@@ -10,9 +10,13 @@ namespace Gymble.Services
 {
     public interface IMemberService
     {
-        Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default);
+        Task<PagedResult<Member>> GetPageAsync(
+            int page = 1,
+            int pageSize = 20,
+            string? sortBy = null,
+            bool desc = true,
+            CancellationToken ct = default);
         Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default);
-
         Task<long> AddAsync(Member member, CancellationToken ct = default);
         Task UpdateAsync(Member member, CancellationToken ct = default);
         Task DeleteAsync(Member member, CancellationToken ct = default);
@@ -25,12 +29,35 @@ namespace Gymble.Services
         public MemberService(IMemberRepository repo)
             => _repo = repo ?? throw new ArgumentNullException(nameof(repo));
 
-        public Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
-            => _repo.GetAllAsync(ct);
+        public Task<PagedResult<Member>> GetPageAsync(
+            int page = 1,
+            int pageSize = 10,
+            string? sortBy = null,
+            bool desc = true,
+            CancellationToken ct = default)
+        {
+            // ✅ 기본 목록도 SearchAsync를 재사용(필터 없는 검색)
+            var q = new MemberSearch
+            {
+                Page = page,
+                PageSize = pageSize,
+                SortBy = sortBy ?? "register_date",
+                Desc = desc
+            };
+
+            return _repo.SearchAsync(q, ct);
+        }
 
         public Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default)
         {
             q ??= new MemberSearch();
+
+            if (q.Page <= 0) q.Page = 1;
+            if (q.PageSize <= 0) q.PageSize = 10;
+
+            if (string.IsNullOrWhiteSpace(q.SortBy))
+                q.SortBy = "register_date";
+
             return _repo.SearchAsync(q, ct);
         }
 
