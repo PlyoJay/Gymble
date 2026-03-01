@@ -99,6 +99,7 @@
     <Style x:Key="PopupWindowStyle" TargetType="{x:Type Window}"
            BasedOn="{StaticResource WindowChromeStyle}">
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SizeToContent" Value="Height"/>
     </Style>
 
     <!-- 윈도우 상단 버튼 -->

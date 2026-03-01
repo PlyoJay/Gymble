@@ -9,6 +9,9 @@ namespace Gymble.ViewModels.Popup
 {
     public partial class EditMemberViewModel : ObservableObject
     {
+        public IEnumerable<MemberStatus> MemberStatusList
+            => Enum.GetValues(typeof(MemberStatus)).Cast<MemberStatus>();
+
         [ObservableProperty]
         private Member targetMember;
 
@@ -28,15 +31,13 @@ namespace Gymble.ViewModels.Popup
         private string phoneLast;
 
         [ObservableProperty]
-        private string selectedMemberState;
+        private MemberStatus selectedMemberState;
 
         [ObservableProperty]
-        private string memo;
+        private string? memo;
 
         [ObservableProperty]
         private bool isBusy;
-
-        public List<string> MemberStateList { get; set; } = new List<string>();
 
         public ICommand? CloseCommand { get; }
         public ICommand? EditCommand { get; }
@@ -62,8 +63,6 @@ namespace Gymble.ViewModels.Popup
         {
             _memberService = memberService;
 
-            InitStateComboBox();
-
             CloseCommand = new RelayCommand(w => Close(false));
             EditCommand = new RelayCommand(async _ => await EditMemberAsync(), _ => CanUpdate() && !IsBusy);
         }
@@ -78,6 +77,7 @@ namespace Gymble.ViewModels.Popup
                 PhoneNumber = member.PhoneNumber,
                 BirthDate = member.BirthDate,
                 RegisterDate = member.RegisterDate,
+                Status = member.Status,
                 Memo = member.Memo
             };
 
@@ -93,19 +93,9 @@ namespace Gymble.ViewModels.Popup
             PhoneMiddle = TargetMember.PhoneNumber!.Substring(3, 4);
             PhoneLast = TargetMember.PhoneNumber!.Substring(7, 4);
 
-            SelectedMemberState = Utils.Utils.ConvertMeberStateToKor(TargetMember.Status);
+            SelectedMemberState = TargetMember.Status;
 
             Memo = TargetMember.Memo;
-        }
-
-        private void InitStateComboBox()
-        {
-            MemberStateList.Clear();
-
-            MemberStateList.Add(StateNormal);
-            MemberStateList.Add(StateDormant);
-            MemberStateList.Add(StateSuspended);
-            MemberStateList.Add(StateWithdrawn);
         }
 
         private async Task EditMemberAsync()
@@ -129,7 +119,7 @@ namespace Gymble.ViewModels.Popup
                     Gender = SelectedGender,
                     PhoneNumber = phone,
                     BirthDate = TargetMember.BirthDate,
-                    Status = Utils.Utils.ConvertKorToMeberState(SelectedMemberState),
+                    Status = SelectedMemberState,
                     RegisterDate = TargetMember.RegisterDate,
                     Memo = Memo
                 };
@@ -159,8 +149,7 @@ namespace Gymble.ViewModels.Popup
                 && !string.IsNullOrWhiteSpace(SelectedGender)
                 && !string.IsNullOrWhiteSpace(PhoneFirst)
                 && !string.IsNullOrWhiteSpace(PhoneMiddle)
-                && !string.IsNullOrWhiteSpace(PhoneLast)
-                && !string.IsNullOrWhiteSpace(SelectedMemberState);
+                && !string.IsNullOrWhiteSpace(PhoneLast);
         }
     }
 }

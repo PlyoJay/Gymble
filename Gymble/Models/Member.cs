@@ -1,15 +1,25 @@
-﻿using System;
+﻿using Gymble.Utils;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 public enum MemberStatus
 {
-    Active = 0,     // 사용중
-    Paused = 1,    // 일시정지
-    Suspended = 2,  // 정지
-    Expired = 3   // 만료
+    [Description(Constants.MemberStateKor.Active)]
+    Active = 0,
+
+    [Description(Constants.MemberStateKor.Paused)]
+    Paused = 1,
+
+    [Description(Constants.MemberStateKor.Suspended)]
+    Suspended = 2,
+
+    [Description(Constants.MemberStateKor.Expired)]
+    Expired = 3
 }
 
 namespace Gymble.Models
