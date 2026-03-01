@@ -116,6 +116,8 @@ namespace Gymble.ViewModels
         {
             CurrentSearch.Page = PageIndex + 1;   // 0-based → 1-based
             CurrentSearch.PageSize = PageSize;
+            CurrentSearch.SortBy = "id";
+            CurrentSearch.Desc = false;
 
             var result = await _memberService.SearchAsync(CurrentSearch);
 

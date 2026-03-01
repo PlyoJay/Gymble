@@ -41,7 +41,7 @@ namespace Gymble.Services
             {
                 Page = page,
                 PageSize = pageSize,
-                SortBy = sortBy ?? "register_date",
+                SortBy = sortBy ?? "id",
                 Desc = desc
             };
 

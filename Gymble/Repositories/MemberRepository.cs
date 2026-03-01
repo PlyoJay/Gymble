@@ -79,27 +79,6 @@ namespace Gymble.Repositories
             return await conn.QuerySingleAsync<Member>(cmd);
         }
 
-        //public async Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
-        //{
-        //    using var conn = _connFactory();
-
-        //    const string sql = @"
-        //        SELECT
-        //          id,
-        //          name,
-        //          gender,
-        //          phone_number AS PhoneNumber,
-        //          birthdate,
-        //          register_date AS RegisterDate,
-        //          status AS Status,
-        //          memo
-        //        FROM tb_member;
-        //        ";
-        //    var cmd = new CommandDefinition(sql, cancellationToken: ct);
-        //    var rows = await conn.QueryAsync<Member>(cmd);
-        //    return rows.AsList();
-        //}
-
         public Task<PagedResult<Member>> GetPageAsync(
             int page = 1, int pageSize = 20, string? sortBy = null, bool desc = true, CancellationToken ct = default)
         {
@@ -126,6 +105,7 @@ namespace Gymble.Repositories
             {
                 "name" => "name",
                 "phone_number" => "phone_number",
+                "id" => "id",
                 _ => "register_date"
             };
             string dir = q.Desc ? "DESC" : "ASC";
