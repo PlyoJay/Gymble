@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gymble.Models;
+using Gymble.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -82,14 +83,22 @@ namespace Gymble.ViewModels.Popup
         public ICommand? CloseCommand { get; }
         public IAsyncRelayCommand? AddCommand { get; }
 
+        #region Fields
+
+        private readonly IProductService _productService;
+
+        #endregion
+
         #region Events
 
         public event Action<bool>? RequestClose;
 
         #endregion
 
-        public AddProductViewModel()
+        public AddProductViewModel(IProductService productService)
         {
+            _productService = productService;
+
             CloseCommand = new RelayCommand(() => Close(false));
             AddCommand = new AsyncRelayCommand(AddProductAsync, CanAdd);
         }
@@ -117,6 +126,8 @@ namespace Gymble.ViewModels.Popup
                     Status = SelectedStatus,
                     IsFavorite = IsFavorite
                 };
+
+                await _productService.AddAsync(product);
             }
             catch (Exception ex)
             {

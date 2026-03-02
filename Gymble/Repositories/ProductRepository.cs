@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Gymble.Models;
+using Gymble.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -11,7 +12,7 @@ namespace Gymble.Repositories
 {
     public interface IProductRepository
     {
-        Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default);
+        Task<IReadOnlyList<Product>> GetAllAsync(CancellationToken ct = default);
         Task<IReadOnlyList<Product>> SearchAsync(ProductSearch q, CancellationToken ct = default);
         Task<Product?> GetByIdAsync(long productId, CancellationToken ct = default);
         Task<long> InsertProductAsync(Product prodcut, CancellationToken ct = default);
@@ -26,7 +27,7 @@ namespace Gymble.Repositories
         public ProductRepository(Func<SQLiteConnection> connFactory)
             => _connFactory = connFactory;
 
-        public Task<IReadOnlyList<Member>> GetAllAsync(CancellationToken ct = default)
+        public Task<IReadOnlyList<Product>> GetAllAsync(CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
@@ -43,7 +44,12 @@ namespace Gymble.Repositories
 
         public async Task<long> InsertProductAsync(Product product, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            using var conn = _connFactory();
+
+            const string sql = SqlProductQuery.INSERT_PRODUCT;
+
+            var cmd = new CommandDefinition(sql, product, cancellationToken: ct);
+            return await conn.ExecuteScalarAsync<long>(cmd);
         }
 
 

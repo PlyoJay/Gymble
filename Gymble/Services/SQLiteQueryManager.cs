@@ -47,6 +47,11 @@ namespace Gymble.Services
                             "[total_count] INTEGER DEFAULT 0,  " +
                             "[price] INTEGER NOT NULL  " +
                         ")";
+
+        public const string INSERT_PRODUCT = @"
+            INSERT INTO tb_product (code, name, category, price, usage_type, duration_days, total_count, start_type, fixed_start_date, status, is_favorite, note, created_at, updated_at)
+            VALUES (@Code, @Name, @Category, @Price, @UsageType, @DurationDays, @TotalCount, @StartType, @FixedStartDate, @Status, @IsFavorite, @Note, @CreatedAt, @UpdatedAt);
+            SELECT last_insert_rowid();";
     }
 
     public class SqlMembershipQuery

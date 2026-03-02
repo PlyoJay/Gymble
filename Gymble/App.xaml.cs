@@ -43,10 +43,12 @@ namespace Gymble
             // Repository
             services.AddSingleton<IMemberRepository, MemberRepository>();
             services.AddSingleton<IAttendanceRepository, AttendanceRepository>();
+            services.AddSingleton<IProductRepository, ProductRepository>();
 
             // Service
             services.AddSingleton<IMemberService, MemberService>();
             //services.AddSingleton<IAttendanceService, AttendanceService>(); // 나중에 추가
+            services.AddSingleton<IProductService, ProductService>();
 
             // ViewModel
             services.AddTransient<DashboardViewModel>();
