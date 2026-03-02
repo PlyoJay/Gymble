@@ -58,5 +58,10 @@ namespace Gymble.ViewModels
             if (ok)
                 await UpdateProductList();
         }
+
+        private async Task UpdateProductList()
+        {
+            
+        }
     }
 }
