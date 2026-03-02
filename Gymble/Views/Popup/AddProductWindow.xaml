@@ -61,6 +61,25 @@
                 <Grid Margin="0 10 0 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="상품코드" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <CheckBox Content="자동 생성" 
+                              Grid.Column="1" Margin="0 0 10 0"
+                              Foreground="Black" FontWeight="Bold" FontSize="14"
+                              Style="{StaticResource MaterialDesignUserForegroundCheckBox}"
+                              IsChecked="{Binding IsAutoCode}"/>
+                    <TextBox Grid.Column="2" 
+                             Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource AddMemberWindowTextBoxStyle}"
+                             IsReadOnly="{Binding IsAutoCode}"/>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="상품 종류" 

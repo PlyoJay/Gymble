@@ -69,7 +69,8 @@
                     <StackPanel Orientation="Horizontal" Margin="0 10" MinHeight="80">
                         
                     </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridStyle}"
+                    <DataGrid ItemsSource="{StaticResource Items}" 
+                              Style="{StaticResource DataGridStyle}"
                               ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
                               RowStyle="{StaticResource DataGridRowStyle}">
                         <DataGrid.Columns>

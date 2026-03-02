@@ -26,6 +26,13 @@ namespace Gymble.ViewModels.Popup
         private string productName = string.Empty;
 
         [ObservableProperty]
+        private bool isAutoCode = false;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddCommand))]
+        private string productCode = string.Empty;
+
+        [ObservableProperty]
         private ProductCategory selectedCategory = ProductCategory.Gym;
 
         [ObservableProperty]
@@ -60,22 +67,12 @@ namespace Gymble.ViewModels.Popup
 
         #region OnPropertyChanged
 
-        partial void OnSelectedCategoryChanged(ProductCategory value)
+        partial void OnIsAutoCodeChanged(bool value)
         {
-            switch (value)
-            {
-                default:
-                case ProductCategory.Gym:
-                    break;
-                case ProductCategory.PT:
-                    break;
-                case ProductCategory.Locker:
-                    break;
-                case ProductCategory.Wear:
-                    break;
-                case ProductCategory.Etc:
-                    break;
-            }
+            OnPropertyChanged(nameof(IsCodeReadOnly));
+
+            if (value)
+                ProductCode = string.Empty;
         }
 
         #endregion
@@ -86,6 +83,9 @@ namespace Gymble.ViewModels.Popup
         #region Fields
 
         private readonly IProductService _productService;
+        private readonly IProductCodeGenerator _codeGenerator;
+
+        public bool IsCodeReadOnly => IsAutoCode;
 
         #endregion
 
@@ -95,9 +95,10 @@ namespace Gymble.ViewModels.Popup
 
         #endregion
 
-        public AddProductViewModel(IProductService productService)
+        public AddProductViewModel(IProductService productService, IProductCodeGenerator codeGenerator)
         {
             _productService = productService;
+            _codeGenerator = codeGenerator;
 
             CloseCommand = new RelayCommand(() => Close(false));
             AddCommand = new AsyncRelayCommand(AddProductAsync, CanAdd);
@@ -118,8 +119,10 @@ namespace Gymble.ViewModels.Popup
                 var product = new Product()
                 {
                     Name = ProductName,
+                    Code = IsAutoCode ? "" : ProductCode,
                     Category = SelectedCategory,
                     UsageType = SelectedUsageType,
+                    UsageValue = UsageValue,
                     Price = Price,
                     StartType = SelectedStartType,
                     FixedStartDate = FixedDateTime,
@@ -150,9 +153,11 @@ namespace Gymble.ViewModels.Popup
 
         private bool CanAdd()
         {
-            return !string.IsNullOrEmpty(ProductName)
-                && UsageValue >= 0
-                && Price >= 0;
+            return !string.IsNullOrWhiteSpace(ProductName)
+                && (IsAutoCode || !string.IsNullOrWhiteSpace(ProductCode))
+                && UsageValue > 0
+                && Price > 0
+                && !IsBusy;
         }
 
         #endregion 

@@ -73,8 +73,9 @@ namespace Gymble.Models
         public ProductCategory Category { get; set; }
         public int Price { get; set; }
         public ProductUsageType UsageType { get; set; }
-        public int? DurationDays { get; set; } // Period
-        public int? TotalCount { get; set; }   // Count
+        //public int? DurationDays { get; set; } // Period
+        //public int? TotalCount { get; set; }   // Count
+        public int? UsageValue { get; set; } // 사용자가 입력하는 값 (기간/횟수)
         public ProductStartType StartType { get; set; }
         public DateTime? FixedStartDate { get; set; }
         public ProductStatus Status { get; set; }
@@ -111,6 +112,8 @@ namespace Gymble.Models
         public int? MinPrice { get; set; }
         public int? MaxPrice { get; set; }
         public ProductStartType? StartType { get; set; }
+        public string SortBy { get; set; } = "register_date"; // name, register_date, phone_number
+        public bool Desc { get; set; } = true;
 
         public int? Take { get; set; }
         public int? Skip { get; set; }

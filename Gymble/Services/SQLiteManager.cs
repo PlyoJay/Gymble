@@ -66,6 +66,9 @@ namespace Gymble.Services
             cmd.CommandText = SqlProductQuery.CREATE_PRODUCT_TABLE;
             cmd.ExecuteNonQuery();
 
+            cmd.CommandText = SqlProductQuery.CREATE_CODE_SEQUENCE_TABLE;
+            cmd.ExecuteNonQuery();
+
             cmd.CommandText = SqlMembershipQuery.CREATE_MEMBERSHIP_TABLE;
             cmd.ExecuteNonQuery();
 

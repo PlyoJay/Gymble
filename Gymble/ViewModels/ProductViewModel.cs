@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Gymble.Models;
+using Gymble.Services;
 using Gymble.ViewModels.Popup;
 using Gymble.Views.Popup;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,18 +20,30 @@ namespace Gymble.ViewModels
     {
         public string PageTitle { get; set; } = "상품 관리";
 
+        public ProductSearch CurrnetSearch { get; private set; } = new();
+
+        public ObservableCollection<Product> Items { get; } = new();
+
         public ICommand? SearchCommand { get; }
         public ICommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
         public ICommand? StopCommand { get; }
         public ICommand? DeleteCommand { get; }
 
-        public ProductViewModel()
+        #region Fields
+
+        private readonly IProductService _productService;
+
+        #endregion
+
+        public ProductViewModel(IProductService productService)
         {
+            _productService = productService;
+
             AddCommand = new RelayCommand(AddProduct);
         }
 
-        private void AddProduct()
+        private async void AddProduct()
         {
             var vm = App.Services.GetRequiredService<AddProductViewModel>();
 
@@ -39,6 +54,9 @@ namespace Gymble.ViewModels
             };
 
             var ok = win.ShowDialog() == true;
+
+            if (ok)
+                await UpdateProductList();
         }
     }
 }

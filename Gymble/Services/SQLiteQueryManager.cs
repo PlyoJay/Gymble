@@ -38,20 +38,32 @@ namespace Gymble.Services
         public static string TOTAL_COUNT = "total_count";
         public static string PRICE = "price";
 
-        public static string CREATE_PRODUCT_TABLE = "CREATE TABLE IF NOT EXISTS [tb_product] " +
-                        "(" +
-                            "[id] INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                            "[name] TEXT NOT NULL,  " +
-                            "[type] TEXT NOT NULL CHECK(type IN ('기간제', '횟수제')),  " +
-                            "[duration_days] INTEGER DEFAULT 0,  " +
-                            "[total_count] INTEGER DEFAULT 0,  " +
-                            "[price] INTEGER NOT NULL  " +
-                        ")";
+        public static string CREATE_PRODUCT_TABLE = @"
+            CREATE TABLE IF NOT EXISTS tb_product (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code TEXT NOT NULL,
+                name TEXT NOT NULL,
+                category INTEGER NOT NULL,
+                price INTEGER NOT NULL,
+                usage_type INTEGER NOT NULL,
+                usage_value INTEGER NOT NULL,
+                start_type INTEGER NOT NULL,
+                fixed_start_date TEXT,
+                status INTEGER NOT NULL,
+                is_favorite INTEGER NOT NULL DEFAULT 0,
+                note TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+            ";
 
         public const string INSERT_PRODUCT = @"
-            INSERT INTO tb_product (code, name, category, price, usage_type, duration_days, total_count, start_type, fixed_start_date, status, is_favorite, note, created_at, updated_at)
-            VALUES (@Code, @Name, @Category, @Price, @UsageType, @DurationDays, @TotalCount, @StartType, @FixedStartDate, @Status, @IsFavorite, @Note, @CreatedAt, @UpdatedAt);
+            INSERT INTO tb_product (code, name, category, price, usage_type, usage_value, start_type, fixed_start_date, status, is_favorite, note, created_at, updated_at)
+            VALUES (@Code, @Name, @Category, @Price, @UsageType, @UsageValue, @StartType, @FixedStartDate, @Status, @IsFavorite, @Note, @CreatedAt, @UpdatedAt);
             SELECT last_insert_rowid();";
+
+        public const string CREATE_CODE_SEQUENCE_TABLE = @"
+            CREATE TABLE IF NOT EXISTS tb_code_sequence (prefix TEXT PRIMARY KEY, last_value INTEGER NOT NULL);";
     }
 
     public class SqlMembershipQuery
