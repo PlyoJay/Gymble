@@ -4,10 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gymble.Views"
+             xmlns:converter="clr-namespace:Gymble.Converter"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1080"
              Background="White">
+
+    <UserControl.Resources>
+        <converter:RowHeightConverter x:Key="RowHeightConverter"
+                              HeaderHeight="46"
+                              RowCount="15"/>
+        <converter:RowNumberConverter x:Key="RowNumberConverter"/>
+    </UserControl.Resources>
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -62,28 +72,74 @@
             <TabItem Header="헬스권"
                      MinWidth="150"
                      Style="{StaticResource GymbleTabItemStyle}">
-                <StackPanel Margin="10">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <TextBlock Text="자주 쓰는 상품" 
                                Style="{StaticResource HeaderKeyTextBlockStyle}"
-                               Foreground="Black"/>
-                    <StackPanel Orientation="Horizontal" Margin="0 10" MinHeight="80">
+                               Foreground="Black" VerticalAlignment="Top"/>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
                         
                     </StackPanel>
-                    <DataGrid ItemsSource="{StaticResource Items}" 
+                    <DataGrid Grid.Row="2" Margin="0 10 0 0"
+                              ItemsSource="{Binding Items}" 
+                              SelectedItem="{Binding SelectedProduxt, Mode=TwoWay}"
                               Style="{StaticResource DataGridStyle}"
                               ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                              RowStyle="{StaticResource DataGridRowStyle}">
+                              RowStyle="{StaticResource DataGridRowStyle}"
+                              RowHeight="{Binding RelativeSource={RelativeSource Self},
+                                                  Path=ActualHeight,
+                                                  Converter={StaticResource RowHeightConverter}}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="상품명" Width="Auto"/>
-                            <DataGridTextColumn Header="기간" Width="Auto"/>
-                            <DataGridTextColumn Header="가격" Width="Auto"/>
-                            <DataGridTextColumn Header="시작 기준" Width="Auto"/>
-                            <DataGridTextColumn Header="상태" Width="Auto"/>
-                            <DataGridTextColumn Header="최종 수정일" Width="Auto"/>
-                            
+                            <DataGridTextColumn Header="상품명" Binding="{Binding Name}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="기간/횟수" Binding="{Binding UsageValue}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="가격" Binding="{Binding Price}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="시작 기준" Binding="{Binding StartType}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="상태" Binding="{Binding Status}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="최종 수정일" Binding="{Binding UpdatedAt}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
                         </DataGrid.Columns>
                     </DataGrid>
-                </StackPanel>
+                </Grid>
             </TabItem>
             <TabItem Header="PT"
                      MinWidth="150"

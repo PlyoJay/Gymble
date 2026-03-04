@@ -122,7 +122,7 @@ namespace Gymble.ViewModels.Popup
                     Code = IsAutoCode ? "" : ProductCode,
                     Category = SelectedCategory,
                     UsageType = SelectedUsageType,
-                    UsageValue = UsageValue,
+                    UsageValue = this.UsageValue,
                     Price = Price,
                     StartType = SelectedStartType,
                     FixedStartDate = FixedDateTime,

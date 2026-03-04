@@ -106,7 +106,21 @@ namespace Gymble.Repositories
             string whereSql = where.Count == 0 ? "" : "WHERE " + string.Join(" AND ", where);
 
             string sql = $@"
-                SELECT *
+                SELECT
+                    id,
+                    code,
+                    name,
+                    category,
+                    price,                    
+                    usage_type AS UsageType,
+                    usage_value AS UsageValue,
+                    start_type AS StartType,
+                    fixed_start_date AS FixedStartDate,
+                    status,
+                    is_favorite AS IsFavorite,
+                    note,
+                    created_at AS CreatedAt,
+                    updated_at AS UpdatedAt
                 FROM tb_product
                 {whereSql}
                 ORDER BY {orderBy} {dir};";

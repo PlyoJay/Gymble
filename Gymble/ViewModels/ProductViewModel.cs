@@ -16,13 +16,19 @@ using System.Windows.Input;
 
 namespace Gymble.ViewModels
 {
-    public class ProductViewModel : ObservableObject
+    public partial class ProductViewModel : ObservableObject
     {
         public string PageTitle { get; set; } = "상품 관리";
 
         public ProductSearch CurrnetSearch { get; private set; } = new();
 
         public ObservableCollection<Product> Items { get; } = new();
+
+        [ObservableProperty]
+        private Product selectedProduct;
+
+        [ObservableProperty]
+        private int totalCount;
 
         public ICommand? SearchCommand { get; }
         public ICommand? AddCommand { get; }
@@ -36,11 +42,16 @@ namespace Gymble.ViewModels
 
         #endregion
 
+        public Action? RequestPage { get; set; }
+
         public ProductViewModel(IProductService productService)
         {
             _productService = productService;
 
             AddCommand = new RelayCommand(AddProduct);
+
+            RequestPage = async () => await UpdateProductList();
+            RequestPage?.Invoke();
         }
 
         private async void AddProduct()
@@ -61,7 +72,15 @@ namespace Gymble.ViewModels
 
         private async Task UpdateProductList()
         {
-            
+            CurrnetSearch.SortBy = "Id";
+            CurrnetSearch.Desc = false;
+
+            var result = await _productService.SearchAsync(CurrnetSearch);
+
+            Items.Clear();
+            foreach (var item in result) Items.Add(item);
+
+            TotalCount = Math.Max(0, result.Count);
         }
     }
 }
