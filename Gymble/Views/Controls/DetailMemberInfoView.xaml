@@ -20,7 +20,7 @@
                     <ContentControl Template="{StaticResource StatusControlTemplate}" 
                                     Width="80" Height="25" Margin="20 0"
                                     Content="{Binding ElementName=root, Path=Member.Status,
-                                                      Converter={StaticResource MemberStatusToBadgeConverter}}"
+                                                      Converter={StaticResource EnumToBadgeConverter}}"
                                     ContentTemplate="{x:Null}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0 10">

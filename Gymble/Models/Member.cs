@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 public enum MemberStatus
 {
-    [Description(Constants.MemberStateKor.Active)]
+    [Description(Constants.MemberStatusKor.Active)]
     Active = 0,
 
-    [Description(Constants.MemberStateKor.Paused)]
+    [Description(Constants.MemberStatusKor.Paused)]
     Paused = 1,
 
-    [Description(Constants.MemberStateKor.Suspended)]
+    [Description(Constants.MemberStatusKor.Suspended)]
     Suspended = 2,
 
-    [Description(Constants.MemberStateKor.Expired)]
+    [Description(Constants.MemberStatusKor.Expired)]
     Expired = 3
 }
 

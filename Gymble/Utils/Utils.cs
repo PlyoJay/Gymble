@@ -15,13 +15,13 @@ namespace Gymble.Utils
             switch (stateKor)
             {
                 default:
-                case Constants.MemberStateKor.Active:
+                case Constants.MemberStatusKor.Active:
                     return MemberStatus.Active;
-                case Constants.MemberStateKor.Paused:
+                case Constants.MemberStatusKor.Paused:
                     return MemberStatus.Paused;
-                case Constants.MemberStateKor.Suspended:
+                case Constants.MemberStatusKor.Suspended:
                     return MemberStatus.Suspended;
-                case Constants.MemberStateKor.Expired:
+                case Constants.MemberStatusKor.Expired:
                     return MemberStatus.Expired;
             }
         }
@@ -32,13 +32,13 @@ namespace Gymble.Utils
             {
                 default:
                 case MemberStatus.Active:
-                    return Constants.MemberStateKor.Active;
+                    return Constants.MemberStatusKor.Active;
                 case MemberStatus.Paused:
-                    return Constants.MemberStateKor.Paused;
+                    return Constants.MemberStatusKor.Paused;
                 case MemberStatus.Suspended:
-                    return Constants.MemberStateKor.Suspended;
+                    return Constants.MemberStatusKor.Suspended;
                 case MemberStatus.Expired:
-                    return Constants.MemberStateKor.Expired;
+                    return Constants.MemberStatusKor.Expired;
             }
         }
     }

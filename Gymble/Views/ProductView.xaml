@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <converter:RowHeightConverter x:Key="RowHeightConverter"
                               HeaderHeight="46"
-                              RowCount="15"/>
+                              RowCount="10"/>
         <converter:RowNumberConverter x:Key="RowNumberConverter"/>
     </UserControl.Resources>
 
@@ -52,10 +52,6 @@
                 <ComboBox Width="150" Height="40"
                           Style="{StaticResource ComboBoxStyle}"
                           Margin="0 0 20 0"/>
-
-                <TextBlock Text="판매중만 보기:" Style="{StaticResource GeneralKeyTextBlockStyle}"
-                           Margin="0 0 10 0"/>
-                <ToggleButton IsChecked="True"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right"
                         HorizontalAlignment="Right">
@@ -94,49 +90,78 @@
                                                   Path=ActualHeight,
                                                   Converter={StaticResource RowHeightConverter}}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="상품명" Binding="{Binding Name}">
+                            <DataGridTextColumn Header="상품코드" Binding="{Binding Code}" Width="Auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="4 0"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="기간/횟수" Binding="{Binding UsageValue}">
+                            <DataGridTextColumn Header="상품명" Binding="{Binding Name}" Width="Auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="4 0"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="가격" Binding="{Binding Price}">
+                            <DataGridTextColumn Header="기간/횟수" Width="Auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="4 0"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn.Binding>
+                                    <MultiBinding Converter="{StaticResource UsageValueConverter}">
+                                        <Binding Path="UsageType"/>
+                                        <Binding Path="UsageValue"/>
+                                    </MultiBinding>
+                                </DataGridTextColumn.Binding>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="시작 기준" Binding="{Binding StartType}">
+                            <DataGridTextColumn Header="가격" Binding="{Binding Price, Converter={StaticResource AddUnitConverter}, ConverterParameter=원}" Width="Auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="4 0"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="상태" Binding="{Binding Status}">
+                            <DataGridTextColumn Header="시작 기준" Binding="{Binding StartType, Converter={StaticResource EnumDescriptionConverter}}" Width="Auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="4 0"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="최종 수정일" Binding="{Binding UpdatedAt}">
+                            <DataGridTemplateColumn Header="상태" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Template="{StaticResource StatusControlTemplate}"
+                                                        Width="80" Height="25" Margin="4 0"
+                                                        Content="{Binding Status, Converter={StaticResource EnumToBadgeConverter}}"
+                                                        ContentTemplate="{x:Null}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="최종 수정일" Binding="{Binding UpdatedAt, StringFormat='yyyy-MM-dd'}" Width="Auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="4 0"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-
+                            <DataGridTextColumn Header="비고" Binding="{Binding Note}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="4 0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
