@@ -129,6 +129,13 @@
         </Style.Triggers>
     </Style>
 
+    <!-- Border -->
+    <Style x:Key="DefaultBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="{StaticResource DefaultBorderBrushColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="12"/>
+    </Style>
+
     <!-- TextBlock -->
     <Style x:Key="TitleTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="24"/>
@@ -286,6 +293,32 @@
         </Style.Triggers>
     </Style>
 
+    <!-- RadioButton -->
+
+    <Style x:Key="RadioButtonTabStyle" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Background" Value="{StaticResource TabUnselectedBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextElement.FontFamily="{StaticResource Pretendard.SemiBold}"
+                                          TextElement.FontSize="{TemplateBinding FontSize}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Background" Value="{StaticResource TabSelectedBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <!-- TabControl -->
 
     <Style x:Key="GymbleTabItemStyle" TargetType="{x:Type TabItem}">
