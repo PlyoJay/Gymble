@@ -140,7 +140,7 @@
                         <md:PackIcon Kind="ChevronLeft"/>
                     </Button>
 
-                    <ItemsControl ItemsSource="{Binding PageNumbers}">
+                    <ItemsControl ItemsSource="{Binding PageNumbers}" Cursor="">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="10 0"/>

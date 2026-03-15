@@ -1,12 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Gymble.Converter
-{    
-    public class EnumDescriptionConverter : IValueConverter
+{
+    public class EnumToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

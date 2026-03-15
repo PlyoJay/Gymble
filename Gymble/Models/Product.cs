@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 public enum ProductUsageType
 {
+    [Description("전체")]
+    All,
     [Description("기간제")]
     Period,
     [Description("횟수제")]
@@ -104,6 +106,7 @@ namespace Gymble.Models
     public sealed class ProductSearch
     {
         public string? NameOrCode { get; set; }
+        public ProductCategory SelectedCategory { get; set; }
         public List<ProductStatus>? Statuses { get; set; }
         public ProductUsageType? UsageType { get; set; }
         public int? MinUsageValue { get; set; }

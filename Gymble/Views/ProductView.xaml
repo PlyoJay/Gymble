@@ -107,12 +107,32 @@
                             <StackPanel Margin="10 0 0 0">
                                 <TextBlock Text="상태" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
                                 <StackPanel Orientation="Horizontal" Height="35">
-                                    <CheckBox IsChecked="True" Content="판매중"
-                                              Style="{StaticResource GeneralCheckBoxStyle}"/>
-                                    <CheckBox IsChecked="True" Content="판매중지" Margin="12 0"
-                                              Style="{StaticResource GeneralCheckBoxStyle}"/>
-                                    <CheckBox IsChecked="True" Content="단종"
-                                              Style="{StaticResource GeneralCheckBoxStyle}"/>
+                                    <ItemsControl ItemsSource="{Binding StatusFilters}"
+                                                  AlternationCount="3">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style TargetType="ContentPresenter">
+                                                <Setter Property="Margin" Value="0"/>
+
+                                                <Style.Triggers>
+                                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                                        <Setter Property="Margin" Value="12 0"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ItemsControl.ItemContainerStyle>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Content="{Binding Name}"
+                                                          IsChecked="{Binding IsChecked}"
+                                                          Style="{StaticResource GeneralCheckBoxStyle}"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </StackPanel>
                             </StackPanel>
                             <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
@@ -120,16 +140,28 @@
                                 <TextBlock Text="이용유형" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
                                 <StackPanel Orientation="Horizontal" Height="35">
                                     <RadioButton GroupName="usageType" Content="전체" 
-                                                 Style="{StaticResource GeneralRadioButtonStyle}"/>
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedUsageType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=All}" Cursor="Hand"/>
                                     <RadioButton GroupName="usageType" Content="기간제" Margin="12 0"
-                                                 Style="{StaticResource GeneralRadioButtonStyle}" Cursor="Hand"/>
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedUsageType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=Period}"/>
                                     <RadioButton GroupName="usageType" Content="횟수제" 
-                                                 Style="{StaticResource GeneralRadioButtonStyle}"/>
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedUsageType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=Count}"/>
                                 </StackPanel>
                             </StackPanel>
                             <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <StackPanel>
-                                <TextBlock Text="기간/횟수" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
+                                <TextBlock Text="기간(일)/횟수" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Grid>
                                         <TextBox x:Name="tbMinUsageValueInput" Width="100" Height="35"
@@ -236,7 +268,8 @@
                                         Width="100" Margin="10 0"/>
                                 <Button Content="검색" 
                                         Style="{StaticResource BaseButtonStyle}"
-                                        Width="100"/>
+                                        Width="100"
+                                        Command="{Binding SearchCommand}"/>
                             </StackPanel>
                         </DockPanel>
                     </Grid>
@@ -244,126 +277,90 @@
             </Grid>
         </Border>
 
-        <TabControl Style="{StaticResource HeaderLeftAlignedTabControlStyle}" 
-                    Grid.Row="1" Visibility="Collapsed"
-                    AlternationCount="1000000">
-            <TabItem Header="헬스권"
-                     MinWidth="150"
-                     Style="{StaticResource GymbleTabItemStyle}">
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="80"/>
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="자주 쓰는 상품" 
-                               Style="{StaticResource HeaderKeyTextBlockStyle}"
-                               Foreground="Black" VerticalAlignment="Top"/>
-                    <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        
-                    </StackPanel>
-                    <DataGrid Grid.Row="2" Margin="0 10 0 0"
-                              ItemsSource="{Binding Items}" 
-                              SelectedItem="{Binding SelectedProduxt, Mode=TwoWay}"
-                              Style="{StaticResource DataGridStyle}"
-                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                              RowStyle="{StaticResource DataGridRowStyle}"
-                              RowHeight="{Binding RelativeSource={RelativeSource Self},
-                                                  Path=ActualHeight,
-                                                  Converter={StaticResource RowHeightConverter}}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="상품코드" Binding="{Binding Code}" Width="Auto">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="4 0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="상품명" Binding="{Binding Name}" Width="Auto">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="4 0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="기간/횟수" Width="Auto">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="4 0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                                <DataGridTextColumn.Binding>
-                                    <MultiBinding Converter="{StaticResource UsageValueConverter}">
-                                        <Binding Path="UsageType"/>
-                                        <Binding Path="UsageValue"/>
-                                    </MultiBinding>
-                                </DataGridTextColumn.Binding>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="가격" Binding="{Binding Price, Converter={StaticResource AddUnitConverter}, ConverterParameter=원}" Width="Auto">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="4 0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="시작 기준" Binding="{Binding StartType, Converter={StaticResource EnumDescriptionConverter}}" Width="Auto">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="4 0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTemplateColumn Header="상태" Width="Auto">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ContentControl Template="{StaticResource StatusControlTemplate}"
-                                                        Width="80" Height="25" Margin="4 0"
-                                                        Content="{Binding Status, Converter={StaticResource EnumToBadgeConverter}}"
-                                                        ContentTemplate="{x:Null}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="최종 수정일" Binding="{Binding UpdatedAt, StringFormat='yyyy-MM-dd'}" Width="Auto">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="4 0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="비고" Binding="{Binding Note}">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="4 0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
-            <TabItem Header="PT"
-                     MinWidth="150"
-                     Style="{StaticResource GymbleTabItemStyle}">
-
-            </TabItem>
-            <TabItem Header="락커/운동복"
-                     MinWidth="150"
-                     Style="{StaticResource GymbleTabItemStyle}">
-
-            </TabItem>
-            <TabItem Header="기타"
-                     MinWidth="150"
-                     Style="{StaticResource GymbleTabItemStyle}">
-
-            </TabItem>
-        </TabControl>
+        <DataGrid Grid.Row="2" Margin="10 10 10 0"
+                  ItemsSource="{Binding Items}" 
+                  SelectedItem="{Binding SelectedProduxt, Mode=TwoWay}"
+                  Style="{StaticResource DataGridStyle}"
+                  ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                  RowStyle="{StaticResource DataGridRowStyle}"
+                  RowHeight="{Binding RelativeSource={RelativeSource Self},
+                              Path=ActualHeight,
+                              Converter={StaticResource RowHeightConverter}}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="상품코드" Binding="{Binding Code}" Width="Auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="4 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="상품명" Binding="{Binding Name}" Width="Auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="4 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="기간/횟수" Width="Auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="4 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding Converter="{StaticResource UsageValueConverter}">
+                            <Binding Path="UsageType"/>
+                            <Binding Path="UsageValue"/>
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="가격" Binding="{Binding Price, Converter={StaticResource AddUnitConverter}, ConverterParameter=원}" Width="Auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="4 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="시작 기준" Binding="{Binding StartType, Converter={StaticResource EnumDescriptionConverter}}" Width="Auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="4 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="상태" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentControl Template="{StaticResource StatusControlTemplate}"
+                                    Width="80" Height="25" Margin="4 0"
+                                    Content="{Binding Status, Converter={StaticResource EnumToBadgeConverter}}"
+                                    ContentTemplate="{x:Null}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="최종 수정일" Binding="{Binding UpdatedAt, StringFormat='yyyy-MM-dd'}" Width="Auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="4 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="비고" Binding="{Binding Note}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="4 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <DockPanel Grid.Row="3" Margin="10">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">

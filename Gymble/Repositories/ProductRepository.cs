@@ -61,6 +61,9 @@ namespace Gymble.Repositories
                 p.Add("NameOrCode", $"%{q.NameOrCode}%");
             }
 
+            where.Add("category = @SelectedCategory");
+            p.Add("SelectedCategory", q.SelectedCategory);
+
             if (q.Statuses is { Count: > 0 })
             {
                 where.Add("status IN (@Statuses)"); // <- SQLite에서 안전

@@ -19,6 +19,7 @@
             <converter:PageIndexToDisplayConverter x:Key="PageIndexToDisplayConverter"/>
             <converter:AddUnitConverter x:Key="AddUnitConverter"/>
             <converter:UsageValueConverter x:Key="UsageValueConverter"/>
+            <converter:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
 
             <!-- ViewModel -> View 연결 -->
             <DataTemplate DataType="{x:Type vms:DashboardViewModel}">

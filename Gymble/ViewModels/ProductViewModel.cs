@@ -16,11 +16,31 @@ using System.Windows.Input;
 
 namespace Gymble.ViewModels
 {
+    public class StatusItem
+    {
+        public ProductStatus Status { get; set; }
+        public string Name { get; set; }
+        public bool IsChecked { get; set; }
+    }
+
     public partial class ProductViewModel : ObservableObject
     {
         public string PageTitle { get; set; } = "상품 관리";
 
         public ProductSearch CurrnetSearch { get; private set; } = new();
+
+        public ObservableCollection<StatusItem> StatusFilters { get; } =
+        [
+            new StatusItem { Status = ProductStatus.OnSale, Name="판매중"},
+            new StatusItem { Status = ProductStatus.Stopped, Name="중지"},
+            new StatusItem { Status = ProductStatus.Discontinued, Name="단종"}
+        ];
+
+        public IEnumerable<ProductUsageType> UsageTypes
+            => Enum.GetValues(typeof(ProductUsageType)).Cast<ProductUsageType>();
+
+        [ObservableProperty]
+        private ProductUsageType selectedUsageType;
 
         public ObservableCollection<Product> Items { get; } = new();
 
@@ -30,6 +50,7 @@ namespace Gymble.ViewModels
         [ObservableProperty]
         private int totalCount;
 
+        public ICommand? AddFilterCommand { get; }
         public ICommand? SearchCommand { get; }
         public ICommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
@@ -48,10 +69,29 @@ namespace Gymble.ViewModels
         {
             _productService = productService;
 
+            SearchCommand = new RelayCommand(SearchProduct);
+
             AddCommand = new RelayCommand(AddProduct);
 
             RequestPage = async () => await UpdateProductList();
             RequestPage?.Invoke();
+        }
+
+        public async void SearchProduct()
+        {
+            if (CurrnetSearch == null) CurrnetSearch = new();
+            if (CurrnetSearch.Statuses == null) CurrnetSearch.Statuses = new List<ProductStatus>();
+            if (CurrnetSearch.Statuses.Any()) CurrnetSearch.Statuses.Clear();
+
+            CurrnetSearch.SelectedCategory = ProductCategory.Gym;
+
+            foreach (var status in StatusFilters.Where(status => status.IsChecked))
+            {
+                CurrnetSearch?.Statuses?.Add(status.Status);
+            }
+
+            CurrnetSearch.UsageType = SelectedUsageType;
+            await UpdateProductList();
         }
 
         private async void AddProduct()
