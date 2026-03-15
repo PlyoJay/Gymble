@@ -79,6 +79,12 @@
     <SolidColorBrush x:Key="PageButtonHoverBgBrush" Color="#E8EFFC"/>
     <SolidColorBrush x:Key="PageButtonSelectedBgBrush" Color="#B2DCFF"/>
 
+    <SolidColorBrush x:Key="ToggleBgBrush" Color="#FAFAFA"/>
+    <SolidColorBrush x:Key="ToggleBorderBrush" Color="#DDDDDD"/>
+    <SolidColorBrush x:Key="ToggleFgBrush" Color="#000000"/>
+    <SolidColorBrush x:Key="ToggleSelectedBrush" Color="#2E66E1"/>
+    <SolidColorBrush x:Key="RadioHoverBrush" Color="#E8EFFC"/>
+
     <!-- 윈도우 -->
     <Style x:Key="WindowChromeStyle" TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{StaticResource ApplicationBgColor}"/>
@@ -318,7 +324,105 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="GeneralRadioButtonStyle" TargetType="{x:Type RadioButton}">
+        <Setter Property="Foreground" Value="{StaticResource ToggleFgBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <Grid Width="18" Height="18" Margin="0,0,4,0">
+                            <Ellipse x:Name="OuterDot" Fill="{StaticResource ToggleBgBrush}"
+                                     StrokeThickness="1"
+                                     Stroke="{StaticResource ToggleBorderBrush}"/>
+                            <Ellipse x:Name="InnerDot"
+                                     Width="10" Height="10"
+                                     Fill="White"
+                                     Opacity="0"/>
+                        </Grid>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextElement.FontFamily="{StaticResource Pretendard.Medium}"
+                                          TextElement.FontSize="{TemplateBinding FontSize}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="OuterDot" Property="Fill" Value="{StaticResource ToggleSelectedBrush}"/>
+                            <Setter TargetName="OuterDot" Property="StrokeThickness" Value="0"/>
+                            <Setter TargetName="InnerDot" Property="Opacity" Value="1"/>
+                        </Trigger>
+
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="InnerDot" Property="Opacity" Value="0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- CheckBox -->
+
+    <Style x:Key="GeneralCheckBoxStyle" TargetType="{x:Type CheckBox}">
+        <Setter Property="Foreground" Value="{StaticResource ToggleFgBrush}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                SnapsToDevicePixels="True">
+                        <Border x:Name="Box"
+                                Width="18"
+                                Height="18"
+                                CornerRadius="3"
+                                Background="{StaticResource ToggleBgBrush}"
+                                BorderBrush="{StaticResource ToggleBorderBrush}"
+                                BorderThickness="1"
+                                VerticalAlignment="Center">
+                            <Path x:Name="CheckMark"
+                                  Width="10"
+                                  Height="7"
+                                  Stretch="Fill"
+                                  Stroke="White"
+                                  StrokeThickness="2"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Data="M 1 4 L 4 7 L 9 1"/>
+                        </Border>
+
+                        <ContentPresenter Margin="6,0,0,0" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True"
+                                          TextElement.FontFamily="{StaticResource Pretendard.Medium}"
+                                          TextElement.FontSize="{TemplateBinding FontSize}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{StaticResource ToggleSelectedBrush}"/>
+                            <Setter TargetName="Box" Property="BorderThickness" Value="0"/>
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- TabControl -->
 
     <Style x:Key="GymbleTabItemStyle" TargetType="{x:Type TabItem}">
@@ -682,6 +786,24 @@
                 ContentTemplate="{TemplateBinding ContentTemplate}"
                 ContentStringFormat="{TemplateBinding ContentStringFormat}"
                 Margin="{TemplateBinding Padding}"/>
+        </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ChipTemplate" TargetType="{x:Type ContentControl}">
+        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{StaticResource DefaultBorderBrushColor}" 
+                Width="Auto" MinWidth="50"
+                Height="25"
+                BorderThickness="1"
+                CornerRadius="12">
+            <ContentPresenter 
+                Content="{TemplateBinding Content}"
+                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                TextElement.FontFamily="{StaticResource Pretendard.Medium}"
+                TextElement.FontSize="{TemplateBinding FontSize}"
+                TextElement.Foreground="{TemplateBinding Foreground}"/>
         </Border>
     </ControlTemplate>
 

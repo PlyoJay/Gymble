@@ -21,7 +21,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="250"/>
+            <RowDefinition Height="210"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
@@ -47,12 +47,6 @@
                 <Button Content="검색" Command="{Binding SearchCommand}" 
                         Margin="0 0 20 0"
                         Style="{StaticResource BaseButtonStyle}"/>
-
-                <TextBlock Text="상태:" Style="{StaticResource GeneralKeyTextBlockStyle}"
-                           Margin="0 0 10 0"/>
-                <ComboBox Width="150" Height="40"
-                          Style="{StaticResource ComboBoxStyle}"
-                          Margin="0 0 20 0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right"
                         HorizontalAlignment="Right">
@@ -107,24 +101,30 @@
                     <Grid Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
-                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal">
-                            <StackPanel>
+                            <StackPanel Margin="10 0 0 0">
                                 <TextBlock Text="상태" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="True" Content="판매중"/>
-                                    <CheckBox IsChecked="True" Content="판매중지" Margin="10 0"/>
-                                    <CheckBox IsChecked="True" Content="단종"/>
+                                <StackPanel Orientation="Horizontal" Height="35">
+                                    <CheckBox IsChecked="True" Content="판매중"
+                                              Style="{StaticResource GeneralCheckBoxStyle}"/>
+                                    <CheckBox IsChecked="True" Content="판매중지" Margin="12 0"
+                                              Style="{StaticResource GeneralCheckBoxStyle}"/>
+                                    <CheckBox IsChecked="True" Content="단종"
+                                              Style="{StaticResource GeneralCheckBoxStyle}"/>
                                 </StackPanel>
                             </StackPanel>
                             <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <StackPanel>
                                 <TextBlock Text="이용유형" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <RadioButton GroupName="usageType" Content="전체"/>
-                                    <RadioButton GroupName="usageType" Content="기간제"/>
-                                    <RadioButton GroupName="usageType" Content="횟수제"/>
+                                <StackPanel Orientation="Horizontal" Height="35">
+                                    <RadioButton GroupName="usageType" Content="전체" 
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"/>
+                                    <RadioButton GroupName="usageType" Content="기간제" Margin="12 0"
+                                                 Style="{StaticResource GeneralRadioButtonStyle}" Cursor="Hand"/>
+                                    <RadioButton GroupName="usageType" Content="횟수제" 
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"/>
                                 </StackPanel>
                             </StackPanel>
                             <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
@@ -133,7 +133,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Grid>
                                         <TextBox x:Name="tbMinUsageValueInput" Width="100" Height="35"
-                                                Style="{StaticResource SearchTextBoxStyle}"
+                                                 Style="{StaticResource SearchTextBoxStyle}"
                                                  FontSize="16"/>
                                         <TextBlock Width="100" Height="35" Text="최소" Padding="10 8">
                                             <TextBlock.Style>
@@ -149,7 +149,7 @@
                                             </TextBlock.Style>
                                         </TextBlock>
                                     </Grid>
-                                    <TextBlock Text="~" Style="{StaticResource HeaderKeyTextBlockStyle}" VerticalAlignment="Center" Margin="10 "/>
+                                    <TextBlock Text="~" Style="{StaticResource HeaderKeyTextBlockStyle}" VerticalAlignment="Center" Margin="10 0"/>
                                     <Grid>
                                         <TextBox x:Name="tbMaxUsageValueInput" Width="100" Height="35"
                                                 Style="{StaticResource SearchTextBoxStyle}"
@@ -172,7 +172,7 @@
                             </StackPanel>
                             <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <StackPanel>
-                                <TextBlock Text="가격" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
+                                <TextBlock Text="가격 (₩)" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Grid>
                                         <TextBox x:Name="tbMinPriceInput" Width="100" Height="35"
@@ -195,8 +195,8 @@
                                     <TextBlock Text="~" Style="{StaticResource HeaderKeyTextBlockStyle}" VerticalAlignment="Center" Margin="10 0"/>
                                     <Grid>
                                         <TextBox x:Name="tbMaxPriceInput" Width="100" Height="35"
-                                                Style="{StaticResource SearchTextBoxStyle}"
-                                                FontSize="16"/>
+                                                 Style="{StaticResource SearchTextBoxStyle}"
+                                                 FontSize="16"/>
                                         <TextBlock Width="100" Height="35" Text="최대" Padding="10 8">
                                             <TextBlock.Style>
                                                 <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource SearchTextBlockStyle}">
@@ -211,10 +211,34 @@
                                             </TextBlock.Style>
                                         </TextBlock>
                                     </Grid>
-                                    <TextBlock Text="₩" Style="{StaticResource HeaderKeyTextBlockStyle}" VerticalAlignment="Center" Margin="10 0"/>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
+                        <DockPanel Grid.Row="1" Margin="10 5 10 0">
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                                <TextBlock Text="선택 필터:" 
+                                           Style="{StaticResource GeneralKeyTextBlockStyle}"
+                                           Foreground="{StaticResource SelectedTBFgColor}"/>
+                                <ContentControl Template="{StaticResource ChipTemplate}"
+                                                Content="판매중"
+                                                Margin="10 0 0 0"/>
+                                <ContentControl Template="{StaticResource ChipTemplate}"
+                                                Content="판매중"
+                                                Margin="10 0 0 0"/>
+                                <ContentControl Template="{StaticResource ChipTemplate}"
+                                                Content="판매중"
+                                                Margin="10 0 0 0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                        DockPanel.Dock="Right">
+                                <Button Content="초기화"
+                                        Style="{StaticResource BorderedButtonStyle}"
+                                        Width="100" Margin="10 0"/>
+                                <Button Content="검색" 
+                                        Style="{StaticResource BaseButtonStyle}"
+                                        Width="100"/>
+                            </StackPanel>
+                        </DockPanel>
                     </Grid>
                 </Border>
             </Grid>
