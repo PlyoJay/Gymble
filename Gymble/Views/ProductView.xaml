@@ -78,20 +78,32 @@
                     </Border.Clip>
                     <StackPanel Orientation="Horizontal">
                         <RadioButton GroupName="category" Content="헬스권"
-                                     Style="{StaticResource RadioButtonTabStyle}" IsChecked="True"
-                                     Width="200"/>
+                                     Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                                     IsChecked="{Binding SelectedCategory,
+                                                         Mode=TwoWay,
+                                                         Converter={StaticResource EnumToBoolConverter},
+                                                         ConverterParameter=Gym}"/>
                         <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                         <RadioButton GroupName="category" Content="PT"
-                                     Style="{StaticResource RadioButtonTabStyle}"
-                                     Width="200"/>
+                                     Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                                     IsChecked="{Binding SelectedCategory,
+                                                         Mode=TwoWay,
+                                                         Converter={StaticResource EnumToBoolConverter},
+                                                         ConverterParameter=PT}"/>
                         <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                         <RadioButton GroupName="category" Content="락커/운동복"
-                                     Style="{StaticResource RadioButtonTabStyle}"
-                                     Width="200"/>
+                                     Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                                     IsChecked="{Binding SelectedCategory,
+                                                         Mode=TwoWay,
+                                                         Converter={StaticResource EnumToBoolConverter},
+                                                         ConverterParameter=Locker}"/>
                         <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                         <RadioButton GroupName="category" Content="기타"
-                                     Style="{StaticResource RadioButtonTabStyle}"
-                                     Width="200"/>
+                                     Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                                     IsChecked="{Binding SelectedCategory,
+                                                         Mode=TwoWay,
+                                                         Converter={StaticResource EnumToBoolConverter},
+                                                         ConverterParameter=Etc}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Row="1"

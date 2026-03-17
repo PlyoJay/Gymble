@@ -27,6 +27,8 @@ namespace Gymble.ViewModels
     {
         public string PageTitle { get; set; } = "상품 관리";
 
+        public ObservableCollection<Product> Items { get; } = new();
+
         public ProductSearch CurrnetSearch { get; private set; } = new();
 
         public ObservableCollection<StatusItem> StatusFilters { get; } =
@@ -40,15 +42,22 @@ namespace Gymble.ViewModels
             => Enum.GetValues(typeof(ProductUsageType)).Cast<ProductUsageType>();
 
         [ObservableProperty]
-        private ProductUsageType selectedUsageType;
+        private ProductCategory selectedCategory = ProductCategory.Gym;
 
-        public ObservableCollection<Product> Items { get; } = new();
+        [ObservableProperty]
+        private ProductUsageType selectedUsageType;
 
         [ObservableProperty]
         private Product selectedProduct;
 
         [ObservableProperty]
         private int totalCount;
+
+        partial void OnSelectedCategoryChanged(ProductCategory value)
+        {
+            CurrnetSearch.SelectedCategory = value;
+            RequestPage?.Invoke();
+        }
 
         public ICommand? AddFilterCommand { get; }
         public ICommand? SearchCommand { get; }
