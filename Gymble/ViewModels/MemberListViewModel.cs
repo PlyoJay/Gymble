@@ -29,7 +29,7 @@ namespace Gymble.ViewModels
         public ObservableCollection<Member> MemberList { get; } = new();
 
         [ObservableProperty]
-        private Member selectedMember;
+        private Member? selectedMember;
 
         [ObservableProperty]
         private bool isDrawerOpen;
@@ -43,6 +43,7 @@ namespace Gymble.ViewModels
         public ICommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
         public ICommand? DeleteCommand { get; }
+        public ICommand? CloseInfoViewCommand { get; }
 
         #region Fields
 
@@ -55,8 +56,9 @@ namespace Gymble.ViewModels
             _memberService = memberService;
 
             AddCommand = new RelayCommand(_ => AddMember());
-            DeleteCommand = new RelayCommand(DeleteMember);
             EditCommand = new RelayCommand(EditMember);
+            DeleteCommand = new RelayCommand(DeleteMember);
+            CloseInfoViewCommand = new RelayCommand(CloseInfoView);
 
             RequestPage = async () => await UpdateMemberList();
         }
@@ -122,6 +124,12 @@ namespace Gymble.ViewModels
             var result = await _memberService.SearchAsync(CurrentSearch);
 
             ApplyPage(result.Rows, result.Total, result.Page);
+        }
+
+        private void CloseInfoView(object obj)
+        {
+            SelectedMember = null;
+            IsDrawerOpen = false;
         }
     }
 }

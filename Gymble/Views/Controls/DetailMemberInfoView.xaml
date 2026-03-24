@@ -11,10 +11,9 @@
     <Border BorderThickness="1" BorderBrush="{StaticResource DefaultBorderBrushColor}"
             CornerRadius="8">
         <StackPanel Margin="20">
-
-                     <!--회원 정보-->
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
+            <!--회원 정보-->
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                     <TextBlock Text="{Binding ElementName=root, Path=Member.Name}" 
                                Style="{StaticResource TitleTextBlockStyle}"/>
                     <ContentControl Template="{StaticResource StatusControlTemplate}" 
@@ -23,6 +22,14 @@
                                                       Converter={StaticResource EnumToBadgeConverter}}"
                                     ContentTemplate="{x:Null}"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <Button Content="X" Style="{StaticResource WIndowChromeButtonStyle}"
+                            Foreground="Black" FontSize="18" FontWeight="Bold"
+                            HorizontalAlignment="Right"
+                            Command="{Binding CloseInfoViewCommand}"/>
+                </StackPanel>
+            </DockPanel>
+            <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0 10">
                     <TextBlock Text="{Binding ElementName=root, Path=Member.Gender,
                         Converter={StaticResource GenderToKoreanConverter}}" 
