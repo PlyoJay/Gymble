@@ -100,9 +100,9 @@ namespace Gymble.ViewModels
         {
             var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
 
-            if (msgResult == MessageBoxResult.No) return;
-            
-            //SQLiteManager.Instance.DeleteMember(SelectedMember);
+            if (msgResult == MessageBoxResult.Cancel) return;
+
+            await  _memberService.DeleteAsync(SelectedMember);
             await UpdateMemberList();            
         }
 
