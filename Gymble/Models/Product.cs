@@ -108,7 +108,7 @@ namespace Gymble.Models
         public string? NameOrCode { get; set; }
         public ProductCategory SelectedCategory { get; set; }
         public List<ProductStatus>? Statuses { get; set; }
-        public ProductUsageType? UsageType { get; set; }
+        public ProductUsageType UsageType { get; set; }
         public int? MinUsageValue { get; set; }
         public int? MaxUsageValue { get; set; }
 

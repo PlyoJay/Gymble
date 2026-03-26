@@ -29,7 +29,7 @@ namespace Gymble.ViewModels
 
         public ObservableCollection<Product> Items { get; } = new();
 
-        public ProductSearch CurrnetSearch { get; private set; } = new();
+        public ProductSearch CurrentSearch { get; private set; } = new();
 
         public ObservableCollection<StatusItem> StatusFilters { get; } =
         [
@@ -48,18 +48,120 @@ namespace Gymble.ViewModels
         private ProductUsageType selectedUsageType;
 
         [ObservableProperty]
+        private string minUsageValue;
+
+        [ObservableProperty]
+        private string maxUsageValue;
+
+        [ObservableProperty]
+        private string minPrice;
+
+        [ObservableProperty]
+        private string maxPrice;
+
+        [ObservableProperty]
         private Product selectedProduct;
 
         [ObservableProperty]
         private int totalCount;
 
+        private const int MinFixedUsageValue = 0;
+        private const int MaxFixedUsageValue = 9999;
+
         partial void OnSelectedCategoryChanged(ProductCategory value)
         {
-            CurrnetSearch.SelectedCategory = value;
+            CurrentSearch.SelectedCategory = value;
             RequestPage?.Invoke();
         }
 
-        public ICommand? AddFilterCommand { get; }
+        partial void OnSelectedUsageTypeChanged(ProductUsageType value)
+        {
+            CurrentSearch.UsageType = value;
+            SearchProduct();
+        }
+
+        partial void OnMinUsageValueChanged(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                CurrentSearch.MinUsageValue = null;
+                SearchProduct();
+                return;
+            }
+
+            if (!int.TryParse(value, out int minVal))
+                return;
+
+            if (minVal < MinFixedUsageValue)
+                return;
+
+            if (int.TryParse(MaxUsageValue, out int maxVal) && minVal > maxVal)
+                return;
+
+            CurrentSearch.MinUsageValue = minVal;
+            SearchProduct();
+        }
+
+        partial void OnMaxUsageValueChanged(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                CurrentSearch.MaxUsageValue = null;
+                SearchProduct();
+                return;
+            }
+
+            if (!int.TryParse(value, out int maxVal))
+                return;
+
+            if (maxVal > MaxFixedUsageValue)
+                return;
+
+            if (int.TryParse(MinUsageValue, out int minVal) && maxVal < minVal)
+                return;
+
+            CurrentSearch.MaxUsageValue = maxVal;
+            SearchProduct();
+        }
+
+        partial void OnMinPriceChanged(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                CurrentSearch.MinPrice = null;
+                SearchProduct();
+                return;
+            }
+
+            if (!int.TryParse(value, out int minPrice))
+                return;
+
+            if (int.TryParse(MaxPrice, out int maxPrice) && minPrice > maxPrice)
+                return;
+
+            CurrentSearch.MinPrice = minPrice;
+            SearchProduct();
+        }
+
+        partial void OnMaxPriceChanged(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                CurrentSearch.MaxPrice = null;
+                SearchProduct();
+                return;
+            }
+
+            if (!int.TryParse(value, out int maxPrice))
+                return;
+
+            if (int.TryParse(MinPrice, out int minPrice) && minPrice > maxPrice)
+                return;
+
+            CurrentSearch.MaxPrice = maxPrice;
+            SearchProduct();
+        }
+
         public ICommand? SearchCommand { get; }
         public ICommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
@@ -88,18 +190,15 @@ namespace Gymble.ViewModels
 
         public async void SearchProduct()
         {
-            if (CurrnetSearch == null) CurrnetSearch = new();
-            if (CurrnetSearch.Statuses == null) CurrnetSearch.Statuses = new List<ProductStatus>();
-            if (CurrnetSearch.Statuses.Any()) CurrnetSearch.Statuses.Clear();
-
-            CurrnetSearch.SelectedCategory = ProductCategory.Gym;
+            if (CurrentSearch == null) CurrentSearch = new();
+            if (CurrentSearch.Statuses == null) CurrentSearch.Statuses = new List<ProductStatus>();
+            if (CurrentSearch.Statuses.Any()) CurrentSearch.Statuses.Clear();
 
             foreach (var status in StatusFilters.Where(status => status.IsChecked))
             {
-                CurrnetSearch?.Statuses?.Add(status.Status);
+                CurrentSearch?.Statuses?.Add(status.Status);
             }
 
-            CurrnetSearch.UsageType = SelectedUsageType;
             await UpdateProductList();
         }
 
@@ -121,10 +220,10 @@ namespace Gymble.ViewModels
 
         private async Task UpdateProductList()
         {
-            CurrnetSearch.SortBy = "Id";
-            CurrnetSearch.Desc = false;
+            CurrentSearch.SortBy = "Id";
+            CurrentSearch.Desc = false;
 
-            var result = await _productService.SearchAsync(CurrnetSearch);
+            var result = await _productService.SearchAsync(CurrentSearch);
 
             Items.Clear();
             foreach (var item in result) Items.Add(item);

@@ -70,7 +70,8 @@ namespace Gymble.Repositories
                 p.Add("Statuses", q.Statuses);
             }
 
-            if (q.UsageType.HasValue)
+            if (q.UsageType != ProductUsageType.All)
+
             {
                 where.Add("usage_type = @UsageType");
                 p.Add("UsageType", q.UsageType);
@@ -113,7 +114,7 @@ namespace Gymble.Repositories
                     id,
                     code,
                     name,
-                    category,
+                    category AS SelectedCategory,
                     price,                    
                     usage_type AS UsageType,
                     usage_value AS UsageValue,

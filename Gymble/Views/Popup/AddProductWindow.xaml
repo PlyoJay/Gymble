@@ -90,7 +90,7 @@
                               SelectedItem="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}, ConverterParameter=ProductCategory}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

@@ -105,6 +105,10 @@ namespace Gymble.ViewModels
             if (msgResult == MessageBoxResult.Cancel) return;
 
             await  _memberService.DeleteAsync(SelectedMember);
+
+            SelectedMember = null;
+            IsDrawerOpen = false;
+
             await UpdateMemberList();            
         }
 
