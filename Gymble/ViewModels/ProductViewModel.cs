@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +18,13 @@ using System.Windows.Input;
 
 namespace Gymble.ViewModels
 {
-    public class StatusItem
+    public partial class StatusItem : ObservableObject
     {
         public ProductStatus Status { get; set; }
         public string Name { get; set; }
-        public bool IsChecked { get; set; }
+
+        [ObservableProperty]
+        private bool isChecked;
     }
 
     public partial class ProductViewModel : ObservableObject
@@ -33,7 +37,7 @@ namespace Gymble.ViewModels
 
         public ObservableCollection<StatusItem> StatusFilters { get; } =
         [
-            new StatusItem { Status = ProductStatus.OnSale, Name="판매중"},
+            new StatusItem { Status = ProductStatus.OnSale, Name="판매중", IsChecked=true},
             new StatusItem { Status = ProductStatus.Stopped, Name="중지"},
             new StatusItem { Status = ProductStatus.Discontinued, Name="단종"}
         ];
@@ -71,7 +75,7 @@ namespace Gymble.ViewModels
         partial void OnSelectedCategoryChanged(ProductCategory value)
         {
             CurrentSearch.SelectedCategory = value;
-            RequestPage?.Invoke();
+            SearchProduct();
         }
 
         partial void OnSelectedUsageTypeChanged(ProductUsageType value)
@@ -163,6 +167,7 @@ namespace Gymble.ViewModels
         }
 
         public ICommand? SearchCommand { get; }
+        public ICommand? ResetFilterCommand { get; }
         public ICommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
         public ICommand? StopCommand { get; }
@@ -176,16 +181,58 @@ namespace Gymble.ViewModels
 
         public Action? RequestPage { get; set; }
 
+        private bool _isUpdating;
+
         public ProductViewModel(IProductService productService)
         {
             _productService = productService;
 
             SearchCommand = new RelayCommand(SearchProduct);
+            ResetFilterCommand = new RelayCommand(ResetFilters);
 
             AddCommand = new RelayCommand(AddProduct);
 
+            foreach (var item in StatusFilters)
+                item.PropertyChanged += OnStatusItemPropertyChanged;
+
+            StatusFilters.CollectionChanged += OnStatusFiltersCollectionChanged;
+
             RequestPage = async () => await UpdateProductList();
             RequestPage?.Invoke();
+        }
+
+        private void OnStatusFiltersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (StatusItem item in e.NewItems)
+                    item.PropertyChanged += OnStatusItemPropertyChanged;
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (StatusItem item in e.OldItems)
+                    item.PropertyChanged -= OnStatusItemPropertyChanged;
+            }
+        }
+
+        private void OnStatusItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_isUpdating) return;
+            if (e.PropertyName != nameof(StatusItem.IsChecked)) return;
+
+            if (StatusFilters.All(x => !x.IsChecked))
+            {
+                try
+                {
+                    _isUpdating = true;
+                    StatusFilters[0].IsChecked = true;
+                }
+                finally
+                {
+                    _isUpdating = false;
+                }
+            }
         }
 
         public async void SearchProduct()
@@ -200,6 +247,13 @@ namespace Gymble.ViewModels
             }
 
             await UpdateProductList();
+        }
+
+        public void ResetFilters()
+        {
+            StatusFilters[0].IsChecked = true;
+            StatusFilters[1].IsChecked = false;
+            StatusFilters[2].IsChecked = false;
         }
 
         private async void AddProduct()

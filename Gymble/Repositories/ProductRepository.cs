@@ -66,7 +66,7 @@ namespace Gymble.Repositories
 
             if (q.Statuses is { Count: > 0 })
             {
-                where.Add("status IN (@Statuses)"); // <- SQLite에서 안전
+                where.Add("status IN @Statuses"); // <- SQLite에서 안전
                 p.Add("Statuses", q.Statuses);
             }
 
