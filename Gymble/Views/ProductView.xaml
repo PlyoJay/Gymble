@@ -112,7 +112,8 @@
                                 HorizontalAlignment="Right">
                         <Button Content="초기화"
                                 Style="{StaticResource BorderedButtonStyle}"
-                                Width="100" Margin="10 0"/>
+                                Width="100" Margin="10 0"
+                                Command="{Binding ResetFilterCommand}" Cursor="Hand"/>
                     </StackPanel>
                 </DockPanel>
                 <Border Grid.Row="1"

@@ -68,13 +68,10 @@ namespace Gymble.ViewModels
         private Product selectedProduct;
 
         [ObservableProperty]
-        private string selectedProductInfo = "없음";
+        private string selectedProductInfo = NO_INFO_TEXT;
 
         [ObservableProperty]
         private int totalCount;
-
-        private const int MinFixedUsageValue = 0;
-        private const int MaxFixedUsageValue = 9999;
 
         partial void OnSelectedCategoryChanged(ProductCategory value)
         {
@@ -100,7 +97,7 @@ namespace Gymble.ViewModels
             if (!int.TryParse(value, out int minVal))
                 return;
 
-            if (minVal < MinFixedUsageValue)
+            if (minVal < FIXED_MIN_USAGE_VALUE)
                 return;
 
             if (int.TryParse(MaxUsageValue, out int maxVal) && minVal > maxVal)
@@ -122,7 +119,7 @@ namespace Gymble.ViewModels
             if (!int.TryParse(value, out int maxVal))
                 return;
 
-            if (maxVal > MaxFixedUsageValue)
+            if (maxVal > FIXED_MAX_USAGE_VALUE)
                 return;
 
             if (int.TryParse(MinUsageValue, out int minVal) && maxVal < minVal)
@@ -174,15 +171,22 @@ namespace Gymble.ViewModels
         {
             string productInfoTxt = string.Empty;
 
-            switch (value.Category)
+            if (value == null)
             {
-                case ProductCategory.Gym:
-                    string? usageValue = GiveUnitToUsageValue(value.UsageType, value.UsageValue);
-                    string startType = value.StartType.GetEnumDescription();
-                    string status = value.Status.GetEnumDescription();
-                    productInfoTxt = $"{value.Name} | {usageValue} | {GiveUnitToPrice(value.Price)} | {startType} | 상태: {status}";
-                    break;
+                SelectedProductInfo = NO_INFO_TEXT;
+                return;
             }
+
+            string? usageValue = GiveUnitToUsageValue(value.UsageType, value.UsageValue);
+            string startType = value.StartType.GetEnumDescription();
+            string status = value.Status.GetEnumDescription();
+            productInfoTxt = $"{value.Name} | {usageValue} | {GiveUnitToPrice(value.Price)} | {startType} | 상태: {status}";
+
+            //switch (value.Category)
+            //{
+            //    case ProductCategory.Gym:
+            //        break;
+            //}
 
             SelectedProductInfo = productInfoTxt;
         }
@@ -201,6 +205,11 @@ namespace Gymble.ViewModels
         #endregion
 
         public Action? RequestPage { get; set; }
+
+        private const int FIXED_MIN_USAGE_VALUE = 0;
+        private const int FIXED_MAX_USAGE_VALUE = 9999;
+
+        private const string NO_INFO_TEXT = "없음";
 
         private bool _isUpdating;
 
@@ -275,6 +284,16 @@ namespace Gymble.ViewModels
             StatusFilters[0].IsChecked = true;
             StatusFilters[1].IsChecked = false;
             StatusFilters[2].IsChecked = false;
+
+            SelectedUsageType = ProductUsageType.All;
+
+            MinUsageValue = string.Empty;
+            MaxUsageValue = string.Empty;
+
+            MinPrice = string.Empty;
+            MaxPrice = string.Empty;
+
+            SelectedProductInfo = NO_INFO_TEXT;
         }
 
         private async void AddProduct()
