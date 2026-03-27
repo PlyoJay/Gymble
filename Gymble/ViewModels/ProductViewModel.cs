@@ -47,6 +47,9 @@ namespace Gymble.ViewModels
             => Enum.GetValues(typeof(ProductUsageType)).Cast<ProductUsageType>();
 
         [ObservableProperty]
+        private string searchInput = string.Empty;
+
+        [ObservableProperty]
         private ProductCategory selectedCategory = ProductCategory.Gym;
 
         [ObservableProperty]
@@ -270,6 +273,9 @@ namespace Gymble.ViewModels
             if (CurrentSearch == null) CurrentSearch = new();
             if (CurrentSearch.Statuses == null) CurrentSearch.Statuses = new List<ProductStatus>();
             if (CurrentSearch.Statuses.Any()) CurrentSearch.Statuses.Clear();
+
+            if (!string.IsNullOrEmpty(SearchInput))
+                CurrentSearch.NameOrCode = SearchInput;
 
             foreach (var status in StatusFilters.Where(status => status.IsChecked))
             {

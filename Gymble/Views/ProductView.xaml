@@ -30,7 +30,8 @@
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                 <Grid>
                     <TextBox x:Name="tbSearchInput" Width="350" Margin="0,0,10,0"
-                             Style="{StaticResource SearchTextBoxStyle}"/>
+                             Style="{StaticResource SearchTextBoxStyle}"
+                             Text="{Binding SearchInput}"/>
                     <TextBlock Width="350" Margin="0,0,10,0" Text="상품명/코드, 메모 검색">
                         <TextBlock.Style>
                             <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource SearchTextBlockStyle}">
