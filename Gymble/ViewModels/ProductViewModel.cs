@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Gymble.Models;
 using Gymble.Services;
+using Gymble.Utils;
 using Gymble.ViewModels.Popup;
 using Gymble.Views.Popup;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,6 +66,9 @@ namespace Gymble.ViewModels
 
         [ObservableProperty]
         private Product selectedProduct;
+
+        [ObservableProperty]
+        private string selectedProductInfo = "없음";
 
         [ObservableProperty]
         private int totalCount;
@@ -164,6 +168,23 @@ namespace Gymble.ViewModels
 
             CurrentSearch.MaxPrice = maxPrice;
             SearchProduct();
+        }
+
+        partial void OnSelectedProductChanged(Product value)
+        {
+            string productInfoTxt = string.Empty;
+
+            switch (value.Category)
+            {
+                case ProductCategory.Gym:
+                    string? usageValue = GiveUnitToUsageValue(value.UsageType, value.UsageValue);
+                    string startType = value.StartType.GetEnumDescription();
+                    string status = value.Status.GetEnumDescription();
+                    productInfoTxt = $"{value.Name} | {usageValue} | {GiveUnitToPrice(value.Price)} | {startType} | 상태: {status}";
+                    break;
+            }
+
+            SelectedProductInfo = productInfoTxt;
         }
 
         public ICommand? SearchCommand { get; }
@@ -283,6 +304,26 @@ namespace Gymble.ViewModels
             foreach (var item in result) Items.Add(item);
 
             TotalCount = Math.Max(0, result.Count);
+        }
+
+        private string? GiveUnitToUsageValue(ProductUsageType usageType, int? usageValue)
+        {
+            string? valueText = usageValue?.ToString("N0");
+            switch (usageType)
+            {
+                case ProductUsageType.Period:
+                    valueText += "일";
+                    break;
+                case ProductUsageType.Count:
+                    valueText += "회";
+                    break;
+            }
+            return valueText;
+        }
+
+        private string GiveUnitToPrice(int price)
+        {
+            return price.ToString("N0") + " ₩";
         }
     }
 }

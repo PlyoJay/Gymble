@@ -368,25 +368,9 @@
                 <TextBlock Text="선택:" 
                            Style="{StaticResource GeneralKeyTextBlockStyle}"
                            Foreground="{StaticResource SelectedTBFgColor}"/>
-                <TextBlock Text="3개월 헬스권" 
+                <TextBlock Text="{Binding SelectedProductInfo}" 
                            Style="{StaticResource GeneralKeyTextBlockStyle}"
                            Margin="10 0 0 0"/>
-                <GridSplitter BorderThickness="1" BorderBrush="Black"
-                              Margin="10 5"/>
-                <TextBlock Text="90일" 
-                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
-                <GridSplitter BorderThickness="1" BorderBrush="Black"
-                              Margin="10 5"/>
-                <TextBlock Text="142,500₩" 
-                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
-                <GridSplitter BorderThickness="1" BorderBrush="Black"
-                              Margin="10 5"/>
-                <TextBlock Text="결제일 기준" 
-                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
-                <GridSplitter BorderThickness="1" BorderBrush="Black"
-                              Margin="10 5"/>
-                <TextBlock Text="상태: 사용중" 
-                           Style="{StaticResource GeneralKeyTextBlockStyle}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                         DockPanel.Dock="Right">
