@@ -150,9 +150,15 @@ namespace Gymble.Repositories
         }
 
 
-        public Task<int> UpdateProductAsync(Product product, CancellationToken ct = default)
+        public async Task<int> UpdateProductAsync(Product product, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open) conn.Open();
+
+            const string sql = SqlProductQuery.UPDATE_PRODUCT;
+
+            var cmd = new CommandDefinition(sql, product, cancellationToken: ct);
+            return await conn.ExecuteScalarAsync<int>(cmd);
         }
 
         public Task<int> DeleteProductAsync(long productId, CancellationToken ct = default)

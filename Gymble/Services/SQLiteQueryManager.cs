@@ -64,6 +64,22 @@ namespace Gymble.Services
 
         public const string CREATE_CODE_SEQUENCE_TABLE = @"
             CREATE TABLE IF NOT EXISTS tb_code_sequence (prefix TEXT PRIMARY KEY, last_value INTEGER NOT NULL);";
+
+        public const string UPDATE_PRODUCT = @"
+            UPDATE tb_product
+            SET code = @Code,
+                name = @Name,
+                category = @Category,
+                price = @Price,
+                usage_type = @UsageType,
+                usage_value = @UsageValue,
+                start_type = @StartType,
+                fixed_start_date = @FixedStartDate,
+                status = @Status,
+                is_favorite = @IsFavorite,
+                note = @Note,
+                updated_at = @UpdatedAt
+            WHERE id = @Id;";
     }
 
     public class SqlMembershipQuery

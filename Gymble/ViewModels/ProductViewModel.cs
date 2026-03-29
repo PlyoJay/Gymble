@@ -38,9 +38,9 @@ namespace Gymble.ViewModels
 
         public ObservableCollection<StatusItem> StatusFilters { get; } =
         [
-            new StatusItem { Status = ProductStatus.OnSale, Name="판매중", IsChecked=true},
-            new StatusItem { Status = ProductStatus.Stopped, Name="중지"},
-            new StatusItem { Status = ProductStatus.Discontinued, Name="단종"}
+            new StatusItem { Status = ProductStatus.OnSale, Name=ProductStatus.OnSale.GetEnumDescription(), IsChecked=true},
+            new StatusItem { Status = ProductStatus.Stopped, Name=ProductStatus.Stopped.GetEnumDescription()},
+            new StatusItem { Status = ProductStatus.Discontinued, Name=ProductStatus.Discontinued.GetEnumDescription()}
         ];
 
         public IEnumerable<ProductUsageType> UsageTypes
@@ -222,8 +222,15 @@ namespace Gymble.ViewModels
 
             SearchCommand = new RelayCommand(SearchProduct);
             ResetFilterCommand = new RelayCommand(ResetFilters);
-
             AddCommand = new RelayCommand(AddProduct);
+            StopCommand = new RelayCommand(() =>
+            {
+                if (SelectedProduct == null) return;
+                SelectedProduct.Status = ProductStatus.Stopped;
+                SelectedProduct.UpdatedAt = DateTime.Now;
+                _productService.UpdateAsync(SelectedProduct);
+                SearchProduct();
+            });
 
             foreach (var item in StatusFilters)
                 item.PropertyChanged += OnStatusItemPropertyChanged;
@@ -331,6 +338,8 @@ namespace Gymble.ViewModels
             TotalCount = Math.Max(0, result.Count);
         }
 
+        #region Helpers
+
         private string? GiveUnitToUsageValue(ProductUsageType usageType, int? usageValue)
         {
             string? valueText = usageValue?.ToString("N0");
@@ -346,9 +355,8 @@ namespace Gymble.ViewModels
             return valueText;
         }
 
-        private string GiveUnitToPrice(int price)
-        {
-            return price.ToString("N0") + " ₩";
-        }
+        private string GiveUnitToPrice(int price) => price.ToString("N0") + " ₩"; 
+
+        #endregion
     }
 }

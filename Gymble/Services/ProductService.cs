@@ -64,6 +64,7 @@ namespace Gymble.Services
         public Task UpdateAsync(Product product, CancellationToken ct = default)
         {
             Validate(product, isNew: false);
+            product.UpdatedAt = DateTime.Now;
 
             return _repo.UpdateProductAsync(product, ct);
         }
