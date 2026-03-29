@@ -62,7 +62,8 @@ namespace Gymble
             services.AddTransient<AddMemberViewModel>();
             services.AddTransient<EditMemberViewModel>();
 
-            services.AddTransient<AddProductViewModel>();
+            services.AddTransient<ProductEditorViewModel>();
+            services.AddTransient<EditProductViewModel>();
 
             Services = services.BuildServiceProvider();
         }

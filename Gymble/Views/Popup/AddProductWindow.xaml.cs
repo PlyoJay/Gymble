@@ -17,7 +17,7 @@ namespace Gymble.Views.Popup
 
         private void AddProductWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is AddProductViewModel vm)
+            if (DataContext is ProductEditorViewModel vm)
             {
                 vm.RequestClose += Vm_RequestClose;
             }

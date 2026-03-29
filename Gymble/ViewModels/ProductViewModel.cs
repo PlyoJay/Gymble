@@ -223,14 +223,7 @@ namespace Gymble.ViewModels
             SearchCommand = new RelayCommand(SearchProduct);
             ResetFilterCommand = new RelayCommand(ResetFilters);
             AddCommand = new RelayCommand(AddProduct);
-            StopCommand = new RelayCommand(() =>
-            {
-                if (SelectedProduct == null) return;
-                SelectedProduct.Status = ProductStatus.Stopped;
-                SelectedProduct.UpdatedAt = DateTime.Now;
-                _productService.UpdateAsync(SelectedProduct);
-                SearchProduct();
-            });
+            StopCommand = new RelayCommand(StopSellingProduct);
 
             foreach (var item in StatusFilters)
                 item.PropertyChanged += OnStatusItemPropertyChanged;
@@ -311,7 +304,7 @@ namespace Gymble.ViewModels
 
         private async void AddProduct()
         {
-            var vm = App.Services.GetRequiredService<AddProductViewModel>();
+            var vm = App.Services.GetRequiredService<ProductEditorViewModel>();
 
             var win = new AddProductWindow
             {
@@ -323,6 +316,29 @@ namespace Gymble.ViewModels
 
             if (ok)
                 await UpdateProductList();
+        }
+
+        private async void EditProduct()
+        {
+            if (SelectedProduct == null) return;
+            var vm = App.Services.GetRequiredService<EditProductViewModel>();
+            vm.SetProduct(SelectedProduct);
+            var win = new EditProductWindow
+            {
+                DataContext = vm,
+                Owner = Application.Current.MainWindow
+            };
+            var ok = win.ShowDialog() == true;
+            if (ok)
+                await UpdateProductList();
+        }
+
+        private void StopSellingProduct()
+        {
+            if (SelectedProduct == null) return;
+            SelectedProduct.Status = ProductStatus.Stopped;
+            _productService.UpdateAsync(SelectedProduct);
+            SearchProduct();
         }
 
         private async Task UpdateProductList()

@@ -11,9 +11,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+public enum ProductEditorMode
+{
+    Add,
+    Edit
+}
+
 namespace Gymble.ViewModels.Popup
 {
-    public partial class AddProductViewModel : ObservableObject
+    public partial class ProductEditorViewModel : ObservableObject
     {
         public IEnumerable<ProductCategory> Categories
             => Enum.GetValues(typeof(ProductCategory)).Cast<ProductCategory>();
@@ -95,18 +101,17 @@ namespace Gymble.ViewModels.Popup
 
         #endregion
 
-        public AddProductViewModel(IProductService productService, IProductCodeGenerator codeGenerator)
+        public ProductEditorViewModel(IProductService productService)
         {
             _productService = productService;
-            _codeGenerator = codeGenerator;
 
             CloseCommand = new RelayCommand(() => Close(false));
-            AddCommand = new AsyncRelayCommand(AddProductAsync, CanAdd);
+            AddCommand = new AsyncRelayCommand(AddProductAsync, CanSave);
         }
 
         private async Task AddProductAsync()
         {
-            if (!CanAdd())
+            if (!CanSave())
             {
                 MessageBox.Show("필수 입력값을 확인해주세요.");
                 return;
@@ -127,7 +132,8 @@ namespace Gymble.ViewModels.Popup
                     StartType = SelectedStartType,
                     FixedStartDate = FixedDateTime,
                     Status = SelectedStatus,
-                    IsFavorite = IsFavorite
+                    IsFavorite = IsFavorite,
+                    Note = Note
                 };
 
                 await _productService.AddAsync(product);
@@ -151,12 +157,13 @@ namespace Gymble.ViewModels.Popup
 
         #region Helpers
 
-        private bool CanAdd()
+        private bool CanSave()
         {
             return !string.IsNullOrWhiteSpace(ProductName)
                 && (IsAutoCode || !string.IsNullOrWhiteSpace(ProductCode))
                 && UsageValue > 0
                 && Price > 0
+                && (SelectedStartType != ProductStartType.FixedDate || FixedDateTime.HasValue)
                 && !IsBusy;
         }
 
