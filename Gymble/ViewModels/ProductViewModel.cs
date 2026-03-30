@@ -196,7 +196,7 @@ namespace Gymble.ViewModels
 
         public ICommand? SearchCommand { get; }
         public ICommand? ResetFilterCommand { get; }
-        public ICommand? AddCommand { get; }
+        public IAsyncRelayCommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
         public ICommand? StopCommand { get; }
         public ICommand? DeleteCommand { get; }
@@ -222,7 +222,8 @@ namespace Gymble.ViewModels
 
             SearchCommand = new RelayCommand(SearchProduct);
             ResetFilterCommand = new RelayCommand(ResetFilters);
-            AddCommand = new RelayCommand(AddProduct);
+            AddCommand = new AsyncRelayCommand(AddProduct);
+            EditCommand = new AsyncRelayCommand(EditProduct);
             StopCommand = new RelayCommand(StopSellingProduct);
 
             foreach (var item in StatusFilters)
@@ -302,11 +303,11 @@ namespace Gymble.ViewModels
             SelectedProductInfo = NO_INFO_TEXT;
         }
 
-        private async void AddProduct()
+        private async Task AddProduct()
         {
             var vm = App.Services.GetRequiredService<ProductEditorViewModel>();
 
-            var win = new AddProductWindow
+            var win = new ProductEditorWindow
             {
                 DataContext = vm,
                 Owner = Application.Current.MainWindow
@@ -318,17 +319,21 @@ namespace Gymble.ViewModels
                 await UpdateProductList();
         }
 
-        private async void EditProduct()
+        private async Task EditProduct()
         {
             if (SelectedProduct == null) return;
-            var vm = App.Services.GetRequiredService<EditProductViewModel>();
-            vm.SetProduct(SelectedProduct);
-            var win = new EditProductWindow
+            var vm = new ProductEditorViewModel(
+                    App.Services.GetRequiredService<IProductService>(),
+                    SelectedProduct);
+
+            var win = new ProductEditorWindow
             {
                 DataContext = vm,
                 Owner = Application.Current.MainWindow
             };
+
             var ok = win.ShowDialog() == true;
+
             if (ok)
                 await UpdateProductList();
         }

@@ -378,7 +378,8 @@
                         DockPanel.Dock="Right">
                 <Button Content="수정"
                         Style="{StaticResource BorderedButtonStyle}"
-                        Width="100" Margin="10 0"/>
+                        Width="100" Margin="10 0"
+                        Command="{Binding EditCommand}" Cursor="Hand"/>
                 <Button Content="판매중지" 
                         Style="{StaticResource BaseButtonStyle}"
                         Width="100"

@@ -6,9 +6,9 @@ namespace Gymble.Views.Popup
     /// <summary>
     /// AddProductWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class AddProductWindow : Window
+    public partial class ProductEditorWindow : Window
     {
-        public AddProductWindow()
+        public ProductEditorWindow()
         {
             InitializeComponent();
 
