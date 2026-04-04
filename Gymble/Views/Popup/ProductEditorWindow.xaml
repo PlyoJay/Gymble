@@ -30,7 +30,7 @@
                     </MultiBinding>
                 </Border.Clip>
                 <Grid>
-                    <TextBlock Text="상품 등록" Margin="20 0"
+                    <TextBlock Text="{Binding Title}" Margin="20 0"
                                Style="{StaticResource TitleTextBlockStyle}"
                                FontSize="20"
                                VerticalAlignment="Center"/>

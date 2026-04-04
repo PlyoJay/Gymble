@@ -45,7 +45,7 @@ namespace Gymble.ViewModels
         public ICommand? SearchCommand { get; }
         public IAsyncRelayCommand? AddCommand { get; }
         public IAsyncRelayCommand? EditCommand { get; }
-        public ICommand? DeleteCommand { get; }
+        public IAsyncRelayCommand? DeleteCommand { get; }
         public ICommand? CloseInfoViewCommand { get; }
 
         #region Fields
@@ -61,7 +61,7 @@ namespace Gymble.ViewModels
             SearchCommand = new RelayCommand(SearchMember);
             AddCommand = new AsyncRelayCommand(AddMember);
             EditCommand = new AsyncRelayCommand(EditMember);
-            DeleteCommand = new RelayCommand(DeleteMember);
+            DeleteCommand = new AsyncRelayCommand(DeleteMember);
             CloseInfoViewCommand = new RelayCommand(CloseInfoView);
 
             RequestPage = async () => await UpdateMemberList();
@@ -112,7 +112,7 @@ namespace Gymble.ViewModels
                 await UpdateMemberList();
         }
 
-        private async void DeleteMember()
+        private async Task DeleteMember()
         {
             var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
 
