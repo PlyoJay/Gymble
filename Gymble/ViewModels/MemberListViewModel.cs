@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Gymble.Controls;
+using CommunityToolkit.Mvvm.Input;
 using Gymble.Models;
 using Gymble.Services;
 using Gymble.ViewModels.Popup;
@@ -29,6 +29,9 @@ namespace Gymble.ViewModels
         public ObservableCollection<Member> MemberList { get; } = new();
 
         [ObservableProperty]
+        private string searchInput = string.Empty;
+
+        [ObservableProperty]
         private Member? selectedMember;
 
         [ObservableProperty]
@@ -40,8 +43,8 @@ namespace Gymble.ViewModels
         }
 
         public ICommand? SearchCommand { get; }
-        public ICommand? AddCommand { get; }
-        public ICommand? EditCommand { get; }
+        public IAsyncRelayCommand? AddCommand { get; }
+        public IAsyncRelayCommand? EditCommand { get; }
         public ICommand? DeleteCommand { get; }
         public ICommand? CloseInfoViewCommand { get; }
 
@@ -55,15 +58,26 @@ namespace Gymble.ViewModels
         {
             _memberService = memberService;
 
-            AddCommand = new RelayCommand(_ => AddMember());
-            EditCommand = new RelayCommand(EditMember);
+            SearchCommand = new RelayCommand(SearchMember);
+            AddCommand = new AsyncRelayCommand(AddMember);
+            EditCommand = new AsyncRelayCommand(EditMember);
             DeleteCommand = new RelayCommand(DeleteMember);
             CloseInfoViewCommand = new RelayCommand(CloseInfoView);
 
             RequestPage = async () => await UpdateMemberList();
+            RequestPage?.Invoke();
         }
 
-        private async void AddMember()
+        public async void SearchMember()
+        {
+            if (CurrentSearch == null) CurrentSearch = new();
+
+            CurrentSearch.NameOrPhone = SearchInput;
+
+            await UpdateMemberList();
+        }
+
+        private async Task AddMember()
         {
             var vm = App.Services.GetRequiredService<AddMemberViewModel>();
 
@@ -79,7 +93,7 @@ namespace Gymble.ViewModels
                 await UpdateMemberList();
         }
 
-        private async void EditMember(object obj)
+        private async Task EditMember()
         {
             if (SelectedMember == null) return;
 
@@ -98,7 +112,7 @@ namespace Gymble.ViewModels
                 await UpdateMemberList();
         }
 
-        private async void DeleteMember(object obj)
+        private async void DeleteMember()
         {
             var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
 
@@ -130,7 +144,7 @@ namespace Gymble.ViewModels
             ApplyPage(result.Rows, result.Total, result.Page);
         }
 
-        private void CloseInfoView(object obj)
+        private void CloseInfoView()
         {
             SelectedMember = null;
             IsDrawerOpen = false;
