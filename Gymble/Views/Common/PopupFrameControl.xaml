@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Gymble.Views.Common.PopupFrameControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Border Style="{StaticResource PopupBorderStyle}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="70"/>
+            </Grid.RowDefinitions>
+
+            <!-- 공통 타이틀바 -->
+            <Border Background="{StaticResource TitleBarBgColor}"
+                    BorderBrush="{StaticResource DefaultBorderBrushColor}"
+                    BorderThickness="0 0 0 1">
+                <Border.Clip>
+                    <MultiBinding Converter="{StaticResource TopRoundRectClipConverter}"
+                                  ConverterParameter="15">
+                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                        <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                    </MultiBinding>
+                </Border.Clip>
+
+                <Grid>
+                    <TextBlock Text="{Binding TitleText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                               Margin="20 0"
+                               Style="{StaticResource TitleTextBlockStyle}"
+                               FontSize="20"
+                               VerticalAlignment="Center"/>
+
+                    <Button Style="{StaticResource WIndowChromeButtonStyle}"
+                            Foreground="Black"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 20 0"
+                            Click="CloseButton_Click">
+                        <md:PackIcon Kind="Close" Width="25" Height="25"/>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- 본문 -->
+            <ContentPresenter Grid.Row="1"
+                              Margin="{Binding BodyMargin, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Content="{Binding BodyContent, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+            <!-- 하단 -->
+            <ContentPresenter Grid.Row="2"
+                              Margin="{Binding FooterMargin, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Content="{Binding FooterContent, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </Grid>
+    </Border>
+</UserControl>

@@ -10,9 +10,7 @@
         mc:Ignorable="d"
         Title="AddProductWindow" Height="Auto" Width="400" ResizeMode="NoResize"
         Style="{StaticResource PopupWindowStyle}" WindowStartupLocation="CenterScreen">
-    <Border BorderBrush="{StaticResource ApplicationBorderColor}" BorderThickness="1" 
-            CornerRadius="15" Background="{StaticResource ApplicationBgColor}"
-            VerticalAlignment="Top">
+    <Border Style="{StaticResource PopupBorderStyle}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>

@@ -106,6 +106,7 @@
            BasedOn="{StaticResource WindowChromeStyle}">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="SizeToContent" Value="Height"/>
+        <Setter Property="ResizeMode" Value="NoResize"/>
     </Style>
 
     <!-- 윈도우 상단 버튼 -->
@@ -142,11 +143,19 @@
         <Setter Property="CornerRadius" Value="12"/>
     </Style>
 
+    <Style x:Key="PopupBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="{StaticResource ApplicationBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="15"/>
+        <Setter Property="Background" Value="{StaticResource ApplicationBgColor}"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+    </Style>
+
     <!-- TextBlock -->
     <Style x:Key="TitleTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="24"/>
-        <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="{StaticResource Pretendard.Regular}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
     </Style>
 
     <Style x:Key="GeneralKeyTextBlockStyle" TargetType="{x:Type TextBlock}">

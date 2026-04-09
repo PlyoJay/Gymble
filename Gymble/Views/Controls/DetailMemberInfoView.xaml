@@ -40,7 +40,7 @@
                                Style="{StaticResource InfoTextBlockStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="이용권 추가" 
+                    <Button Content="이용권 등록" 
                             Command="{Binding AddProductCommand}"
                             Style="{StaticResource BaseButtonStyle}"
                             Width="220"/>
