@@ -85,6 +85,10 @@
     <SolidColorBrush x:Key="ToggleSelectedBrush" Color="#2E66E1"/>
     <SolidColorBrush x:Key="RadioHoverBrush" Color="#E8EFFC"/>
 
+    <SolidColorBrush x:Key="DatePickerBorderBrush" Color="#DFDFDF"/>
+    <SolidColorBrush x:Key="DatePickerSelectedBorderBrush" Color="#2E66E1"/>
+    <SolidColorBrush x:Key="DatePickerBgBrush" Color="#FAFAFA"/>
+
     <!-- 윈도우 -->
     <Style x:Key="WindowChromeStyle" TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{StaticResource ApplicationBgColor}"/>
@@ -769,6 +773,53 @@
         <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
 
         <Setter Property="AlternationCount" Value="9999999"/>
+    </Style>
+
+    <!-- DatePicker -->
+
+    <Style x:Key="CustomCalendarDayButton" TargetType="CalendarDayButton"
+           BasedOn="{StaticResource MaterialDesignCalendarDayButton}">
+        <Setter Property="md:CalendarAssist.SelectionColor" Value="#B2F39B" />
+        <Setter Property="md:CalendarAssist.SelectionForegroundColor" Value="Black" />
+    </Style>
+
+    <Style x:Key="CustomCalendarButton" TargetType="{x:Type CalendarButton}"
+           BasedOn="{StaticResource MaterialDesignCalendarButton}">
+        <Setter Property="md:CalendarAssist.SelectionColor" Value="#B2F39B" />
+        <Setter Property="md:CalendarAssist.SelectionForegroundColor" Value="Black" />
+    </Style>
+    
+    <Style x:Key="CustomCalendar" TargetType="{x:Type Calendar}"
+           BasedOn="{StaticResource MaterialDesignDatePickerCalendarPortrait}">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="CalendarButtonStyle" Value="{StaticResource CustomCalendarButton}" />
+        <Setter Property="CalendarDayButtonStyle" Value="{StaticResource CustomCalendarDayButton}" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="md:CalendarAssist.HeaderBackground" Value="#A2E9FF" />
+        <Setter Property="md:CalendarAssist.HeaderForeground" Value="Black" />
+    </Style>
+
+    <Style x:Key="CustomDatePickerStyle" TargetType="{x:Type DatePicker}"
+           BasedOn="{StaticResource MaterialDesignOutlinedDatePicker}">
+        <Setter Property="CalendarStyle" Value="{StaticResource CustomCalendar}" />
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DatePickerBorderBrush}"/>
+        <Setter Property="Background" Value="{StaticResource DatePickerBgBrush}" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="FontFamily" Value="{StaticResource Pretendard.Medium}"/>
+        <Setter Property="Padding" Value="10 0" />
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="md:HintAssist.Foreground" Value="{StaticResource DatePickerSelectedBorderBrush}" />
+        <Style.Resources>
+            <SolidColorBrush x:Key="MaterialDesign.Brush.Primary" Color="#2E66E1"/>
+            <SolidColorBrush x:Key="MaterialDesign.Brush.Primary.Foreground" Color="Black"/>
+
+            <Style TargetType="{x:Type DatePickerTextBox}">
+                <Setter Property="Background" Value="{StaticResource DatePickerBgBrush}"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <!-- ControlTemplate -->

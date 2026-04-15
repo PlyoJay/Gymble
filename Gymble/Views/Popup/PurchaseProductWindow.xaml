@@ -9,7 +9,7 @@
         xmlns:common="clr-namespace:Gymble.Views.Common"
         Title="PurchaseProductWindow" Height="555" Width="750"
         Style="{StaticResource PopupWindowStyle}" WindowStartupLocation="CenterScreen">
-    <common:PopupFrameControl TitleText="이용권 등록" Loaded="PopupFrameControl_Loaded">
+    <common:PopupFrameControl TitleText="이용권 등록">
         <common:PopupFrameControl.BodyContent>
             <StackPanel>
                 <ContentControl Template="{StaticResource DefaultCardTemplate}"
@@ -17,9 +17,12 @@
                     <StackPanel Margin="15 0" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Margin="0">
                             <TextBlock Style="{StaticResource HeaderKeyTextBlockStyle}"
-                                       Text="김형준"/>
-                            <TextBlock Style="{StaticResource ContentDataTextBlockStyle}"
-                                       Text="(010-2488-8731)" Margin="10 0"/>
+                                       Text="{Binding TargetMember.Name}"/>
+                            <TextBlock Style="{StaticResource ContentDataTextBlockStyle}" Margin="10 0">
+                                (
+                                <Run Text="{Binding TargetMember.PhoneNumber, Converter={StaticResource PhoneNumberConverter}}"/>
+                                )
+                            </TextBlock>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0 12 0 0">
                             <TextBlock Style="{StaticResource HeaderKeyTextBlockStyle}"
@@ -49,7 +52,7 @@
                             <TabItem Header="헬스권"
                                      Style="{StaticResource GymbleTabItemStyle}"
                                      MinWidth="87.6">
-                                <Grid Margin="15 20">
+                                <Grid Margin="15 15">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="100"/>
                                         <ColumnDefinition/>
@@ -68,7 +71,11 @@
                                         
                                     </ComboBox>
 
-                                    <DatePicker Grid.Row="1" Grid.Column="1"/>
+                                    <DatePicker Grid.Row="1" Grid.Column="1"
+                                                Height="35"
+                                                md:HintAssist.Hint="Pick Date"
+                                                Style="{StaticResource CustomDatePickerStyle}"
+                                                SelectedDate="{Binding SelectedDate}"/>
                                 </Grid>
                             </TabItem>
                             <TabItem Header="P.T."

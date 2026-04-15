@@ -41,7 +41,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="이용권 등록" 
-                            Command="{Binding AddProductCommand}"
+                            Command="{Binding PurchaseProductCommand}"
                             Style="{StaticResource BaseButtonStyle}"
                             Width="220"/>
                     <Button Content="수정"
