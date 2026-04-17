@@ -73,4 +73,20 @@ namespace Gymble.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
+
+    public class PurchaseRequest
+    {
+        public int MemberId { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+        public int DiscountAmount { get; set; }
+        public string? Memo { get; set; }
+
+        public List<PurchaseRequestItem> Items { get; set; } = new();
+    }
+
+    public class PurchaseRequestItem
+    {
+        public int ProductId { get; set; }
+        public DateTime? SelectedStartDate { get; set; } // 지정 시작일 필요 시
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Gymble.Models;
+﻿using Dapper;
+using Gymble.Models;
 using Gymble.Repositories;
 using Gymble.Utils;
 using System.Data.SQLite;
@@ -69,15 +70,25 @@ namespace Gymble.Services
             cmd.CommandText = SqlProductQuery.CREATE_CODE_SEQUENCE_TABLE;
             cmd.ExecuteNonQuery();
 
-            cmd.CommandText = SqlMembershipQuery.CREATE_MEMBERSHIP_TABLE;
+            cmd.CommandText = SqlMemberMembershipQuery.CREATE_MEMBER_MEMBERSHIP_TABLE;
             cmd.ExecuteNonQuery();
 
             cmd.CommandText = SqlAttendanceQuery.CREATE_ATTENDANCE_TABLE;
             cmd.ExecuteNonQuery();
 
+            EnsurePurchaseTables(conn);
+
             // ✅ (추천) 하루 1회 체크인 강제 인덱스도 여기서
             // cmd.CommandText = SqlAttendanceQuery.CREATE_ATTENDANCE_UNIQUE_INDEX;
             // cmd.ExecuteNonQuery();
+        }
+
+        private void EnsurePurchaseTables(SQLiteConnection conn)
+        {
+            conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_TABLE);
+            conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_ITEM_TABLE);
+            conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_MEMBER_ID_INDEX);
+            conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_ITEM_PURCHASE_ID_INDEX);
         }
 
         public Func<SQLiteConnection> ConnectionFactory()
