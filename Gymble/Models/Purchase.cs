@@ -88,5 +88,6 @@ namespace Gymble.Models
     {
         public int ProductId { get; set; }
         public DateTime? SelectedStartDate { get; set; } // 지정 시작일 필요 시
+        public string? Note { get; set; }
     }
 }

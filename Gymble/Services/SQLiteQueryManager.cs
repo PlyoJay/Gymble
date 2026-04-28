@@ -31,13 +31,6 @@ namespace Gymble.Services
 
     public class SqlProductQuery
     {
-        public static string ID = "id";
-        public static string NAME = "name";
-        public static string TYPE = "type";
-        public static string DURATION_DAYS = "duration_days";
-        public static string TOTAL_COUNT = "total_count";
-        public static string PRICE = "price";
-
         public static string CREATE_PRODUCT_TABLE = @"
             CREATE TABLE IF NOT EXISTS tb_product (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,28 +51,117 @@ namespace Gymble.Services
             ";
 
         public const string INSERT_PRODUCT = @"
-            INSERT INTO tb_product (code, name, category, price, usage_type, usage_value, start_type, fixed_start_date, status, is_favorite, note, created_at, updated_at)
-            VALUES (@Code, @Name, @Category, @Price, @UsageType, @UsageValue, @StartType, @FixedStartDate, @Status, @IsFavorite, @Note, @CreatedAt, @UpdatedAt);
-            SELECT last_insert_rowid();";
-
-        public const string CREATE_CODE_SEQUENCE_TABLE = @"
-            CREATE TABLE IF NOT EXISTS tb_code_sequence (prefix TEXT PRIMARY KEY, last_value INTEGER NOT NULL);";
+            INSERT INTO tb_product
+            (
+                code,
+                name,
+                sale_type,
+                price,
+                status,
+                is_favorite,
+                note,
+                created_at,
+                updated_at
+            )
+            VALUES
+            (
+                @Code,
+                @Name,
+                @SaleType,
+                @Price,
+                @Status,
+                @IsFavorite,
+                @Note,
+                @CreatedAt,
+                @UpdatedAt
+            );
+            SELECT last_insert_rowid();
+            ";
 
         public const string UPDATE_PRODUCT = @"
             UPDATE tb_product
-            SET code = @Code,
+            SET
+                code = @Code,
                 name = @Name,
-                category = @Category,
+                sale_type = @SaleType,
                 price = @Price,
-                usage_type = @UsageType,
-                usage_value = @UsageValue,
-                start_type = @StartType,
-                fixed_start_date = @FixedStartDate,
                 status = @Status,
                 is_favorite = @IsFavorite,
                 note = @Note,
                 updated_at = @UpdatedAt
-            WHERE id = @Id;";
+            WHERE id = @Id;
+            ";
+
+        public const string DELETE_PRODUCT = @"
+            DELETE FROM tb_product
+            WHERE id = @ProductId;
+            ";
+
+        public const string GET_PRODUCT_BY_ID = @"
+            SELECT
+                id,
+                code,
+                name,
+                sale_type AS SaleType,
+                price,
+                status,
+                is_favorite AS IsFavorite,
+                note,
+                created_at AS CreatedAt,
+                updated_at AS UpdatedAt
+            FROM tb_product
+            WHERE id = @ProductId;
+            ";
+    }
+
+    public static class SqlProductComponentQuery
+    {
+        public const string INSERT_PRODUCT_COMPONENT = @"
+            INSERT INTO tb_product_component
+            (
+                product_id,
+                name,
+                category,
+                usage_type,
+                usage_value,
+                start_type,
+                fixed_start_date,
+                note
+            )
+            VALUES
+            (
+                @ProductId,
+                @Name,
+                @Category,
+                @UsageType,
+                @UsageValue,
+                @StartType,
+                @FixedStartDate,
+                @Note
+            );
+            SELECT last_insert_rowid();
+            ";
+
+        public const string DELETE_PRODUCT_COMPONENTS = @"
+            DELETE FROM tb_product_component
+            WHERE product_id = @ProductId;
+            ";
+
+        public const string GET_PRODUCT_COMPONENTS = @"
+            SELECT
+                id,
+                product_id AS ProductId,
+                name,
+                category AS Category,
+                usage_type AS UsageType,
+                usage_value AS UsageValue,
+                start_type AS StartType,
+                fixed_start_date AS FixedStartDate,
+                note
+            FROM tb_product_component
+            WHERE product_id = @ProductId
+            ORDER BY id ASC;
+            ";
     }
 
     public class SqlPurchaseQuery
@@ -123,6 +205,76 @@ namespace Gymble.Services
 
         public const string CREATE_PURCHASE_ITEM_PURCHASE_ID_INDEX = 
             "CREATE INDEX IF NOT EXISTS [idx_tb_purchase_item_purchase_id] ON [tb_purchase_item]([purchase_id]);";
+
+        public static string INSERT_PURCHASE = @"
+            INSERT INTO tb_purchase
+            (
+                member_id,
+                total_amount,
+                discount_amount,
+                final_amount,
+                payment_method,
+                status,
+                purchased_at,
+                memo,
+                created_at,
+                updated_at
+            )
+            VALUES
+            (
+                @MemberId,
+                @TotalAmount,
+                @DiscountAmount,
+                @FinalAmount,
+                @PaymentMethod,
+                @Status,
+                @PurchasedAt,
+                @Memo,
+                @CreatedAt,
+                @UpdatedAt
+            );
+
+            SELECT last_insert_rowid();
+        ";
+
+        public static string INSERT_PURCHASE_ITEM = @"
+            INSERT INTO tb_purchase_item
+            (
+                purchase_id,
+                product_id,
+                product_code_snapshot,
+                product_name_snapshot,
+                category,
+                usage_type,
+                start_type,
+                unit_price,
+                line_amount,
+                usage_value,
+                is_membership_item,
+                note,
+                created_at,
+                updated_at
+            )
+            VALUES
+            (
+                @PurchaseId,
+                @ProductId,
+                @ProductCodeSnapshot,
+                @ProductNameSnapshot,
+                @Category,
+                @UsageType,
+                @StartType,
+                @UnitPrice,
+                @LineAmount,
+                @UsageValue,
+                @IsMembershipItem,
+                @Note,
+                @CreatedAt,
+                @UpdatedAt
+            );
+
+            SELECT last_insert_rowid();
+        ";
     }
 
     public class SqlMemberMembershipQuery
@@ -160,6 +312,63 @@ namespace Gymble.Services
 
         public const string CREATE_MEMBER_MEMBERSHIP_PURCHASE_ID_INDEX =
             "CREATE INDEX IF NOT EXISTS [idx_tb_member_membership_purchase_id] ON [tb_member_membership]([purchase_id]);";
+
+        public static string INSERT_MEMBER_MEMBERSHIP = @"
+            INSERT INTO tb_member_membership
+            (
+                member_id,
+                purchase_id,
+                purchase_item_id,
+                product_id,
+                product_code_snapshot,
+                product_name_snapshot,
+                category,
+                usage_type,
+                start_type,
+                unit_price_snapshot,
+                usage_value,
+                duration_days,
+                total_count,
+                used_count,
+                remaining_count,
+                purchased_at,
+                activated_at,
+                start_date,
+                end_date,
+                status,
+                note,
+                created_at,
+                updated_at
+            )
+            VALUES
+            (
+                @MemberId,
+                @PurchaseId,
+                @PurchaseItemId,
+                @ProductId,
+                @ProductCodeSnapshot,
+                @ProductNameSnapshot,
+                @Category,
+                @UsageType,
+                @StartType,
+                @UnitPriceSnapshot,
+                @UsageValue,
+                @DurationDays,
+                @TotalCount,
+                @UsedCount,
+                @RemainingCount,
+                @PurchasedAt,
+                @ActivatedAt,
+                @StartDate,
+                @EndDate,
+                @Status,
+                @Note,
+                @CreatedAt,
+                @UpdatedAt
+            );
+
+            SELECT last_insert_rowid();
+        ";
     }
 
     public class SqlAttendanceQuery
@@ -175,5 +384,29 @@ namespace Gymble.Services
                             "[datetime] TEXT NOT NULL,  " +
                             "FOREIGN KEY (member_id) REFERENCES tb_member(id)" +
                         ")";
+    }
+
+    public static class SqlCodeSequenceQuery
+    {
+
+        public const string CREATE_CODE_SEQUENCE_TABLE = @"
+            CREATE TABLE IF NOT EXISTS tb_code_sequence (prefix TEXT PRIMARY KEY, last_value INTEGER NOT NULL);";
+
+        public const string INSERT_IF_MISSING = @"
+            INSERT OR IGNORE INTO tb_code_sequence(prefix, last_value)
+            VALUES (@Prefix, 0);
+            ";
+
+        public const string UPDATE_SEQUENCE = @"
+            UPDATE tb_code_sequence
+            SET last_value = last_value + 1
+            WHERE prefix = @Prefix;
+            ";
+
+        public const string SELECT_SEQUENCE = @"
+            SELECT last_value
+            FROM tb_code_sequence
+            WHERE prefix = @Prefix;
+            ";
     }
 }

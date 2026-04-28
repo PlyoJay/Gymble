@@ -16,10 +16,21 @@ namespace Gymble.Repositories
     {
         Task<IReadOnlyList<Product>> SearchAsync(ProductSearch q, CancellationToken ct = default);
         Task<Product?> GetByIdAsync(long productId, CancellationToken ct = default);
-        Task<long> InsertProductAsync(Product prodcut, CancellationToken ct = default);
+
+        Task<long> InsertProductAsync(Product product, CancellationToken ct = default);
         Task<int> UpdateProductAsync(Product product, CancellationToken ct = default);
         Task<int> DeleteProductAsync(long productId, CancellationToken ct = default);
-        Task<string> GenerateAsync(ProductCategory category, CancellationToken ct = default);
+
+        Task<long> InsertProductComponentAsync(ProductComponent component, CancellationToken ct = default);
+        Task<int> DeleteProductComponentsAsync(long productId, CancellationToken ct = default);
+        Task<IReadOnlyList<ProductComponent>> GetProductComponentsAsync(long productId, CancellationToken ct = default);
+
+        Task<string> GenerateAsync(ProductSaleType saleType, CancellationToken ct = default);
+
+        Task<long> InsertProductAsync(SQLiteConnection conn, SQLiteTransaction tx, Product product, CancellationToken ct = default);
+        Task<long> InsertProductComponentAsync(SQLiteConnection conn, SQLiteTransaction tx, ProductComponent component, CancellationToken ct = default);
+        Task<int> UpdateProductAsync(SQLiteConnection conn, SQLiteTransaction tx, Product product, CancellationToken ct = default);
+        Task<int> DeleteProductComponentsAsync(SQLiteConnection conn, SQLiteTransaction tx, long productId, CancellationToken ct = default);
     }
 
     public class ProductRepository : IProductRepository
@@ -32,24 +43,24 @@ namespace Gymble.Repositories
         public async Task<IReadOnlyList<Product>> SearchAsync(ProductSearch q, CancellationToken ct = default)
         {
             using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
             q ??= new ProductSearch();
 
-            // 범위 정규화
             if (q.MinPrice.HasValue && q.MaxPrice.HasValue && q.MinPrice > q.MaxPrice)
                 (q.MinPrice, q.MaxPrice) = (q.MaxPrice, q.MinPrice);
 
-            if (q.MinUsageValue.HasValue && q.MaxUsageValue.HasValue && q.MinUsageValue > q.MaxUsageValue)
-                (q.MinUsageValue, q.MaxUsageValue) = (q.MaxUsageValue, q.MinUsageValue);
-
-            // SortBy 화이트리스트
             string orderBy = q.SortBy switch
             {
                 "name" => "name",
                 "code" => "code",
                 "price" => "price",
                 "created_at" => "created_at",
+                "updated_at" => "updated_at",
                 _ => "created_at"
             };
+
             string dir = q.Desc ? "DESC" : "ASC";
 
             var where = new List<string>();
@@ -61,65 +72,47 @@ namespace Gymble.Repositories
                 p.Add("NameOrCode", $"%{q.NameOrCode}%");
             }
 
-            where.Add("category = @SelectedCategory");
-            p.Add("SelectedCategory", q.SelectedCategory);
+            if (q.SaleType.HasValue)
+            {
+                where.Add("sale_type = @SaleType");
+                p.Add("SaleType", q.SaleType.Value);
+            }
 
             if (q.Statuses is { Count: > 0 })
             {
-                where.Add("status IN @Statuses"); // <- SQLite에서 안전
+                where.Add("status IN @Statuses");
                 p.Add("Statuses", q.Statuses);
-            }
-
-            if (q.UsageType != ProductUsageType.All)
-
-            {
-                where.Add("usage_type = @UsageType");
-                p.Add("UsageType", q.UsageType);
-            }
-
-            if (q.MinUsageValue.HasValue)
-            {
-                where.Add("usage_value >= @MinUsageValue");
-                p.Add("MinUsageValue", q.MinUsageValue);
-            }
-
-            if (q.MaxUsageValue.HasValue)
-            {
-                where.Add("usage_value <= @MaxUsageValue");
-                p.Add("MaxUsageValue", q.MaxUsageValue);
             }
 
             if (q.MinPrice.HasValue)
             {
                 where.Add("price >= @MinPrice");
-                p.Add("MinPrice", q.MinPrice);
+                p.Add("MinPrice", q.MinPrice.Value);
             }
 
             if (q.MaxPrice.HasValue)
             {
                 where.Add("price <= @MaxPrice");
-                p.Add("MaxPrice", q.MaxPrice);
+                p.Add("MaxPrice", q.MaxPrice.Value);
             }
 
-            if (q.StartType.HasValue)
+            if (q.IsFavorite.HasValue)
             {
-                where.Add("start_type = @StartType");
-                p.Add("StartType", q.StartType);
+                where.Add("is_favorite = @IsFavorite");
+                p.Add("IsFavorite", q.IsFavorite.Value ? 1 : 0);
             }
 
-            string whereSql = where.Count == 0 ? "" : "WHERE " + string.Join(" AND ", where);
+            string whereSql = where.Count == 0
+                ? ""
+                : "WHERE " + string.Join(" AND ", where);
 
             string sql = $@"
                 SELECT
                     id,
                     code,
                     name,
-                    category AS SelectedCategory,
-                    price,                    
-                    usage_type AS UsageType,
-                    usage_value AS UsageValue,
-                    start_type AS StartType,
-                    fixed_start_date AS FixedStartDate,
+                    sale_type AS SaleType,
+                    price,
                     status,
                     is_favorite AS IsFavorite,
                     note,
@@ -133,79 +126,198 @@ namespace Gymble.Repositories
             return (await conn.QueryAsync<Product>(cmd)).AsList();
         }
 
-        public Task<Product?> GetByIdAsync(long productId, CancellationToken ct = default)
+        public async Task<Product?> GetByIdAsync(long productId, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            var cmd = new CommandDefinition(
+                SqlProductQuery.GET_PRODUCT_BY_ID,
+                new { ProductId = productId },
+                cancellationToken: ct);
+
+            return await conn.QuerySingleOrDefaultAsync<Product>(cmd);
         }
 
         public async Task<long> InsertProductAsync(Product product, CancellationToken ct = default)
         {
             using var conn = _connFactory();
-            if (conn.State != ConnectionState.Open) conn.Open();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
 
-            const string sql = SqlProductQuery.INSERT_PRODUCT;
+            var cmd = new CommandDefinition(
+                SqlProductQuery.INSERT_PRODUCT,
+                product,
+                cancellationToken: ct);
 
-            var cmd = new CommandDefinition(sql, product, cancellationToken: ct);
             return await conn.ExecuteScalarAsync<long>(cmd);
         }
 
+        public async Task<long> InsertProductAsync(SQLiteConnection conn, SQLiteTransaction tx, Product product, CancellationToken ct = default)
+        {
+            var cmd = new CommandDefinition(
+                SqlProductQuery.INSERT_PRODUCT,
+                product,
+                transaction: tx,
+                cancellationToken: ct);
+
+            return await conn.ExecuteScalarAsync<long>(cmd);
+        }
 
         public async Task<int> UpdateProductAsync(Product product, CancellationToken ct = default)
         {
             using var conn = _connFactory();
-            if (conn.State != ConnectionState.Open) conn.Open();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
 
-            const string sql = SqlProductQuery.UPDATE_PRODUCT;
+            var cmd = new CommandDefinition(
+                SqlProductQuery.UPDATE_PRODUCT,
+                product,
+                cancellationToken: ct);
 
-            var cmd = new CommandDefinition(sql, product, cancellationToken: ct);
-            return await conn.ExecuteScalarAsync<int>(cmd);
+            return await conn.ExecuteAsync(cmd);
         }
 
-        public Task<int> DeleteProductAsync(long productId, CancellationToken ct = default)
+        public async Task<int> UpdateProductAsync(SQLiteConnection conn, SQLiteTransaction tx, Product product, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            var cmd = new CommandDefinition(
+                SqlProductQuery.UPDATE_PRODUCT,
+                product,
+                transaction: tx,
+                cancellationToken: ct);
+
+            return await conn.ExecuteAsync(cmd);
         }
 
-        public async Task<string> GenerateAsync(ProductCategory category, CancellationToken ct = default)
+        public async Task<int> DeleteProductAsync(long productId, CancellationToken ct = default)
         {
-            string prefix = category switch
-            {
-                ProductCategory.Gym => "GYM",
-                ProductCategory.PT => "PT",
-                ProductCategory.Locker => "LOCK",
-                ProductCategory.Wear => "WEAR",
-                _ => "ETC"
-            };
-
             using var conn = _connFactory();
-            if (conn.State != System.Data.ConnectionState.Open)
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
 
             using var tx = conn.BeginTransaction();
 
-            const string insertIfMissing = @"
-                INSERT OR IGNORE INTO tb_code_sequence(prefix, last_value)
-                VALUES (@Prefix, 0);
-            ";
+            try
+            {
+                await DeleteProductComponentsAsync(conn, tx, productId, ct);
 
-            const string update = @"
-                UPDATE tb_code_sequence
-                SET last_value = last_value + 1
-                WHERE prefix = @Prefix;
-            ";
+                var cmd = new CommandDefinition(
+                    SqlProductQuery.DELETE_PRODUCT,
+                    new { ProductId = productId },
+                    transaction: tx,
+                    cancellationToken: ct);
 
-            const string select = @"
-                SELECT last_value
-                FROM tb_code_sequence
-                WHERE prefix = @Prefix;
-            ";
+                int affected = await conn.ExecuteAsync(cmd);
+
+                tx.Commit();
+                return affected;
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
+        }
+
+        public async Task<long> InsertProductComponentAsync(ProductComponent component, CancellationToken ct = default)
+        {
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            var cmd = new CommandDefinition(
+                SqlProductComponentQuery.INSERT_PRODUCT_COMPONENT,
+                component,
+                cancellationToken: ct);
+
+            return await conn.ExecuteScalarAsync<long>(cmd);
+        }
+
+        public async Task<long> InsertProductComponentAsync(SQLiteConnection conn, SQLiteTransaction tx, ProductComponent component, CancellationToken ct = default)
+        {
+            var cmd = new CommandDefinition(
+                SqlProductComponentQuery.INSERT_PRODUCT_COMPONENT,
+                component,
+                transaction: tx,
+                cancellationToken: ct);
+
+            return await conn.ExecuteScalarAsync<long>(cmd);
+        }
+
+        public async Task<int> DeleteProductComponentsAsync(long productId, CancellationToken ct = default)
+        {
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            var cmd = new CommandDefinition(
+                SqlProductComponentQuery.DELETE_PRODUCT_COMPONENTS,
+                new { ProductId = productId },
+                cancellationToken: ct);
+
+            return await conn.ExecuteAsync(cmd);
+        }
+
+        public async Task<int> DeleteProductComponentsAsync(SQLiteConnection conn, SQLiteTransaction tx, long productId, CancellationToken ct = default)
+        {
+            var cmd = new CommandDefinition(
+                SqlProductComponentQuery.DELETE_PRODUCT_COMPONENTS,
+                new { ProductId = productId },
+                transaction: tx,
+                cancellationToken: ct);
+
+            return await conn.ExecuteAsync(cmd);
+        }
+
+        public async Task<IReadOnlyList<ProductComponent>> GetProductComponentsAsync(long productId, CancellationToken ct = default)
+        {
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            var cmd = new CommandDefinition(
+                SqlProductComponentQuery.GET_PRODUCT_COMPONENTS,
+                new { ProductId = productId },
+                cancellationToken: ct);
+
+            return (await conn.QueryAsync<ProductComponent>(cmd)).AsList();
+        }
+
+        public async Task<string> GenerateAsync(ProductSaleType saleType, CancellationToken ct = default)
+        {
+            string prefix = saleType switch
+            {
+                ProductSaleType.Single => "PRD",
+                ProductSaleType.Package => "PKG",
+                _ => "PRD"
+            };
+
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            using var tx = conn.BeginTransaction();
 
             var param = new { Prefix = prefix };
 
-            await conn.ExecuteAsync(new CommandDefinition(insertIfMissing, param, transaction: tx, cancellationToken: ct));
-            await conn.ExecuteAsync(new CommandDefinition(update, param, transaction: tx, cancellationToken: ct));
+            await conn.ExecuteAsync(new CommandDefinition(
+                SqlCodeSequenceQuery.INSERT_IF_MISSING,
+                param,
+                transaction: tx,
+                cancellationToken: ct));
 
-            int seq = await conn.ExecuteScalarAsync<int>(new CommandDefinition(select, param, transaction: tx, cancellationToken: ct));
+            await conn.ExecuteAsync(new CommandDefinition(
+                SqlCodeSequenceQuery.UPDATE_SEQUENCE,
+                param,
+                transaction: tx,
+                cancellationToken: ct));
+
+            int seq = await conn.ExecuteScalarAsync<int>(new CommandDefinition(
+                SqlCodeSequenceQuery.SELECT_SEQUENCE,
+                param,
+                transaction: tx,
+                cancellationToken: ct));
 
             tx.Commit();
 

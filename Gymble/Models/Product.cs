@@ -5,6 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+public enum ProductSaleType
+{
+    [Description("단품")]
+    Single = 0,
+    [Description("통합권")]
+    Package = 1
+}
+
 public enum ProductUsageType
 {
     [Description("전체")]
@@ -72,19 +80,45 @@ namespace Gymble.Models
         public int Id { get; set; }
         public string Code { get; set; } = "";
         public string Name { get; set; } = "";
-        public ProductCategory Category { get; set; }
+        public ProductSaleType SaleType { get; set; }
+
         public int Price { get; set; }
-        public ProductUsageType UsageType { get; set; }
-        //public int? DurationDays { get; set; } // Period
-        //public int? TotalCount { get; set; }   // Count
-        public int? UsageValue { get; set; } // 사용자가 입력하는 값 (기간/횟수)
-        public ProductStartType StartType { get; set; }
-        public DateTime? FixedStartDate { get; set; }
         public ProductStatus Status { get; set; }
-        public bool IsFavorite { get; set; } // 자주 쓰는 상품
+        public bool IsFavorite { get; set; }
         public string? Note { get; set; }
+
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+    }
+
+    public class ProductComponent
+    {
+        public int Id { get; set; }
+        public int ProductId { get; set; }
+
+        public ProductCategory Category { get; set; }
+        public ProductUsageType UsageType { get; set; }
+        public int UsageValue { get; set; }
+        public ProductStartType StartType { get; set; }
+        public DateTime? FixedStartDate { get; set; }
+
+        public string Name { get; set; } = "";   // 예: 헬스, PT, 락커
+        public string? Note { get; set; }
+    }
+
+    public class ProductUpsertRequest
+    {
+        public int? Id { get; set; }
+
+        public string Code { get; set; } = "";
+        public string Name { get; set; } = "";
+        public ProductSaleType SaleType { get; set; }
+        public int Price { get; set; }
+        public ProductStatus Status { get; set; }
+        public bool IsFavorite { get; set; }
+        public string? Note { get; set; }
+
+        public List<ProductComponent> Components { get; set; } = new();
     }
 
     public class ProductPtOption
