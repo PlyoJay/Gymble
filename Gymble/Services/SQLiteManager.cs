@@ -67,6 +67,11 @@ namespace Gymble.Services
             cmd.CommandText = SqlProductQuery.CREATE_PRODUCT_TABLE;
             cmd.ExecuteNonQuery();
 
+            cmd.CommandText = SqlProductComponentQuery.CREATE_PRODUCT_COMPONENT_TABLE;
+            cmd.ExecuteNonQuery();
+
+            EnsureProductSchema(conn);
+
             cmd.CommandText = SqlCodeSequenceQuery.CREATE_CODE_SEQUENCE_TABLE;
             cmd.ExecuteNonQuery();
 
@@ -89,6 +94,53 @@ namespace Gymble.Services
             conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_ITEM_TABLE);
             conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_MEMBER_ID_INDEX);
             conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_ITEM_PURCHASE_ID_INDEX);
+        }
+
+        private void EnsureProductSchema(SQLiteConnection conn)
+        {
+            EnsureColumn(conn, "tb_product", "code", "TEXT NOT NULL DEFAULT ''");
+            EnsureColumn(conn, "tb_product", "name", "TEXT NOT NULL DEFAULT ''");
+            EnsureColumn(conn, "tb_product", "sale_type", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product", "price", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product", "status", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product", "is_favorite", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product", "note", "TEXT");
+            EnsureColumn(conn, "tb_product", "created_at", "TEXT NOT NULL DEFAULT ''");
+            EnsureColumn(conn, "tb_product", "updated_at", "TEXT NOT NULL DEFAULT ''");
+
+            EnsureColumn(conn, "tb_product_component", "product_id", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product_component", "name", "TEXT NOT NULL DEFAULT ''");
+            EnsureColumn(conn, "tb_product_component", "category", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product_component", "usage_type", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product_component", "usage_value", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product_component", "start_type", "INTEGER NOT NULL DEFAULT 0");
+            EnsureColumn(conn, "tb_product_component", "fixed_start_date", "TEXT");
+            EnsureColumn(conn, "tb_product_component", "note", "TEXT");
+        }
+
+        private static void EnsureColumn(SQLiteConnection conn, string tableName, string columnName, string columnDefinition)
+        {
+            if (ColumnExists(conn, tableName, columnName))
+                return;
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $"ALTER TABLE {tableName} ADD COLUMN {columnName} {columnDefinition};";
+            cmd.ExecuteNonQuery();
+        }
+
+        private static bool ColumnExists(SQLiteConnection conn, string tableName, string columnName)
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $"PRAGMA table_info({tableName});";
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                if (string.Equals(reader["name"]?.ToString(), columnName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
 
         public Func<SQLiteConnection> ConnectionFactory()

@@ -140,6 +140,7 @@ namespace Gymble.Models
     public sealed class ProductSearch
     {
         public string? NameOrCode { get; set; }
+        public ProductSaleType? SaleType { get; set; }
         public ProductCategory SelectedCategory { get; set; }
         public List<ProductStatus>? Statuses { get; set; }
         public ProductUsageType UsageType { get; set; }
@@ -148,6 +149,7 @@ namespace Gymble.Models
 
         public int? MinPrice { get; set; }
         public int? MaxPrice { get; set; }
+        public bool? IsFavorite { get; set; }
         public ProductStartType? StartType { get; set; }
         public string SortBy { get; set; } = "register_date"; // name, register_date, phone_number
         public bool Desc { get; set; } = true;

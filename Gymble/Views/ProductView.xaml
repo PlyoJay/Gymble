@@ -288,7 +288,8 @@
                   RowStyle="{StaticResource DataGridRowStyle}"
                   RowHeight="{Binding RelativeSource={RelativeSource Self},
                               Path=ActualHeight,
-                              Converter={StaticResource RowHeightConverter}}">
+                              Converter={StaticResource RowHeightConverter}}"
+                  VerticalScrollBarVisibility="Visible">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="상품코드" Binding="{Binding Code}" Width="Auto">
                     <DataGridTextColumn.ElementStyle>
@@ -306,19 +307,13 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="기간/횟수" Width="Auto">
+                <DataGridTextColumn Header="판매유형" Binding="{Binding SaleType, Converter={StaticResource EnumDescriptionConverter}}" Width="Auto">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="Padding" Value="4 0"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
-                    <DataGridTextColumn.Binding>
-                        <MultiBinding Converter="{StaticResource UsageValueConverter}">
-                            <Binding Path="UsageType"/>
-                            <Binding Path="UsageValue"/>
-                        </MultiBinding>
-                    </DataGridTextColumn.Binding>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="가격" Binding="{Binding Price, Converter={StaticResource AddUnitConverter}, ConverterParameter=원}" Width="Auto">
                     <DataGridTextColumn.ElementStyle>
@@ -328,7 +323,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="시작 기준" Binding="{Binding StartType, Converter={StaticResource EnumDescriptionConverter}}" Width="Auto">
+                <DataGridTextColumn Header="등록일" Binding="{Binding CreatedAt, StringFormat='yyyy-MM-dd'}" Width="Auto">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -371,6 +366,13 @@
                            Style="{StaticResource GeneralKeyTextBlockStyle}"
                            Foreground="{StaticResource SelectedTBFgColor}"/>
                 <TextBlock Text="{Binding SelectedProductInfo}" 
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"
+                           Margin="10 0 0 0"/>
+                <TextBlock Text="구성:"
+                           Style="{StaticResource GeneralKeyTextBlockStyle}"
+                           Foreground="{StaticResource SelectedTBFgColor}"
+                           Margin="20 0 0 0"/>
+                <TextBlock Text="{Binding ComponentSummary}"
                            Style="{StaticResource GeneralKeyTextBlockStyle}"
                            Margin="10 0 0 0"/>
             </StackPanel>

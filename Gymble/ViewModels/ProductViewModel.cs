@@ -22,7 +22,7 @@ namespace Gymble.ViewModels
     public partial class StatusItem : ObservableObject
     {
         public ProductStatus Status { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
         private bool isChecked;
@@ -56,80 +56,51 @@ namespace Gymble.ViewModels
         private ProductUsageType selectedUsageType;
 
         [ObservableProperty]
-        private string minUsageValue;
+        private string minUsageValue = string.Empty;
 
         [ObservableProperty]
-        private string maxUsageValue;
+        private string maxUsageValue = string.Empty;
 
         [ObservableProperty]
-        private string minPrice;
+        private string minPrice = string.Empty;
 
         [ObservableProperty]
-        private string maxPrice;
+        private string maxPrice = string.Empty;
 
         [ObservableProperty]
-        private Product selectedProduct;
+        private Product? selectedProduct;
 
         [ObservableProperty]
         private string selectedProductInfo = NO_INFO_TEXT;
+
+        private string componentSummary = NO_INFO_TEXT;
+        public string ComponentSummary
+        {
+            get => componentSummary;
+            private set => SetProperty(ref componentSummary, value);
+        }
 
         [ObservableProperty]
         private int totalCount;
 
         partial void OnSelectedCategoryChanged(ProductCategory value)
         {
-            CurrentSearch.SelectedCategory = value;
-            SearchProduct();
+            // TODO(ProductComponent): 구성품 JOIN 검색이 추가되면 Category 필터를 다시 연결한다.
         }
 
         partial void OnSelectedUsageTypeChanged(ProductUsageType value)
         {
-            CurrentSearch.UsageType = value;
-            SearchProduct();
+            // TODO(ProductComponent): 구성품 JOIN 검색이 추가되면 UsageType 필터를 다시 연결한다.
         }
 
         partial void OnMinUsageValueChanged(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                CurrentSearch.MinUsageValue = null;
-                SearchProduct();
-                return;
-            }
-
-            if (!int.TryParse(value, out int minVal))
-                return;
-
-            if (minVal < FIXED_MIN_USAGE_VALUE)
-                return;
-
-            if (int.TryParse(MaxUsageValue, out int maxVal) && minVal > maxVal)
-                return;
-
-            CurrentSearch.MinUsageValue = minVal;
-            SearchProduct();
+            // TODO(ProductComponent): 구성품 JOIN 검색이 추가되면 MinUsageValue 필터를 다시 연결한다.
         }
 
         partial void OnMaxUsageValueChanged(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                CurrentSearch.MaxUsageValue = null;
-                SearchProduct();
-                return;
-            }
-
-            if (!int.TryParse(value, out int maxVal))
-                return;
-
-            if (maxVal > FIXED_MAX_USAGE_VALUE)
-                return;
-
-            if (int.TryParse(MinUsageValue, out int minVal) && maxVal < minVal)
-                return;
-
-            CurrentSearch.MaxUsageValue = maxVal;
-            SearchProduct();
+            // TODO(ProductComponent): 구성품 JOIN 검색이 추가되면 MaxUsageValue 필터를 다시 연결한다.
         }
 
         partial void OnMinPriceChanged(string value)
@@ -170,28 +141,19 @@ namespace Gymble.ViewModels
             SearchProduct();
         }
 
-        partial void OnSelectedProductChanged(Product value)
+        partial void OnSelectedProductChanged(Product? value)
         {
-            string productInfoTxt = string.Empty;
-
             if (value == null)
             {
                 SelectedProductInfo = NO_INFO_TEXT;
+                ComponentSummary = NO_INFO_TEXT;
                 return;
             }
 
-            string? usageValue = GiveUnitToUsageValue(value.UsageType, value.UsageValue);
-            string startType = value.StartType.GetEnumDescription();
-            string status = value.Status.GetEnumDescription();
-            productInfoTxt = $"{value.Name} | {usageValue} | {GiveUnitToPrice(value.Price)} | {startType} | 상태: {status}";
+            ComponentSummary = "불러오는 중...";
+            SelectedProductInfo = CreateProductInfoText(value);
 
-            //switch (value.Category)
-            //{
-            //    case ProductCategory.Gym:
-            //        break;
-            //}
-
-            SelectedProductInfo = productInfoTxt;
+            _ = LoadComponentSummaryAsync(value);
         }
 
         public ICommand? SearchCommand { get; }
@@ -208,9 +170,6 @@ namespace Gymble.ViewModels
         #endregion
 
         public Action? RequestPage { get; set; }
-
-        private const int FIXED_MIN_USAGE_VALUE = 0;
-        private const int FIXED_MAX_USAGE_VALUE = 9999;
 
         private const string NO_INFO_TEXT = "없음";
 
@@ -275,8 +234,15 @@ namespace Gymble.ViewModels
             if (CurrentSearch.Statuses == null) CurrentSearch.Statuses = new List<ProductStatus>();
             if (CurrentSearch.Statuses.Any()) CurrentSearch.Statuses.Clear();
 
-            if (!string.IsNullOrEmpty(SearchInput))
-                CurrentSearch.NameOrCode = SearchInput;
+            CurrentSearch.NameOrCode = string.IsNullOrWhiteSpace(SearchInput)
+                ? null
+                : SearchInput.Trim();
+
+            CurrentSearch.SelectedCategory = default;
+            CurrentSearch.UsageType = ProductUsageType.All;
+            CurrentSearch.MinUsageValue = null;
+            CurrentSearch.MaxUsageValue = null;
+            CurrentSearch.StartType = null;
 
             foreach (var status in StatusFilters.Where(status => status.IsChecked))
             {
@@ -301,6 +267,9 @@ namespace Gymble.ViewModels
             MaxPrice = string.Empty;
 
             SelectedProductInfo = NO_INFO_TEXT;
+            ComponentSummary = NO_INFO_TEXT;
+
+            SearchProduct();
         }
 
         private async Task AddProduct()
@@ -342,13 +311,13 @@ namespace Gymble.ViewModels
         {
             if (SelectedProduct == null) return;
             SelectedProduct.Status = ProductStatus.Stopped;
-            _productService.UpdateAsync(SelectedProduct);
+            // TODO(ProductComponent): 상태 변경 저장 시 기존 구성품을 조회해 ProductUpsertRequest에 포함해야 한다.
             SearchProduct();
         }
 
         private async Task UpdateProductList()
         {
-            CurrentSearch.SortBy = "Id";
+            CurrentSearch.SortBy = "created_at";
             CurrentSearch.Desc = false;
 
             var result = await _productService.SearchAsync(CurrentSearch);
@@ -360,6 +329,66 @@ namespace Gymble.ViewModels
         }
 
         #region Helpers
+
+        private async Task LoadComponentSummaryAsync(Product product)
+        {
+            try
+            {
+                var components = await _productService.GetComponentsAsync(product.Id);
+
+                if (SelectedProduct?.Id != product.Id)
+                    return;
+
+                ComponentSummary = CreateComponentSummaryText(components);
+            }
+            catch (Exception ex)
+            {
+                if (SelectedProduct?.Id != product.Id)
+                    return;
+
+                ComponentSummary = NO_INFO_TEXT;
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private string CreateProductInfoText(Product product)
+        {
+            string saleType = product.SaleType.GetEnumDescription();
+            string status = product.Status.GetEnumDescription();
+
+            return $"{product.Name} | {saleType} | {GiveUnitToPrice(product.Price)} | 상태: {status}";
+        }
+
+        private string CreateComponentSummaryText(IReadOnlyList<ProductComponent> components)
+        {
+            if (components.Count == 0)
+                return NO_INFO_TEXT;
+
+            return string.Join(" + ", components.Select(CreateComponentSummaryText));
+        }
+
+        private string CreateComponentSummaryText(ProductComponent component)
+        {
+            string category = GetComponentCategoryText(component.Category);
+            string? usageValue = GiveUnitToUsageValue(component.UsageType, component.UsageValue);
+
+            return string.IsNullOrWhiteSpace(usageValue)
+                ? category
+                : $"{category} {usageValue}";
+        }
+
+        private string GetComponentCategoryText(ProductCategory category)
+        {
+            return category switch
+            {
+                ProductCategory.Gym => "헬스",
+                ProductCategory.PT => "PT",
+                ProductCategory.Locker => "락커",
+                ProductCategory.Wear => "운동복",
+                ProductCategory.Etc => "기타",
+                _ => category.GetEnumDescription()
+            };
+        }
 
         private string? GiveUnitToUsageValue(ProductUsageType usageType, int? usageValue)
         {

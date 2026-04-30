@@ -36,12 +36,8 @@ namespace Gymble.Services
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 code TEXT NOT NULL,
                 name TEXT NOT NULL,
-                category INTEGER NOT NULL,
+                sale_type INTEGER NOT NULL,
                 price INTEGER NOT NULL,
-                usage_type INTEGER NOT NULL,
-                usage_value INTEGER NOT NULL,
-                start_type INTEGER NOT NULL,
-                fixed_start_date TEXT,
                 status INTEGER NOT NULL,
                 is_favorite INTEGER NOT NULL DEFAULT 0,
                 note TEXT,
@@ -116,6 +112,21 @@ namespace Gymble.Services
 
     public static class SqlProductComponentQuery
     {
+        public const string CREATE_PRODUCT_COMPONENT_TABLE = @"
+            CREATE TABLE IF NOT EXISTS tb_product_component (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                product_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                category INTEGER NOT NULL,
+                usage_type INTEGER NOT NULL,
+                usage_value INTEGER NOT NULL,
+                start_type INTEGER NOT NULL,
+                fixed_start_date TEXT,
+                note TEXT,
+                FOREIGN KEY (product_id) REFERENCES tb_product(id)
+            );
+            ";
+
         public const string INSERT_PRODUCT_COMPONENT = @"
             INSERT INTO tb_product_component
             (

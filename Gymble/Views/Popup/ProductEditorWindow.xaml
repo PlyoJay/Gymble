@@ -80,12 +80,31 @@
                         <ColumnDefinition Width="110"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="상품 종류" 
+                    <TextBlock Text="상품 유형" 
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <ComboBox Grid.Column="1" Height="37"
+                              Style="{StaticResource ComboBoxStyle}"
+                              ItemsSource="{Binding SaleTypes}"
+                              SelectedItem="{Binding SelectedSaleType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="구성 종류"
                                Style="{StaticResource HeaderKeyTextBlockStyle}"/>
                     <ComboBox Grid.Column="1" Height="37"
                               Style="{StaticResource ComboBoxStyle}"
                               ItemsSource="{Binding Categories}"
-                              SelectedItem="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                              SelectedItem="{Binding Components[0].Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}, ConverterParameter=ProductCategory}"/>
@@ -102,22 +121,22 @@
                     <TextBlock Text="기간/횟수" 
                                Style="{StaticResource HeaderKeyTextBlockStyle}"/>
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Height="37"
-                                HorizontalAlignment="Center">
+                            HorizontalAlignment="Center">
                         <RadioButton Content="기간(일)" GroupName="usageType" Tag="Period"
-                                     Foreground="Black" FontWeight="Bold" FontSize="14"
-                                     Width="110" Height="37" Margin="0 0 25 0"
-                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
-                                     IsChecked="{Binding SelectedUsageType, Converter={StaticResource TagMatchConverter}, ConverterParameter=Period, Mode=TwoWay}"/>
+                                 Foreground="Black" FontWeight="Bold" FontSize="14"
+                                 Width="110" Height="37" Margin="0 0 25 0"
+                                 Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                                 IsChecked="{Binding Components[0].UsageType, Converter={StaticResource TagMatchConverter}, ConverterParameter=Period, Mode=TwoWay}"/>
                         <RadioButton Content="횟수" GroupName="usageType" Tag="Count"
-                                     Foreground="Black" FontWeight="Bold" FontSize="14"
-                                     Width="110" Height="37" Margin="0"
-                                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
-                                     IsChecked="{Binding SelectedUsageType, Converter={StaticResource TagMatchConverter}, ConverterParameter=Count, Mode=TwoWay}"/>
+                                 Foreground="Black" FontWeight="Bold" FontSize="14"
+                                 Width="110" Height="37" Margin="0"
+                                 Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                                 IsChecked="{Binding Components[0].UsageType, Converter={StaticResource TagMatchConverter}, ConverterParameter=Count, Mode=TwoWay}"/>
                     </StackPanel>
                 </Grid>
                 <Grid>
                     <TextBox Margin="110 10 0 0" Height="37"
-                             Text="{Binding UsageValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Components[0].UsageValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource AddMemberWindowTextBoxStyle}"/>
                 </Grid>
 
@@ -143,13 +162,24 @@
                     <ComboBox Grid.Column="1" Height="37"
                               Style="{StaticResource ComboBoxStyle}"
                               ItemsSource="{Binding StartTypes}"
-                              SelectedItem="{Binding SelectedStartType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                              SelectedItem="{Binding Components[0].StartType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                </Grid>
+
+                <Grid Margin="0 10 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="고정 시작일"
+               Style="{StaticResource HeaderKeyTextBlockStyle}"/>
+                    <DatePicker Grid.Column="1"
+                SelectedDate="{Binding Components[0].FixedStartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
                 <Grid Margin="0 10 0 0">

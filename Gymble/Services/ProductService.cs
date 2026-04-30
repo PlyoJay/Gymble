@@ -14,6 +14,7 @@ namespace Gymble.Services
     {
         Task<IReadOnlyList<Product>> SearchAsync(ProductSearch q, CancellationToken ct = default);
         Task<Product?> GetByIdAsync(long productId, CancellationToken ct = default);
+        Task<IReadOnlyList<ProductComponent>> GetComponentsAsync(long productId, CancellationToken ct = default);
 
         Task<long> AddAsync(ProductUpsertRequest request, CancellationToken ct = default);
         Task UpdateAsync(ProductUpsertRequest request, CancellationToken ct = default);
@@ -43,6 +44,11 @@ namespace Gymble.Services
             return _repo.GetByIdAsync(productId, ct);
         }
 
+        public Task<IReadOnlyList<ProductComponent>> GetComponentsAsync(long productId, CancellationToken ct = default)
+        {
+            return _repo.GetProductComponentsAsync(productId, ct);
+        }
+
         public async Task<long> AddAsync(ProductUpsertRequest request, CancellationToken ct = default)
         {
             Validate(request, isNew: true);
@@ -65,15 +71,7 @@ namespace Gymble.Services
             if (string.IsNullOrWhiteSpace(product.Code))
                 product.Code = await _repo.GenerateAsync(product.SaleType, ct);
 
-            var productId = await _repo.InsertProductAsync(product, ct);
-
-            foreach (var component in request.Components)
-            {
-                component.ProductId = (int)productId;
-                await _repo.InsertProductComponentAsync(component, ct);
-            }
-
-            return productId;
+            return await _repo.InsertProductWithComponentsAsync(product, request.Components, ct);
         }
 
         public async Task UpdateAsync(ProductUpsertRequest request, CancellationToken ct = default)
@@ -93,15 +91,7 @@ namespace Gymble.Services
                 UpdatedAt = DateTime.Now
             };
 
-            await _repo.UpdateProductAsync(product, ct);
-
-            await _repo.DeleteProductComponentsAsync(product.Id, ct);
-
-            foreach (var component in request.Components)
-            {
-                component.ProductId = product.Id;
-                await _repo.InsertProductComponentAsync(component, ct);
-            }
+            await _repo.UpdateProductWithComponentsAsync(product, request.Components, ct);
         }
 
         public Task DeleteAsync(long productId, CancellationToken ct = default)

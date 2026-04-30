@@ -25,6 +25,9 @@ namespace Gymble.Repositories
         Task<int> DeleteProductComponentsAsync(long productId, CancellationToken ct = default);
         Task<IReadOnlyList<ProductComponent>> GetProductComponentsAsync(long productId, CancellationToken ct = default);
 
+        Task<long> InsertProductWithComponentsAsync(Product product, IReadOnlyList<ProductComponent> components, CancellationToken ct = default);
+        Task<int> UpdateProductWithComponentsAsync(Product product, IReadOnlyList<ProductComponent> components, CancellationToken ct = default);
+
         Task<string> GenerateAsync(ProductSaleType saleType, CancellationToken ct = default);
 
         Task<long> InsertProductAsync(SQLiteConnection conn, SQLiteTransaction tx, Product product, CancellationToken ct = default);
@@ -101,6 +104,9 @@ namespace Gymble.Repositories
                 where.Add("is_favorite = @IsFavorite");
                 p.Add("IsFavorite", q.IsFavorite.Value ? 1 : 0);
             }
+
+            // TODO(ProductComponent): Category/UsageType/UsageValue/StartType 검색은
+            // tb_product_component 조인 또는 EXISTS 조건으로 옮겨야 한다.
 
             string whereSql = where.Count == 0
                 ? ""
@@ -282,6 +288,64 @@ namespace Gymble.Repositories
                 cancellationToken: ct);
 
             return (await conn.QueryAsync<ProductComponent>(cmd)).AsList();
+        }
+
+        public async Task<long> InsertProductWithComponentsAsync(Product product, IReadOnlyList<ProductComponent> components, CancellationToken ct = default)
+        {
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            using var tx = conn.BeginTransaction();
+
+            try
+            {
+                var productId = await InsertProductAsync(conn, tx, product, ct);
+
+                foreach (var component in components)
+                {
+                    component.ProductId = (int)productId;
+                    await InsertProductComponentAsync(conn, tx, component, ct);
+                }
+
+                tx.Commit();
+                return productId;
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
+        }
+
+        public async Task<int> UpdateProductWithComponentsAsync(Product product, IReadOnlyList<ProductComponent> components, CancellationToken ct = default)
+        {
+            using var conn = _connFactory();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            using var tx = conn.BeginTransaction();
+
+            try
+            {
+                int affected = await UpdateProductAsync(conn, tx, product, ct);
+
+                await DeleteProductComponentsAsync(conn, tx, product.Id, ct);
+
+                foreach (var component in components)
+                {
+                    component.ProductId = product.Id;
+                    await InsertProductComponentAsync(conn, tx, component, ct);
+                }
+
+                tx.Commit();
+                return affected;
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
         }
 
         public async Task<string> GenerateAsync(ProductSaleType saleType, CancellationToken ct = default)
