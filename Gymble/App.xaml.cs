@@ -24,32 +24,27 @@ namespace Gymble
 
             var services = new ServiceCollection();
 
-            // DB 연결 (예시) - 네 SQLiteManager가 있으면 거기서 연결 가져오는 식으로 바꿔도 됨
-            services.AddSingleton(_ =>
-            {
-                var conn = new SQLiteConnection("Data Source=gymble.db;Version=3;");
-                conn.Open();
-                return conn;
-            });
+            var sqliteManager = SQLiteManager.Instance;
+            sqliteManager.EnsureCreated();
 
-            services.AddSingleton(SQLiteManager.Instance);
+            services.AddSingleton(sqliteManager);
 
-            services.AddTransient<Func<SQLiteConnection>>(sp =>
+            services.AddTransient<Func<SQLiteConnection>>(_ =>
             {
-                var mgr = SQLiteManager.Instance;
-                return mgr.ConnectionFactory();
+                return sqliteManager.ConnectionFactory();
             });
 
             // Repository
-            services.AddScoped<IMemberRepository, MemberRepository>();
-            services.AddScoped<IAttendanceRepository, AttendanceRepository>();
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddTransient<IMemberRepository, MemberRepository>();
+            services.AddTransient<IAttendanceRepository, AttendanceRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IPurchaseRepository, PurchaseRepository>();
 
             // Service
-            services.AddSingleton<IMemberService, MemberService>();
-            //services.AddSingleton<IAttendanceService, AttendanceService>(); // 나중에 추가
-            services.AddSingleton<IProductService, ProductService>();
+            services.AddTransient<IMemberService, MemberService>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IProductCodeGenerator, ProductCodeGenerator>();
+            services.AddTransient<IPurchaseService, PurchaseService>();
 
             // ViewModel
             services.AddTransient<DashboardViewModel>();
