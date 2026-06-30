@@ -92,8 +92,14 @@ namespace Gymble.Services
         {
             conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_TABLE);
             conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_ITEM_TABLE);
+            EnsurePurchaseSchema(conn);
             conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_MEMBER_ID_INDEX);
             conn.Execute(SqlPurchaseQuery.CREATE_PURCHASE_ITEM_PURCHASE_ID_INDEX);
+        }
+
+        private void EnsurePurchaseSchema(SQLiteConnection conn)
+        {
+            EnsureColumn(conn, "tb_purchase_item", "fixed_start_date", "TEXT");
         }
 
         private void EnsureProductSchema(SQLiteConnection conn)

@@ -1,27 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Gymble.ViewModels.Popup;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Gymble.Views.Popup
 {
-    /// <summary>
-    /// PurchaseProductWindow.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class PurchaseProductWindow : Window
     {
+        private PurchaseProductViewModel? _viewModel;
+
         public PurchaseProductWindow()
         {
             InitializeComponent();
+
+            DataContextChanged += OnDataContextChanged;
+            Closed += OnClosed;
+        }
+
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            Unsubscribe();
+
+            _viewModel = e.NewValue as PurchaseProductViewModel;
+            if (_viewModel != null)
+                _viewModel.CloseRequested += OnCloseRequested;
+        }
+
+        private void OnCloseRequested(bool? dialogResult)
+        {
+            DialogResult = dialogResult;
+            Close();
+        }
+
+        private void OnClosed(object? sender, EventArgs e)
+        {
+            Unsubscribe();
+            DataContextChanged -= OnDataContextChanged;
+            Closed -= OnClosed;
+        }
+
+        private void Unsubscribe()
+        {
+            if (_viewModel != null)
+                _viewModel.CloseRequested -= OnCloseRequested;
+
+            _viewModel = null;
         }
     }
 }

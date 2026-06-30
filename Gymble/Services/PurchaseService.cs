@@ -1,11 +1,6 @@
 ﻿using Gymble.Models;
 using Gymble.Repositories;
-using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gymble.Services
 {
@@ -53,7 +48,7 @@ namespace Gymble.Services
             {
                 var now = DateTime.Now;
 
-                var purchaseItems = new List<PurchaseItem>();
+                var purchaseItems = new List<(PurchaseItem Item, DateTime? SelectedStartDate)>();
 
                 foreach (var requestItem in request.Items)
                 {
@@ -67,7 +62,7 @@ namespace Gymble.Services
                     if (components == null || components.Count == 0)
                     {
                         // 구성 정보가 없는 상품도 일단 구매 항목으로 저장
-                        purchaseItems.Add(new PurchaseItem
+                        purchaseItems.Add((new PurchaseItem
                         {
                             ProductId = product.Id,
                             ProductCodeSnapshot = product.Code,
@@ -75,6 +70,7 @@ namespace Gymble.Services
                             Category = ProductCategory.Etc,
                             UsageType = null,
                             StartType = null,
+                            FixedStartDate = null,
                             UnitPrice = product.Price,
                             LineAmount = product.Price,
                             UsageValue = null,
@@ -82,14 +78,14 @@ namespace Gymble.Services
                             Note = requestItem.Note,
                             CreatedAt = now,
                             UpdatedAt = now
-                        });
+                        }, requestItem.SelectedStartDate));
 
                         continue;
                     }
 
                     foreach (var component in components)
                     {
-                        purchaseItems.Add(new PurchaseItem
+                        purchaseItems.Add((new PurchaseItem
                         {
                             ProductId = product.Id,
                             ProductCodeSnapshot = product.Code,
@@ -99,6 +95,7 @@ namespace Gymble.Services
                             Category = component.Category,
                             UsageType = component.UsageType,
                             StartType = component.StartType,
+                            FixedStartDate = component.FixedStartDate,
                             UnitPrice = product.Price,
                             LineAmount = product.Price,
                             UsageValue = component.UsageValue,
@@ -106,11 +103,11 @@ namespace Gymble.Services
                             Note = requestItem.Note,
                             CreatedAt = now,
                             UpdatedAt = now
-                        });
+                        }, requestItem.SelectedStartDate));
                     }
                 }
 
-                var totalAmount = purchaseItems.Sum(x => x.LineAmount);
+                var totalAmount = purchaseItems.Sum(x => x.Item.LineAmount);
                 var discountAmount = Math.Max(0, request.DiscountAmount);
                 var finalAmount = Math.Max(0, totalAmount - discountAmount);
 
@@ -130,8 +127,9 @@ namespace Gymble.Services
 
                 var purchaseId = await _purchaseRepository.InsertPurchaseAsync(conn, tx, purchase);
 
-                foreach (var item in purchaseItems)
+                foreach (var purchaseItem in purchaseItems)
                 {
+                    var item = purchaseItem.Item;
                     item.PurchaseId = purchaseId;
 
                     var purchaseItemId = await _purchaseRepository.InsertPurchaseItemAsync(conn, tx, item);
@@ -144,6 +142,7 @@ namespace Gymble.Services
                         purchaseId,
                         purchaseItemId,
                         item,
+                        purchaseItem.SelectedStartDate,
                         now);
 
                     await _purchaseRepository.InsertMemberMembershipAsync(conn, tx, membership);
@@ -173,6 +172,7 @@ namespace Gymble.Services
             int purchaseId,
             int purchaseItemId,
             PurchaseItem item,
+            DateTime? selectedStartDate,
             DateTime now)
         {
             var usageType = item.UsageType ?? ProductUsageType.Period;
@@ -190,11 +190,43 @@ namespace Gymble.Services
 
             var status = MembershipStatus.Pending;
 
-            if (startType == ProductStartType.Immediate)
+            switch (startType)
             {
-                startDate = now.Date;
-                activatedAt = now;
-                status = MembershipStatus.Active;
+                case ProductStartType.Immediate:
+                    startDate = now.Date;
+                    activatedAt = now;
+                    status = MembershipStatus.Active;
+                    break;
+
+                case ProductStartType.SelectDate:
+                    if (!selectedStartDate.HasValue)
+                        throw new InvalidOperationException("직접 선택 시작일 상품은 시작일이 필요합니다.");
+
+                    startDate = selectedStartDate.Value.Date;
+                    if (startDate.Value <= now.Date)
+                    {
+                        activatedAt = now;
+                        status = MembershipStatus.Active;
+                    }
+                    break;
+
+                case ProductStartType.FirstCheckIn:
+                    startDate = null;
+                    activatedAt = null;
+                    status = MembershipStatus.Pending;
+                    break;
+
+                case ProductStartType.FixedDate:
+                    if (!item.FixedStartDate.HasValue)
+                        throw new InvalidOperationException("고정 시작일 상품은 FixedStartDate가 필요합니다.");
+
+                    startDate = item.FixedStartDate.Value.Date;
+                    if (startDate.Value <= now.Date)
+                    {
+                        activatedAt = now;
+                        status = MembershipStatus.Active;
+                    }
+                    break;
             }
 
             if (usageType == ProductUsageType.Period)

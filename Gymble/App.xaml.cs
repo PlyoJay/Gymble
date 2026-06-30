@@ -1,11 +1,9 @@
-﻿using Gymble.Models;
+using Gymble.Models;
 using Gymble.Repositories;
 using Gymble.Services;
 using Gymble.ViewModels;
 using Gymble.ViewModels.Popup;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
-using System.Data;
 using System.Data.SQLite;
 using System.Windows;
 

@@ -205,6 +205,7 @@ namespace Gymble.Services
             "[category] INTEGER NOT NULL, " +
             "[usage_type] INTEGER, " +
             "[start_type] INTEGER, " +
+            "[fixed_start_date] TEXT, " +
             "[unit_price] INTEGER NOT NULL,  " +
             "[line_amount] INTEGER NOT NULL,  " +
             "[usage_value] INTEGER,  " +
@@ -258,6 +259,7 @@ namespace Gymble.Services
                 category,
                 usage_type,
                 start_type,
+                fixed_start_date,
                 unit_price,
                 line_amount,
                 usage_value,
@@ -275,6 +277,7 @@ namespace Gymble.Services
                 @Category,
                 @UsageType,
                 @StartType,
+                @FixedStartDate,
                 @UnitPrice,
                 @LineAmount,
                 @UsageValue,

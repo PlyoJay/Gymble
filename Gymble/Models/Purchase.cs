@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public enum PaymentMethod
 {
@@ -60,6 +55,7 @@ namespace Gymble.Models
         public ProductCategory Category { get; set; }
         public ProductUsageType? UsageType { get; set; }
         public ProductStartType? StartType { get; set; }
+        public DateTime? FixedStartDate { get; set; }
 
         public int UnitPrice { get; set; }
         public int LineAmount { get; set; }

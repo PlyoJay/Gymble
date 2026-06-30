@@ -47,7 +47,7 @@ namespace Gymble.ViewModels
         public IAsyncRelayCommand? EditCommand { get; }
         public IAsyncRelayCommand? DeleteCommand { get; }
         public ICommand? CloseInfoViewCommand { get; }
-        public ICommand? PurchaseProductCommand { get; }
+        public IAsyncRelayCommand? PurchaseProductCommand { get; }
 
         #region Fields
 
@@ -64,7 +64,7 @@ namespace Gymble.ViewModels
             EditCommand = new AsyncRelayCommand(EditMember);
             DeleteCommand = new AsyncRelayCommand(DeleteMember);
             CloseInfoViewCommand = new RelayCommand(CloseInfoView);
-            PurchaseProductCommand = new RelayCommand(PurchaseProduct);
+            PurchaseProductCommand = new AsyncRelayCommand(PurchaseProduct);
 
             RequestPage = async () => await UpdateMemberList();
             RequestPage?.Invoke();
@@ -152,8 +152,10 @@ namespace Gymble.ViewModels
             IsDrawerOpen = false;
         }
 
-        private void PurchaseProduct()
+        private async Task PurchaseProduct()
         {
+            if (SelectedMember == null) return;
+
             var vm = App.Services.GetRequiredService<PurchaseProductViewModel>();
             vm.Initialize(SelectedMember);
 
@@ -164,6 +166,9 @@ namespace Gymble.ViewModels
             };
 
             var ok = win.ShowDialog() == true;
+
+            if (ok)
+                await UpdateMemberList();
         }
     }
 }
