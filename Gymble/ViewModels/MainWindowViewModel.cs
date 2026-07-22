@@ -106,6 +106,7 @@ namespace Gymble.ViewModels
             ToMemberLIstViewCommand = new RelayCommand(SwapView);
             ToAttendaceViewCommand = new RelayCommand(SwapView);
             ToProductViewCommand = new RelayCommand(SwapView);
+            ToMembershipViewCommand = new RelayCommand(SwapView);
             ToSettingsViewCommand = new RelayCommand(SwapView);
 
             CurrentViewModel = new DashboardViewModel();
@@ -116,7 +117,7 @@ namespace Gymble.ViewModels
                 new NavigationItemModel { IconKind = PackIconKind.ViewList, Label = "회원관리", TagName="memberlist", Command = ToMemberLIstViewCommand },
                 new NavigationItemModel { IconKind = PackIconKind.ListStatus, Label = "출석관리", TagName="attendance", Command = ToAttendaceViewCommand },
                 new NavigationItemModel { IconKind = PackIconKind.Gym, Label = "상품관리", TagName="product", Command = ToProductViewCommand },
-                //new NavigationItemModel { IconKind = PackIconKind.CardMembership, Label = "멤버쉽", TagName="membership", Command = ToMembershipViewCommand },                
+                new NavigationItemModel { IconKind = PackIconKind.CardMembership, Label = "이용권조회", TagName="membership", Command = ToMembershipViewCommand },
             };
 
             SettingsItem = new ObservableCollection<NavigationItemModel>()
@@ -148,6 +149,9 @@ namespace Gymble.ViewModels
                     break;
                 case "product":
                     CurrentViewModel = _sp.GetRequiredService<ProductViewModel>();
+                    break;
+                case "membership":
+                    CurrentViewModel = _sp.GetRequiredService<MembershipViewModel>();
                     break;
                 case "settings":
                     CurrentViewModel = _sp.GetRequiredService<SettingsViewModel>();

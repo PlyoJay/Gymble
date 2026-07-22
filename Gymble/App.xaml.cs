@@ -37,12 +37,14 @@ namespace Gymble
             services.AddTransient<IAttendanceRepository, AttendanceRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IPurchaseRepository, PurchaseRepository>();
+            services.AddTransient<IMembershipRepository, MembershipRepository>();
 
             // Service
             services.AddTransient<IMemberService, MemberService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IProductCodeGenerator, ProductCodeGenerator>();
             services.AddTransient<IPurchaseService, PurchaseService>();
+            services.AddTransient<IMembershipService, MembershipService>();
 
             // ViewModel
             services.AddTransient<DashboardViewModel>();

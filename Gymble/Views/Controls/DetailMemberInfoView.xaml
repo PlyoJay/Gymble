@@ -64,24 +64,60 @@
                 <ContentControl Template="{StaticResource DefaultCardTemplate}"
                                 Margin="0 10"
                                 MinHeight="150">
-                    <Grid>
-                        <TextBlock Text="이용중인 이용권이 없습니다."
-                                   Style="{StaticResource NoDataTextBlockStyle}"/>
-                        <StackPanel Margin="15" Visibility="Collapsed">
-                            <StackPanel>
-                                <TextBlock Text="3개월 헬스권" 
-                                           FontSize="18"
-                                           Style="{StaticResource ContentDataTextBlockStyle}"/>
-                                <TextBlock Text="2026-02-05 ~ 2026-05-05" 
-                                           Style="{StaticResource ContentDataTextBlockStyle}"
-                                           Margin="0 10"/>
-                                <ContentControl Template="{StaticResource StatusControlTemplate}" 
-                                                Width="90" Height="30"
-                                                Background="#FF7700" Foreground="White"
-                                                Content="만료-91"
-                                                HorizontalAlignment="Left"/>
-                            </StackPanel>
-                        </StackPanel>
+                    <Grid Margin="15">
+                        <TextBlock Text="{Binding MembershipErrorMessage}"
+                                   Foreground="#D32F2F"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Text="이용중인 이용권이 없습니다.">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource NoDataTextBlockStyle}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentMemberships.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsMembershipLoading}" Value="True">
+                                            <Setter Property="Text" Value="이용권을 불러오는 중입니다."/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <ItemsControl ItemsSource="{Binding CurrentMemberships}">
+                            <ItemsControl.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentMemberships.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0 0 0 12">
+                                        <TextBlock Text="{Binding ProductName}"
+                                                   FontSize="18"
+                                                   Style="{StaticResource ContentDataTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding PeriodText}"
+                                                   Style="{StaticResource ContentDataTextBlockStyle}"
+                                                   Margin="0 8 0 4"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ContentControl Template="{StaticResource StatusControlTemplate}"
+                                                            Width="80" Height="28"
+                                                            Background="#2E7D32"
+                                                            Foreground="White"
+                                                            Content="{Binding StatusText}"
+                                                            HorizontalAlignment="Left"/>
+                                            <TextBlock Text="{Binding UsageText}"
+                                                       Margin="10 4 0 0"
+                                                       Style="{StaticResource ContentDataTextBlockStyle}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
                 </ContentControl>
             </StackPanel>
@@ -122,9 +158,63 @@
                         AlternationCount="1000000">
                 <TabItem Header="이용권/결제 이력"
                          Style="{StaticResource GymbleTabItemStyle}">
-                    <Grid>
-                        <TextBlock Text="이력이 없습니다."
-                                   Style="{StaticResource NoDataTextBlockStyle}"/>
+                    <Grid Margin="15">
+                        <TextBlock Text="이력이 없습니다.">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource NoDataTextBlockStyle}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding MembershipHistories.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsMembershipLoading}" Value="True">
+                                            <Setter Property="Text" Value="이력을 불러오는 중입니다."/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding MembershipHistories}">
+                                <ItemsControl.Style>
+                                    <Style TargetType="ItemsControl">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding MembershipHistories.Count}" Value="0">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ItemsControl.Style>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0 0 0 10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding ProductName}"
+                                                           Style="{StaticResource ContentDataTextBlockStyle}"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding PeriodText}"
+                                                           Foreground="#606060"
+                                                           Margin="0 4 0 0"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding StatusText}"
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding UsageText}"
+                                                           Foreground="#606060"
+                                                           HorizontalAlignment="Right"
+                                                           Margin="0 4 0 0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </Grid>
                 </TabItem>
                 <TabItem Header="출석 기록"

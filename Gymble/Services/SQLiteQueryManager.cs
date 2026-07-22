@@ -383,6 +383,48 @@ namespace Gymble.Services
 
             SELECT last_insert_rowid();
         ";
+
+        public const string GET_MEMBER_MEMBERSHIPS_BY_MEMBER_ID = @"
+            SELECT
+                id,
+                member_id AS MemberId,
+                purchase_id AS PurchaseId,
+                purchase_item_id AS PurchaseItemId,
+                product_id AS ProductId,
+                product_code_snapshot AS ProductCodeSnapshot,
+                product_name_snapshot AS ProductNameSnapshot,
+                category AS Category,
+                usage_type AS UsageType,
+                start_type AS StartType,
+                unit_price_snapshot AS UnitPriceSnapshot,
+                usage_value AS UsageValue,
+                duration_days AS DurationDays,
+                total_count AS TotalCount,
+                used_count AS UsedCount,
+                remaining_count AS RemainingCount,
+                purchased_at AS PurchasedAt,
+                activated_at AS ActivatedAt,
+                start_date AS StartDate,
+                end_date AS EndDate,
+                status AS Status,
+                note,
+                created_at AS CreatedAt,
+                updated_at AS UpdatedAt
+            FROM tb_member_membership
+            WHERE member_id = @MemberId
+            ORDER BY purchased_at DESC, id DESC;
+        ";
+
+        public const string UPDATE_MEMBER_MEMBERSHIP_ACTIVATION = @"
+            UPDATE tb_member_membership
+            SET
+                activated_at = @ActivatedAt,
+                start_date = @StartDate,
+                end_date = @EndDate,
+                status = @Status,
+                updated_at = @UpdatedAt
+            WHERE id = @Id;
+        ";
     }
 
     public class SqlAttendanceQuery

@@ -274,7 +274,7 @@ namespace Gymble.Services
                 durationDays = usageValue;
 
                 if (startDate.HasValue && usageValue > 0)
-                    endDate = startDate.Value.AddDays(usageValue);
+                    endDate = MembershipDatePolicy.CalculatePeriodEndDate(startDate.Value, usageValue);
             }
             else if (usageType == ProductUsageType.Count)
             {

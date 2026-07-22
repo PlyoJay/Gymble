@@ -1,13 +1,87 @@
-﻿<UserControl x:Class="Gymble.Views.MembershipView"
+<UserControl x:Class="Gymble.Views.MembershipView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Gymble.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converter="clr-namespace:Gymble.Converter"
+             mc:Ignorable="d"
+             d:DesignHeight="720" d:DesignWidth="1100">
+    <UserControl.Resources>
+        <converter:PhoneNumberConverter x:Key="PhoneNumberConverter"/>
+    </UserControl.Resources>
+
     <Grid>
-        <TextBlock Text="MEMBERSHIP" VerticalAlignment="Center" HorizontalAlignment="Center"
-               FontSize="30"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Margin="0 0 0 10">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <TextBox Width="280"
+                         Margin="0 0 10 0"
+                         Style="{StaticResource SearchTextBoxStyle}"
+                         Text="{Binding SearchInput, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Content="검색"
+                        Command="{Binding SearchCommand}"
+                        Style="{StaticResource BaseButtonStyle}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="#D32F2F"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"/>
+        </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid ItemsSource="{Binding Members}"
+                      SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      Style="{StaticResource DataGridStyle}"
+                      ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                      RowStyle="{StaticResource DataGridRowStyle}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber, Converter={StaticResource PhoneNumberConverter}}" Width="140"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter Grid.Column="1"
+                          Width="1"
+                          HorizontalAlignment="Center"
+                          Background="{StaticResource SeperatorBorderBrushColor}"/>
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="34"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="{Binding SelectedMember.Name, StringFormat={}{0} 회원 이용권}"
+                           Style="{StaticResource TitleTextBlockStyle}"
+                           VerticalAlignment="Center"/>
+
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Memberships}"
+                          AutoGenerateColumns="False"
+                          Style="{StaticResource DataGridStyle}"
+                          ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                          RowStyle="{StaticResource DataGridRowStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="상품" Binding="{Binding ProductName}" Width="2*"/>
+                        <DataGridTextColumn Header="상태" Binding="{Binding StatusText}" Width="90"/>
+                        <DataGridTextColumn Header="기간" Binding="{Binding PeriodText}" Width="180"/>
+                        <DataGridTextColumn Header="사용" Binding="{Binding UsageText}" Width="100"/>
+                        <DataGridTextColumn Header="구매일" Binding="{Binding PurchasedAt, StringFormat=yyyy-MM-dd}" Width="110"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

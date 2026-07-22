@@ -18,6 +18,8 @@ namespace Gymble.ViewModels
         public MemberSearch CurrentSearch { get; private set; } = new();
 
         public ObservableCollection<Member> MemberList { get; } = new();
+        public ObservableCollection<MemberMembershipSummary> CurrentMemberships { get; } = new();
+        public ObservableCollection<MemberMembershipSummary> MembershipHistories { get; } = new();
 
         [ObservableProperty]
         private string searchInput = string.Empty;
@@ -28,9 +30,16 @@ namespace Gymble.ViewModels
         [ObservableProperty]
         private bool isDrawerOpen;
 
+        [ObservableProperty]
+        private bool isMembershipLoading;
+
+        [ObservableProperty]
+        private string? membershipErrorMessage;
+
         partial void OnSelectedMemberChanged(Member? value)
         {
             IsDrawerOpen = value != null;
+            _ = LoadMembershipsAsync(value?.Id);
         }
 
         public IAsyncRelayCommand? SearchCommand { get; }
@@ -43,12 +52,14 @@ namespace Gymble.ViewModels
         #region Fields
 
         private readonly IMemberService _memberService;
+        private readonly IMembershipService _membershipService;
 
         #endregion
 
-        public MemberListViewModel(IMemberService memberService)
+        public MemberListViewModel(IMemberService memberService, IMembershipService membershipService)
         {
             _memberService = memberService;
+            _membershipService = membershipService;
 
             SearchCommand = new AsyncRelayCommand(SearchMember);
             AddCommand = new AsyncRelayCommand(AddMember);
@@ -145,6 +156,44 @@ namespace Gymble.ViewModels
             IsDrawerOpen = false;
         }
 
+        private async Task LoadMembershipsAsync(int? memberId)
+        {
+            CurrentMemberships.Clear();
+            MembershipHistories.Clear();
+            MembershipErrorMessage = null;
+
+            if (!memberId.HasValue || memberId.Value <= 0)
+                return;
+
+            IsMembershipLoading = true;
+
+            try
+            {
+                var memberships = await _membershipService.GetByMemberIdAsync(memberId.Value);
+
+                if (SelectedMember?.Id != memberId.Value)
+                    return;
+
+                foreach (var membership in memberships)
+                {
+                    if (membership.Status == MembershipStatus.Active)
+                        CurrentMemberships.Add(membership);
+
+                    MembershipHistories.Add(membership);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (SelectedMember?.Id == memberId.Value)
+                    MembershipErrorMessage = ex.Message;
+            }
+            finally
+            {
+                if (SelectedMember?.Id == memberId.Value)
+                    IsMembershipLoading = false;
+            }
+        }
+
         private async Task PurchaseProduct()
         {
             if (SelectedMember == null) return;
@@ -161,7 +210,10 @@ namespace Gymble.ViewModels
             var ok = win.ShowDialog() == true;
 
             if (ok)
+            {
                 await UpdateMemberList();
+                await LoadMembershipsAsync(SelectedMember?.Id);
+            }
         }
     }
 }
