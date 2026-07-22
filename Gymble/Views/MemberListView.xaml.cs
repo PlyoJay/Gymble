@@ -28,10 +28,10 @@ namespace Gymble.Views
             Loaded += MemberListView_Loaded;
         }
 
-        private async void MemberListView_Loaded(object sender, RoutedEventArgs e)
+        private void MemberListView_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is MemberListViewModel vm)
-                await vm.InitializeAsync();
+                _ = vm.InitializeAsync();
         }
     }
 }

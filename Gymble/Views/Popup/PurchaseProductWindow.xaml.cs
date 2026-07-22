@@ -21,13 +21,21 @@ namespace Gymble.Views.Popup
 
             _viewModel = e.NewValue as PurchaseProductViewModel;
             if (_viewModel != null)
+            {
                 _viewModel.CloseRequested += OnCloseRequested;
+                _viewModel.MessageRequested += OnMessageRequested;
+            }
         }
 
         private void OnCloseRequested(bool? dialogResult)
         {
             DialogResult = dialogResult;
             Close();
+        }
+
+        private void OnMessageRequested(string message)
+        {
+            MessageBox.Show(this, message, "구매 완료", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void OnClosed(object? sender, EventArgs e)
@@ -40,7 +48,10 @@ namespace Gymble.Views.Popup
         private void Unsubscribe()
         {
             if (_viewModel != null)
+            {
                 _viewModel.CloseRequested -= OnCloseRequested;
+                _viewModel.MessageRequested -= OnMessageRequested;
+            }
 
             _viewModel = null;
         }

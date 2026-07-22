@@ -1,4 +1,4 @@
-﻿using Gymble.Models;
+using Gymble.Models;
 using Gymble.Repositories;
 using System.Data.SQLite;
 
@@ -14,28 +14,30 @@ namespace Gymble.Services
         private readonly Func<SQLiteConnection> _connFactory;
         private readonly IPurchaseRepository _purchaseRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IMemberRepository _memberRepository;
 
         public PurchaseService(
             Func<SQLiteConnection> connFactory,
             IPurchaseRepository purchaseRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IMemberRepository memberRepository)
         {
             _connFactory = connFactory;
             _purchaseRepository = purchaseRepository;
             _productRepository = productRepository;
+            _memberRepository = memberRepository;
         }
-
 
         public async Task<int> CreatePurchaseAsync(PurchaseRequest request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            if (request.MemberId <= 0)
-                throw new InvalidOperationException("구매 대상 회원이 올바르지 않습니다.");
-
-            if (request.Items == null || request.Items.Count == 0)
-                throw new InvalidOperationException("구매할 상품이 없습니다.");
+            var now = DateTime.Now;
+            var purchaseItems = await BuildValidatedPurchaseItemsAsync(request, now);
+            var totalAmount = purchaseItems.Sum(x => x.Item.LineAmount);
+            var discountAmount = request.DiscountAmount;
+            var finalAmount = totalAmount - discountAmount;
 
             using var conn = _connFactory();
 
@@ -46,71 +48,6 @@ namespace Gymble.Services
 
             try
             {
-                var now = DateTime.Now;
-
-                var purchaseItems = new List<(PurchaseItem Item, DateTime? SelectedStartDate)>();
-
-                foreach (var requestItem in request.Items)
-                {
-                    var product = await _productRepository.GetByIdAsync(requestItem.ProductId);
-
-                    if (product == null)
-                        throw new InvalidOperationException($"상품을 찾을 수 없습니다. ProductId={requestItem.ProductId}");
-
-                    var components = await _productRepository.GetProductComponentsAsync(product.Id);
-
-                    if (components == null || components.Count == 0)
-                    {
-                        // 구성 정보가 없는 상품도 일단 구매 항목으로 저장
-                        purchaseItems.Add((new PurchaseItem
-                        {
-                            ProductId = product.Id,
-                            ProductCodeSnapshot = product.Code,
-                            ProductNameSnapshot = product.Name,
-                            Category = ProductCategory.Etc,
-                            UsageType = null,
-                            StartType = null,
-                            FixedStartDate = null,
-                            UnitPrice = product.Price,
-                            LineAmount = product.Price,
-                            UsageValue = null,
-                            IsMembershipItem = false,
-                            Note = requestItem.Note,
-                            CreatedAt = now,
-                            UpdatedAt = now
-                        }, requestItem.SelectedStartDate));
-
-                        continue;
-                    }
-
-                    foreach (var component in components)
-                    {
-                        purchaseItems.Add((new PurchaseItem
-                        {
-                            ProductId = product.Id,
-                            ProductCodeSnapshot = product.Code,
-                            ProductNameSnapshot = string.IsNullOrWhiteSpace(component.Name)
-                                ? product.Name
-                                : $"{product.Name} - {component.Name}",
-                            Category = component.Category,
-                            UsageType = component.UsageType,
-                            StartType = component.StartType,
-                            FixedStartDate = component.FixedStartDate,
-                            UnitPrice = product.Price,
-                            LineAmount = product.Price,
-                            UsageValue = component.UsageValue,
-                            IsMembershipItem = IsMembershipCategory(component.Category),
-                            Note = requestItem.Note,
-                            CreatedAt = now,
-                            UpdatedAt = now
-                        }, requestItem.SelectedStartDate));
-                    }
-                }
-
-                var totalAmount = purchaseItems.Sum(x => x.Item.LineAmount);
-                var discountAmount = Math.Max(0, request.DiscountAmount);
-                var finalAmount = Math.Max(0, totalAmount - discountAmount);
-
                 var purchase = new Purchase
                 {
                     MemberId = request.MemberId,
@@ -157,6 +94,109 @@ namespace Gymble.Services
                 tx.Rollback();
                 throw;
             }
+        }
+
+        private async Task<List<(PurchaseItem Item, DateTime? SelectedStartDate)>> BuildValidatedPurchaseItemsAsync(
+            PurchaseRequest request,
+            DateTime now)
+        {
+            if (request.MemberId <= 0)
+                throw new InvalidOperationException("구매 대상 회원이 올바르지 않습니다.");
+
+            if (!await _memberRepository.ExistsAsync(request.MemberId))
+                throw new InvalidOperationException("구매 대상 회원을 찾을 수 없습니다.");
+
+            if (request.Items == null || request.Items.Count == 0)
+                throw new InvalidOperationException("구매할 상품을 선택해 주세요.");
+
+            if (request.DiscountAmount < 0)
+                throw new InvalidOperationException("할인금액은 0원보다 작을 수 없습니다.");
+
+            var purchaseItems = new List<(PurchaseItem Item, DateTime? SelectedStartDate)>();
+            var totalAmount = 0;
+
+            foreach (var requestItem in request.Items)
+            {
+                if (requestItem.ProductId <= 0)
+                    throw new InvalidOperationException("선택한 상품 정보가 올바르지 않습니다.");
+
+                var product = await _productRepository.GetByIdAsync(requestItem.ProductId);
+
+                if (product == null)
+                    throw new InvalidOperationException("선택한 상품을 찾을 수 없습니다.");
+
+                if (product.Status != ProductStatus.OnSale)
+                    throw new InvalidOperationException($"'{product.Name}' 상품은 현재 판매 중이 아닙니다.");
+
+                var components = await _productRepository.GetProductComponentsAsync(product.Id);
+
+                if (components == null || components.Count == 0)
+                    throw new InvalidOperationException($"'{product.Name}' 상품에 구성품이 없어 구매할 수 없습니다. 상품 구성을 먼저 확인해 주세요.");
+
+                ValidateSelectedStartDate(product, components, requestItem.SelectedStartDate, now);
+
+                for (var i = 0; i < components.Count; i++)
+                {
+                    var component = components[i];
+                    ValidateComponent(product, component);
+
+                    var lineAmount = i == 0 ? product.Price : 0;
+                    totalAmount += lineAmount;
+
+                    purchaseItems.Add((new PurchaseItem
+                    {
+                        ProductId = product.Id,
+                        ProductCodeSnapshot = product.Code,
+                        ProductNameSnapshot = string.IsNullOrWhiteSpace(component.Name)
+                            ? product.Name
+                            : $"{product.Name} - {component.Name}",
+                        Category = component.Category,
+                        UsageType = component.UsageType,
+                        StartType = component.StartType,
+                        FixedStartDate = component.FixedStartDate,
+                        UnitPrice = product.Price,
+                        LineAmount = lineAmount,
+                        UsageValue = component.UsageValue,
+                        IsMembershipItem = IsMembershipCategory(component.Category),
+                        Note = requestItem.Note,
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    }, requestItem.SelectedStartDate));
+                }
+            }
+
+            if (request.DiscountAmount > totalAmount)
+                throw new InvalidOperationException("할인금액은 상품 정상가보다 클 수 없습니다.");
+
+            return purchaseItems;
+        }
+
+        private static void ValidateSelectedStartDate(
+            Product product,
+            IReadOnlyList<ProductComponent> components,
+            DateTime? selectedStartDate,
+            DateTime now)
+        {
+            if (!components.Any(x => x.StartType == ProductStartType.SelectDate))
+                return;
+
+            if (!selectedStartDate.HasValue)
+                throw new InvalidOperationException($"'{product.Name}' 상품은 시작일을 선택해야 합니다.");
+
+            if (selectedStartDate.Value.Date < now.Date)
+                throw new InvalidOperationException("선택 시작일은 오늘보다 이전일 수 없습니다.");
+        }
+
+        private static void ValidateComponent(Product product, ProductComponent component)
+        {
+            if (component.StartType == ProductStartType.FixedDate && !component.FixedStartDate.HasValue)
+                throw new InvalidOperationException($"'{product.Name}' 상품의 고정 시작일이 설정되어 있지 않습니다.");
+
+            if (component.UsageType == ProductUsageType.Period && component.UsageValue < 1)
+                throw new InvalidOperationException($"'{product.Name} - {component.Name}' 기간제 구성의 사용 기간은 1일 이상이어야 합니다.");
+
+            if (component.UsageType == ProductUsageType.Count && component.UsageValue < 1)
+                throw new InvalidOperationException($"'{product.Name} - {component.Name}' 횟수제 구성의 사용 횟수는 1회 이상이어야 합니다.");
         }
 
         private static bool IsMembershipCategory(ProductCategory category)
@@ -234,9 +274,7 @@ namespace Gymble.Services
                 durationDays = usageValue;
 
                 if (startDate.HasValue && usageValue > 0)
-                {
                     endDate = startDate.Value.AddDays(usageValue);
-                }
             }
             else if (usageType == ProductUsageType.Count)
             {

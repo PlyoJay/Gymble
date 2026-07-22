@@ -17,6 +17,7 @@ namespace Gymble.Repositories
         Task<int> UpdateMemberAsync(Member member, CancellationToken ct = default);
         Task<int> DeleteMemberAsync(Member member, CancellationToken ct = default);
         Task<Member> GetByIdAsync(long id, CancellationToken ct = default);
+        Task<bool> ExistsAsync(long id, CancellationToken ct = default);
         Task<PagedResult<Member>> GetPageAsync(int page = 1, int pageSize = 20, string? sortBy = null, bool desc = true, CancellationToken ct = default);
         Task<PagedResult<Member>> SearchAsync(MemberSearch q, CancellationToken ct = default);
     }
@@ -77,6 +78,15 @@ namespace Gymble.Repositories
             const string sql = "SELECT * FROM tb_member WHERE id = @Id;";
             var cmd = new CommandDefinition(sql, new { Id = id }, cancellationToken: ct);
             return await conn.QuerySingleAsync<Member>(cmd);
+        }
+
+        public async Task<bool> ExistsAsync(long id, CancellationToken ct = default)
+        {
+            using var conn = _connFactory();
+
+            const string sql = "SELECT COUNT(1) FROM tb_member WHERE id = @Id;";
+            var cmd = new CommandDefinition(sql, new { Id = id }, cancellationToken: ct);
+            return await conn.ExecuteScalarAsync<int>(cmd) > 0;
         }
 
         public Task<PagedResult<Member>> GetPageAsync(

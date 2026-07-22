@@ -21,7 +21,6 @@ public enum PurchaseStatus
     Cancelled = 1
 }
 
-
 namespace Gymble.Models
 {
     public class Purchase
@@ -83,7 +82,7 @@ namespace Gymble.Models
     public class PurchaseRequestItem
     {
         public int ProductId { get; set; }
-        public DateTime? SelectedStartDate { get; set; } // 지정 시작일 필요 시
+        public DateTime? SelectedStartDate { get; set; }
         public string? Note { get; set; }
     }
 }

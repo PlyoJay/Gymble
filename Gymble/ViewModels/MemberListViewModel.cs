@@ -3,18 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using Gymble.Models;
 using Gymble.Services;
 using Gymble.ViewModels.Popup;
-using Gymble.Views;
 using Gymble.Views.Popup;
-using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -37,12 +28,12 @@ namespace Gymble.ViewModels
         [ObservableProperty]
         private bool isDrawerOpen;
 
-        partial void OnSelectedMemberChanged(Member value)
+        partial void OnSelectedMemberChanged(Member? value)
         {
-            IsDrawerOpen = true;
+            IsDrawerOpen = value != null;
         }
 
-        public ICommand? SearchCommand { get; }
+        public IAsyncRelayCommand? SearchCommand { get; }
         public IAsyncRelayCommand? AddCommand { get; }
         public IAsyncRelayCommand? EditCommand { get; }
         public IAsyncRelayCommand? DeleteCommand { get; }
@@ -59,7 +50,7 @@ namespace Gymble.ViewModels
         {
             _memberService = memberService;
 
-            SearchCommand = new RelayCommand(SearchMember);
+            SearchCommand = new AsyncRelayCommand(SearchMember);
             AddCommand = new AsyncRelayCommand(AddMember);
             EditCommand = new AsyncRelayCommand(EditMember);
             DeleteCommand = new AsyncRelayCommand(DeleteMember);
@@ -70,7 +61,7 @@ namespace Gymble.ViewModels
             RequestPage?.Invoke();
         }
 
-        public async void SearchMember()
+        public async Task SearchMember()
         {
             if (CurrentSearch == null) CurrentSearch = new();
 
@@ -116,11 +107,13 @@ namespace Gymble.ViewModels
 
         private async Task DeleteMember()
         {
+            if (SelectedMember == null) return;
+
             var msgResult = MessageBox.Show("정말로 삭제하겠습니까?", "경고", MessageBoxButton.OKCancel);
 
             if (msgResult == MessageBoxResult.Cancel) return;
 
-            await  _memberService.DeleteAsync(SelectedMember);
+            await _memberService.DeleteAsync(SelectedMember);
 
             SelectedMember = null;
             IsDrawerOpen = false;

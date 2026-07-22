@@ -108,7 +108,7 @@ namespace Gymble.ViewModels
             if (string.IsNullOrWhiteSpace(value))
             {
                 CurrentSearch.MinPrice = null;
-                SearchProduct();
+                _ = SearchProduct();
                 return;
             }
 
@@ -119,7 +119,7 @@ namespace Gymble.ViewModels
                 return;
 
             CurrentSearch.MinPrice = minPrice;
-            SearchProduct();
+            _ = SearchProduct();
         }
 
         partial void OnMaxPriceChanged(string value)
@@ -127,7 +127,7 @@ namespace Gymble.ViewModels
             if (string.IsNullOrWhiteSpace(value))
             {
                 CurrentSearch.MaxPrice = null;
-                SearchProduct();
+                _ = SearchProduct();
                 return;
             }
 
@@ -138,7 +138,7 @@ namespace Gymble.ViewModels
                 return;
 
             CurrentSearch.MaxPrice = maxPrice;
-            SearchProduct();
+            _ = SearchProduct();
         }
 
         partial void OnSelectedProductChanged(Product? value)
@@ -156,7 +156,7 @@ namespace Gymble.ViewModels
             _ = LoadComponentSummaryAsync(value);
         }
 
-        public ICommand? SearchCommand { get; }
+        public IAsyncRelayCommand? SearchCommand { get; }
         public ICommand? ResetFilterCommand { get; }
         public IAsyncRelayCommand? AddCommand { get; }
         public ICommand? EditCommand { get; }
@@ -179,7 +179,7 @@ namespace Gymble.ViewModels
         {
             _productService = productService;
 
-            SearchCommand = new RelayCommand(SearchProduct);
+            SearchCommand = new AsyncRelayCommand(SearchProduct);
             ResetFilterCommand = new RelayCommand(ResetFilters);
             AddCommand = new AsyncRelayCommand(AddProduct);
             EditCommand = new AsyncRelayCommand(EditProduct);
@@ -228,7 +228,7 @@ namespace Gymble.ViewModels
             }
         }
 
-        public async void SearchProduct()
+        public async Task SearchProduct()
         {
             if (CurrentSearch == null) CurrentSearch = new();
             if (CurrentSearch.Statuses == null) CurrentSearch.Statuses = new List<ProductStatus>();
@@ -269,7 +269,7 @@ namespace Gymble.ViewModels
             SelectedProductInfo = NO_INFO_TEXT;
             ComponentSummary = NO_INFO_TEXT;
 
-            SearchProduct();
+            _ = SearchProduct();
         }
 
         private async Task AddProduct()
@@ -312,7 +312,7 @@ namespace Gymble.ViewModels
             if (SelectedProduct == null) return;
             SelectedProduct.Status = ProductStatus.Stopped;
             // TODO(ProductComponent): 상태 변경 저장 시 기존 구성품을 조회해 ProductUpsertRequest에 포함해야 한다.
-            SearchProduct();
+            _ = SearchProduct();
         }
 
         private async Task UpdateProductList()
@@ -405,7 +405,7 @@ namespace Gymble.ViewModels
             return valueText;
         }
 
-        private string GiveUnitToPrice(int price) => price.ToString("N0") + " ₩"; 
+        private string GiveUnitToPrice(int price) => price.ToString("N0") + "원";
 
         #endregion
     }
