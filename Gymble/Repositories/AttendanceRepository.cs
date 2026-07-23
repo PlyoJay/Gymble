@@ -1,74 +1,68 @@
-﻿using Dapper;
+using Dapper;
 using Gymble.Models;
-using System;
-using System.Collections.Generic;
+using Gymble.Services;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gymble.Repositories
 {
-    public class AttendanceRepository : IAttendanceRepository
+    public sealed class AttendanceRepository : IAttendanceRepository
     {
-        private readonly SQLiteConnection _conn;
+        private readonly Func<SQLiteConnection> _connFactory;
 
-        public AttendanceRepository(SQLiteConnection connection)
-            => _conn = connection ?? throw new ArgumentNullException(nameof(connection));
+        public AttendanceRepository(Func<SQLiteConnection> connFactory)
+            => _connFactory = connFactory ?? throw new ArgumentNullException(nameof(connFactory));
 
         public async Task<bool> HasCheckedInAsync(long memberId, string checkinDate, CancellationToken ct = default)
         {
-            const string sql = @"
-                SELECT EXISTS(
-                    SELECT 1 FROM tb_attendance
-                    WHERE member_id = @MemberId AND checkin_date = @Date
-                );";
-            var cmd = new CommandDefinition(sql, new { MemberId = memberId, Date = checkinDate }, cancellationToken: ct);
-            return await _conn.ExecuteScalarAsync<long>(cmd) == 1;
+            using var conn = _connFactory();
+            var cmd = new CommandDefinition(
+                SqlAttendanceQuery.HAS_CHECKED_IN,
+                new { MemberId = memberId, CheckinDate = checkinDate },
+                cancellationToken: ct);
+
+            return await conn.ExecuteScalarAsync<long>(cmd) == 1;
         }
 
-        public async Task<long> CheckInOncePerDayAsync(long memberId, DateTime checkedInAtUtc, CancellationToken ct = default)
+        public async Task<bool> HasCheckedInAsync(
+            SQLiteConnection conn,
+            SQLiteTransaction tx,
+            long memberId,
+            string checkinDate,
+            CancellationToken ct = default)
         {
-            // 날짜키 생성 (UTC 기준). 표시만 KST로 하면 됨.
-            string dateKey = checkedInAtUtc.ToString("yyyy-MM-dd");
+            var cmd = new CommandDefinition(
+                SqlAttendanceQuery.HAS_CHECKED_IN,
+                new { MemberId = memberId, CheckinDate = checkinDate },
+                transaction: tx,
+                cancellationToken: ct);
 
-            const string sql = @"
-                INSERT INTO tb_attendance (member_id, datetime, checkin_date)
-                VALUES (@MemberId, @CheckedInAt, @DateKey);
-                SELECT last_insert_rowid();";
-
-            try
-            {
-                var cmd = new CommandDefinition(sql, new
-                {
-                    MemberId = memberId,
-                    CheckedInAt = checkedInAtUtc,
-                    DateKey = dateKey
-                }, cancellationToken: ct);
-
-                return await _conn.ExecuteScalarAsync<long>(cmd);
-            }
-            catch (SQLiteException ex) when (ex.ResultCode == SQLiteErrorCode.Constraint)
-            {
-                // ux_attendance_member_day에 걸림 = 오늘 이미 체크인 함
-                return -1;
-            }
+            return await conn.ExecuteScalarAsync<long>(cmd) == 1;
         }
 
-        public async Task<IReadOnlyList<Attendance>> GetByDateAsync(string checkinDate, CancellationToken ct = default)
+        public async Task<long> InsertAsync(
+            SQLiteConnection conn,
+            SQLiteTransaction tx,
+            Attendance attendance,
+            CancellationToken ct = default)
         {
-            const string sql = @"
-                SELECT id,
-                       member_id AS MemberId,
-                       datetime   AS CheckedInAt,
-                       checkin_date AS CheckinDate
-                FROM tb_attendance
-                WHERE checkin_date = @Date
-                ORDER BY datetime DESC;";
+            var cmd = new CommandDefinition(
+                SqlAttendanceQuery.INSERT_ATTENDANCE,
+                attendance,
+                transaction: tx,
+                cancellationToken: ct);
 
-            var cmd = new CommandDefinition(sql, new { Date = checkinDate }, cancellationToken: ct);
-            var rows = await _conn.QueryAsync<Attendance>(cmd);
-            return rows.AsList();
+            return await conn.ExecuteScalarAsync<long>(cmd);
+        }
+
+        public async Task<IReadOnlyList<AttendanceViewItem>> GetByDateAsync(string checkinDate, CancellationToken ct = default)
+        {
+            using var conn = _connFactory();
+            var cmd = new CommandDefinition(
+                SqlAttendanceQuery.GET_BY_DATE,
+                new { CheckinDate = checkinDate },
+                cancellationToken: ct);
+
+            return (await conn.QueryAsync<AttendanceViewItem>(cmd)).AsList();
         }
     }
 }

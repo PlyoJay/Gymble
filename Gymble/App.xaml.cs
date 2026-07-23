@@ -45,6 +45,7 @@ namespace Gymble
             services.AddTransient<IProductCodeGenerator, ProductCodeGenerator>();
             services.AddTransient<IPurchaseService, PurchaseService>();
             services.AddTransient<IMembershipService, MembershipService>();
+            services.AddTransient<IAttendanceService, AttendanceService>();
 
             // ViewModel
             services.AddTransient<DashboardViewModel>();

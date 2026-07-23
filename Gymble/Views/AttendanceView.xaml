@@ -1,13 +1,154 @@
-﻿<UserControl x:Class="Gymble.Views.AttendanceView"
+<UserControl x:Class="Gymble.Views.AttendanceView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Gymble.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converter="clr-namespace:Gymble.Converter"
+             mc:Ignorable="d"
+             d:DesignHeight="720" d:DesignWidth="1100">
+    <UserControl.Resources>
+        <converter:PhoneNumberConverter x:Key="PhoneNumberConverter"/>
+    </UserControl.Resources>
+
     <Grid>
-        <TextBlock Text="ATTENDACE" VerticalAlignment="Center" HorizontalAlignment="Center"
-                       FontSize="30"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="430"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="170"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="회원 검색"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       Margin="0 0 0 10"/>
+
+            <DockPanel Grid.Row="1" LastChildFill="True" Margin="0 0 0 15">
+                <Button Content="검색"
+                        DockPanel.Dock="Right"
+                        Width="90"
+                        Margin="10 0 0 0"
+                        Style="{StaticResource BaseButtonStyle}"
+                        Command="{Binding SearchMemberCommand}"/>
+                <TextBox Style="{StaticResource SearchTextBoxStyle}"
+                         Text="{Binding SearchInput, UpdateSourceTrigger=PropertyChanged}"/>
+            </DockPanel>
+
+            <DataGrid Grid.Row="1"
+                      Margin="0 50 0 0"
+                      ItemsSource="{Binding MemberSearchResults}"
+                      SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      Style="{StaticResource DataGridStyle}"
+                      ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                      RowStyle="{StaticResource DataGridRowStyle}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="이름" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber, Converter={StaticResource PhoneNumberConverter}}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock Grid.Row="2"
+                       Text="선택 회원"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       Margin="0 15 0 10"/>
+
+            <ContentControl Grid.Row="3"
+                            Template="{StaticResource DefaultCardTemplate}"
+                            VerticalAlignment="Top"
+                            MinHeight="220">
+                <StackPanel Margin="15">
+                    <TextBlock Text="{Binding SelectedMember.Name, TargetNullValue=회원을 선택해 주세요.}"
+                               FontSize="20"
+                               Style="{StaticResource ContentDataTextBlockStyle}"/>
+                    <TextBlock Text="{Binding SelectedMember.PhoneNumber, Converter={StaticResource PhoneNumberConverter}}"
+                               Foreground="#606060"
+                               Margin="0 8 0 18"/>
+
+                    <TextBlock Text="사용 가능 이용권"
+                               Style="{StaticResource HeaderKeyTextBlockStyle}"
+                               Margin="0 0 0 6"/>
+                    <TextBlock Text="{Binding UsableMembershipSummary}"
+                               TextWrapping="Wrap"
+                               Style="{StaticResource ContentDataTextBlockStyle}"
+                               Margin="0 0 0 18"/>
+
+                    <Button Content="출석 등록"
+                            Height="42"
+                            Style="{StaticResource BaseButtonStyle}"
+                            Command="{Binding CheckInCommand}"/>
+
+                    <TextBlock Text="{Binding ResultMessage}"
+                               Foreground="#2E7D32"
+                               TextWrapping="Wrap"
+                               Margin="0 14 0 0"/>
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="#D32F2F"
+                               TextWrapping="Wrap"
+                               Margin="0 8 0 0"/>
+                </StackPanel>
+            </ContentControl>
+        </Grid>
+
+        <GridSplitter Grid.Column="1"
+                      Width="1"
+                      HorizontalAlignment="Center"
+                      Background="{StaticResource SeperatorBorderBrushColor}"/>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <DockPanel Margin="0 0 0 10">
+                <TextBlock Text="출석 목록"
+                           Style="{StaticResource TitleTextBlockStyle}"
+                           VerticalAlignment="Center"/>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="이전"
+                            Width="70"
+                            Style="{StaticResource BorderedButtonStyle}"
+                            Command="{Binding PreviousDateCommand}"/>
+                    <DatePicker Width="135"
+                                Margin="8 0"
+                                SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                Style="{StaticResource CustomDatePickerStyle}"/>
+                    <Button Content="오늘"
+                            Width="70"
+                            Style="{StaticResource BorderedButtonStyle}"
+                            Command="{Binding TodayCommand}"/>
+                    <Button Content="다음"
+                            Width="70"
+                            Margin="8 0 0 0"
+                            Style="{StaticResource BorderedButtonStyle}"
+                            Command="{Binding NextDateCommand}"/>
+                </StackPanel>
+            </DockPanel>
+
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding Attendances}"
+                      AutoGenerateColumns="False"
+                      Style="{StaticResource DataGridStyle}"
+                      ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                      RowStyle="{StaticResource DataGridRowStyle}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="시간" Binding="{Binding CheckInTimeText}" Width="70"/>
+                    <DataGridTextColumn Header="회원명" Binding="{Binding MemberName}" Width="110"/>
+                    <DataGridTextColumn Header="연락처" Binding="{Binding PhoneNumber, Converter={StaticResource PhoneNumberConverter}}" Width="130"/>
+                    <DataGridTextColumn Header="이용권" Binding="{Binding MembershipName}" Width="*"/>
+                    <DataGridTextColumn Header="유형" Binding="{Binding UsageTypeText}" Width="90"/>
+                    <DataGridTextColumn Header="사용" Binding="{Binding UsageChangeText}" Width="120"/>
+                    <DataGridTextColumn Header="상태" Binding="{Binding ResultText}" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </UserControl>

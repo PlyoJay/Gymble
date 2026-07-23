@@ -425,6 +425,19 @@ namespace Gymble.Services
                 updated_at = @UpdatedAt
             WHERE id = @Id;
         ";
+
+        public const string UPDATE_MEMBER_MEMBERSHIP_USAGE = @"
+            UPDATE tb_member_membership
+            SET
+                activated_at = @ActivatedAt,
+                start_date = @StartDate,
+                end_date = @EndDate,
+                used_count = @UsedCount,
+                remaining_count = @RemainingCount,
+                status = @Status,
+                updated_at = @UpdatedAt
+            WHERE id = @Id;
+        ";
     }
 
     public class SqlAttendanceQuery
@@ -438,8 +451,69 @@ namespace Gymble.Services
                             "[id] INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "[member_id] INTEGER NOT NULL,  " +
                             "[datetime] TEXT NOT NULL,  " +
+                            "[checkin_date] TEXT NOT NULL DEFAULT '', " +
+                            "[membership_id] INTEGER, " +
+                            "[membership_before_remaining] INTEGER, " +
+                            "[membership_after_remaining] INTEGER, " +
                             "FOREIGN KEY (member_id) REFERENCES tb_member(id)" +
                         ")";
+
+        public const string CREATE_ATTENDANCE_MEMBER_DATE_UNIQUE_INDEX =
+            "CREATE UNIQUE INDEX IF NOT EXISTS [ux_tb_attendance_member_date] ON [tb_attendance]([member_id], [checkin_date]);";
+
+        public const string CREATE_ATTENDANCE_DATE_INDEX =
+            "CREATE INDEX IF NOT EXISTS [idx_tb_attendance_checkin_date] ON [tb_attendance]([checkin_date]);";
+
+        public const string HAS_CHECKED_IN = @"
+            SELECT EXISTS(
+                SELECT 1
+                FROM tb_attendance
+                WHERE member_id = @MemberId
+                  AND checkin_date = @CheckinDate
+            );
+        ";
+
+        public const string INSERT_ATTENDANCE = @"
+            INSERT INTO tb_attendance
+            (
+                member_id,
+                datetime,
+                checkin_date,
+                membership_id,
+                membership_before_remaining,
+                membership_after_remaining
+            )
+            VALUES
+            (
+                @MemberId,
+                @CheckedInAt,
+                @CheckinDate,
+                @MembershipId,
+                @MembershipBeforeRemaining,
+                @MembershipAfterRemaining
+            );
+            SELECT last_insert_rowid();
+        ";
+
+        public const string GET_BY_DATE = @"
+            SELECT
+                a.id AS AttendanceId,
+                a.member_id AS MemberId,
+                m.name AS MemberName,
+                m.phone_number AS PhoneNumber,
+                a.datetime AS CheckedInAt,
+                a.membership_id AS MembershipId,
+                mm.product_name_snapshot AS MembershipName,
+                mm.usage_type AS UsageType,
+                a.membership_before_remaining AS BeforeRemainingCount,
+                a.membership_after_remaining AS AfterRemainingCount,
+                '출석 완료' AS ResultText
+            FROM tb_attendance a
+            INNER JOIN tb_member m ON m.id = a.member_id
+            LEFT JOIN tb_member_membership mm ON mm.id = a.membership_id
+            WHERE a.checkin_date = @CheckinDate
+            ORDER BY a.datetime DESC, a.id DESC;
+        ";
     }
 
     public static class SqlCodeSequenceQuery

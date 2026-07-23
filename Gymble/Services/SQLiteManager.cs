@@ -80,6 +80,10 @@ namespace Gymble.Services
 
             cmd.CommandText = SqlAttendanceQuery.CREATE_ATTENDANCE_TABLE;
             cmd.ExecuteNonQuery();
+            EnsureAttendanceSchema(conn);
+            BackfillAttendanceCheckinDate(conn);
+            conn.Execute(SqlAttendanceQuery.CREATE_ATTENDANCE_MEMBER_DATE_UNIQUE_INDEX);
+            conn.Execute(SqlAttendanceQuery.CREATE_ATTENDANCE_DATE_INDEX);
 
             EnsurePurchaseTables(conn);
 
@@ -100,6 +104,23 @@ namespace Gymble.Services
         private void EnsurePurchaseSchema(SQLiteConnection conn)
         {
             EnsureColumn(conn, "tb_purchase_item", "fixed_start_date", "TEXT");
+        }
+
+        private void EnsureAttendanceSchema(SQLiteConnection conn)
+        {
+            EnsureColumn(conn, "tb_attendance", "checkin_date", "TEXT NOT NULL DEFAULT ''");
+            EnsureColumn(conn, "tb_attendance", "membership_id", "INTEGER");
+            EnsureColumn(conn, "tb_attendance", "membership_before_remaining", "INTEGER");
+            EnsureColumn(conn, "tb_attendance", "membership_after_remaining", "INTEGER");
+        }
+
+        private static void BackfillAttendanceCheckinDate(SQLiteConnection conn)
+        {
+            conn.Execute(@"
+                UPDATE tb_attendance
+                SET checkin_date = substr(datetime, 1, 10)
+                WHERE checkin_date IS NULL OR checkin_date = '';
+            ");
         }
 
         private void EnsureProductSchema(SQLiteConnection conn)

@@ -9,6 +9,16 @@ namespace Gymble.Repositories
     {
         Task<IReadOnlyList<MemberMembership>> GetByMemberIdAsync(long memberId, CancellationToken ct = default);
         Task<int> UpdateActivationAsync(MemberMembership membership, CancellationToken ct = default);
+        Task<IReadOnlyList<MemberMembership>> GetByMemberIdAsync(
+            SQLiteConnection conn,
+            SQLiteTransaction tx,
+            long memberId,
+            CancellationToken ct = default);
+        Task<int> UpdateUsageAsync(
+            SQLiteConnection conn,
+            SQLiteTransaction tx,
+            MemberMembership membership,
+            CancellationToken ct = default);
     }
 
     public sealed class MembershipRepository : IMembershipRepository
@@ -37,6 +47,36 @@ namespace Gymble.Repositories
             var cmd = new CommandDefinition(
                 SqlMemberMembershipQuery.UPDATE_MEMBER_MEMBERSHIP_ACTIVATION,
                 membership,
+                cancellationToken: ct);
+
+            return await conn.ExecuteAsync(cmd);
+        }
+
+        public async Task<IReadOnlyList<MemberMembership>> GetByMemberIdAsync(
+            SQLiteConnection conn,
+            SQLiteTransaction tx,
+            long memberId,
+            CancellationToken ct = default)
+        {
+            var cmd = new CommandDefinition(
+                SqlMemberMembershipQuery.GET_MEMBER_MEMBERSHIPS_BY_MEMBER_ID,
+                new { MemberId = memberId },
+                transaction: tx,
+                cancellationToken: ct);
+
+            return (await conn.QueryAsync<MemberMembership>(cmd)).AsList();
+        }
+
+        public async Task<int> UpdateUsageAsync(
+            SQLiteConnection conn,
+            SQLiteTransaction tx,
+            MemberMembership membership,
+            CancellationToken ct = default)
+        {
+            var cmd = new CommandDefinition(
+                SqlMemberMembershipQuery.UPDATE_MEMBER_MEMBERSHIP_USAGE,
+                membership,
+                transaction: tx,
                 cancellationToken: ct);
 
             return await conn.ExecuteAsync(cmd);
