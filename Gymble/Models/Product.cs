@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public enum ProductSaleType
 {
@@ -141,7 +138,7 @@ namespace Gymble.Models
     {
         public string? NameOrCode { get; set; }
         public ProductSaleType? SaleType { get; set; }
-        public ProductCategory SelectedCategory { get; set; }
+        public ProductCategory? SelectedCategory { get; set; }
         public List<ProductStatus>? Statuses { get; set; }
         public ProductUsageType UsageType { get; set; }
         public int? MinUsageValue { get; set; }
@@ -151,7 +148,7 @@ namespace Gymble.Models
         public int? MaxPrice { get; set; }
         public bool? IsFavorite { get; set; }
         public ProductStartType? StartType { get; set; }
-        public string SortBy { get; set; } = "register_date"; // name, register_date, phone_number
+        public string SortBy { get; set; } = "created_at";
         public bool Desc { get; set; } = true;
 
         public int? Take { get; set; }

@@ -30,5 +30,10 @@ namespace Gymble.Views
         {
             e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
         }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

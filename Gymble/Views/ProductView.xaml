@@ -21,7 +21,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="160"/>
+            <RowDefinition Height="155"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
@@ -32,7 +32,7 @@
                     <TextBox x:Name="tbSearchInput" Width="350" Margin="0,0,10,0"
                              Style="{StaticResource SearchTextBoxStyle}"
                              Text="{Binding SearchInput}"/>
-                    <TextBlock Width="350" Margin="0,0,10,0" Text="상품명/코드, 메모 검색">
+                    <TextBlock Width="350" Margin="0,0,10,0" Text="상품명/코드 검색">
                         <TextBlock.Style>
                             <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource SearchTextBlockStyle}">
                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -80,29 +80,43 @@
                             </MultiBinding>
                         </Border.Clip>
                         <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="category" Content="전체"
+                                         Style="{StaticResource RadioButtonTabStyle}" Width="110"
+                                         IsChecked="{Binding SelectedCategory,
+                                                             Mode=TwoWay,
+                                                             Converter={StaticResource EnumToBoolConverter},
+                                                             ConverterParameter=All}"/>
+                            <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <RadioButton GroupName="category" Content="헬스권"
-                                         Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                                         Style="{StaticResource RadioButtonTabStyle}" Width="120"
                                          IsChecked="{Binding SelectedCategory,
                                                              Mode=TwoWay,
                                                              Converter={StaticResource EnumToBoolConverter},
                                                              ConverterParameter=Gym}"/>
                             <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <RadioButton GroupName="category" Content="PT"
-                                         Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                                         Style="{StaticResource RadioButtonTabStyle}" Width="110"
                                          IsChecked="{Binding SelectedCategory,
                                                              Mode=TwoWay,
                                                              Converter={StaticResource EnumToBoolConverter},
                                                              ConverterParameter=PT}"/>
                             <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
-                            <RadioButton GroupName="category" Content="락커/운동복"
-                                         Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                            <RadioButton GroupName="category" Content="락커"
+                                         Style="{StaticResource RadioButtonTabStyle}" Width="110"
                                          IsChecked="{Binding SelectedCategory,
                                                              Mode=TwoWay,
                                                              Converter={StaticResource EnumToBoolConverter},
                                                              ConverterParameter=Locker}"/>
                             <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
+                            <RadioButton GroupName="category" Content="운동복"
+                                         Style="{StaticResource RadioButtonTabStyle}" Width="110"
+                                         IsChecked="{Binding SelectedCategory,
+                                                             Mode=TwoWay,
+                                                             Converter={StaticResource EnumToBoolConverter},
+                                                             ConverterParameter=Wear}"/>
+                            <GridSplitter BorderThickness="0.5" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <RadioButton GroupName="category" Content="기타"
-                                         Style="{StaticResource RadioButtonTabStyle}" Width="200"
+                                         Style="{StaticResource RadioButtonTabStyle}" Width="110"
                                          IsChecked="{Binding SelectedCategory,
                                                              Mode=TwoWay,
                                                              Converter={StaticResource EnumToBoolConverter},
@@ -122,6 +136,11 @@
                         BorderThickness="0 1 0 0"
                         BorderBrush="{StaticResource DefaultBorderBrushColor}">
                     <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Margin="10 0 0 0">
                                 <TextBlock Text="상태" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
@@ -182,7 +201,43 @@
                             </StackPanel>
                             <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <StackPanel>
-                                <TextBlock Text="기간(일)/횟수" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
+                                <TextBlock Text="시작방식" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
+                                <StackPanel Orientation="Horizontal" Height="35">
+                                    <RadioButton GroupName="startType" Content="전체"
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedStartType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=All}"/>
+                                    <RadioButton GroupName="startType" Content="즉시" Margin="12 0"
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedStartType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=Immediate}"/>
+                                    <RadioButton GroupName="startType" Content="직접선택"
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedStartType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=SelectDate}"/>
+                                    <RadioButton GroupName="startType" Content="첫 출석" Margin="12 0"
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedStartType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=FirstCheckIn}"/>
+                                    <RadioButton GroupName="startType" Content="고정일"
+                                                 Style="{StaticResource GeneralRadioButtonStyle}"
+                                                 IsChecked="{Binding SelectedStartType,
+                                                                     Mode=TwoWay,
+                                                                     Converter={StaticResource EnumToBoolConverter},
+                                                                     ConverterParameter=FixedDate}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding UsageValueHeader}" Style="{StaticResource HeaderKeyTextBlockStyle}" Margin="0 0 0 10"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Grid>
                                         <TextBox x:Name="tbMinUsageValueInput" 
@@ -226,6 +281,18 @@
                                         </TextBlock>
                                     </Grid>
                                 </StackPanel>
+                                <TextBlock Text="{Binding UsageValueError}" Foreground="#C62828" FontSize="11" Margin="0 4 0 0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding UsageValueError}" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </StackPanel>
                             <GridSplitter BorderThickness="0.5" Margin="20 0" BorderBrush="{StaticResource SeperatorBorderBrushColor}"/>
                             <StackPanel>
@@ -273,7 +340,23 @@
                                         </TextBlock>
                                     </Grid>
                                 </StackPanel>
+                                <TextBlock Text="{Binding PriceError}" Foreground="#C62828" FontSize="11" Margin="0 4 0 0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding PriceError}" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10 14 0 0">
+                            
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -289,7 +372,7 @@
                   RowHeight="{Binding RelativeSource={RelativeSource Self},
                               Path=ActualHeight,
                               Converter={StaticResource RowHeightConverter}}"
-                  VerticalScrollBarVisibility="Visible">
+                  VerticalScrollBarVisibility="Visible" SelectionChanged="DataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="상품코드" Binding="{Binding Code}" Width="Auto">
                     <DataGridTextColumn.ElementStyle>

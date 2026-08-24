@@ -1,14 +1,11 @@
 ﻿using Dapper;
 using Gymble.Models;
 using Gymble.Services;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Gymble.Repositories
 {
@@ -51,17 +48,14 @@ namespace Gymble.Repositories
 
             q ??= new ProductSearch();
 
-            if (q.MinPrice.HasValue && q.MaxPrice.HasValue && q.MinPrice > q.MaxPrice)
-                (q.MinPrice, q.MaxPrice) = (q.MaxPrice, q.MinPrice);
-
             string orderBy = q.SortBy switch
             {
-                "name" => "name",
-                "code" => "code",
-                "price" => "price",
-                "created_at" => "created_at",
-                "updated_at" => "updated_at",
-                _ => "created_at"
+                "name" => "p.name",
+                "code" => "p.code",
+                "price" => "p.price",
+                "created_at" => "p.created_at",
+                "updated_at" => "p.updated_at",
+                _ => "p.created_at"
             };
 
             string dir = q.Desc ? "DESC" : "ASC";
@@ -71,42 +65,84 @@ namespace Gymble.Repositories
 
             if (!string.IsNullOrWhiteSpace(q.NameOrCode))
             {
-                where.Add("(name LIKE @NameOrCode OR code LIKE @NameOrCode)");
+                where.Add("(p.name LIKE @NameOrCode OR p.code LIKE @NameOrCode)");
                 p.Add("NameOrCode", $"%{q.NameOrCode}%");
             }
 
             if (q.SaleType.HasValue)
             {
-                where.Add("sale_type = @SaleType");
+                where.Add("p.sale_type = @SaleType");
                 p.Add("SaleType", q.SaleType.Value);
             }
 
             if (q.Statuses is { Count: > 0 })
             {
-                where.Add("status IN @Statuses");
+                where.Add("p.status IN @Statuses");
                 p.Add("Statuses", q.Statuses);
             }
 
             if (q.MinPrice.HasValue)
             {
-                where.Add("price >= @MinPrice");
+                where.Add("p.price >= @MinPrice");
                 p.Add("MinPrice", q.MinPrice.Value);
             }
 
             if (q.MaxPrice.HasValue)
             {
-                where.Add("price <= @MaxPrice");
+                where.Add("p.price <= @MaxPrice");
                 p.Add("MaxPrice", q.MaxPrice.Value);
             }
 
             if (q.IsFavorite.HasValue)
             {
-                where.Add("is_favorite = @IsFavorite");
+                where.Add("p.is_favorite = @IsFavorite");
                 p.Add("IsFavorite", q.IsFavorite.Value ? 1 : 0);
             }
 
-            // TODO(ProductComponent): Category/UsageType/UsageValue/StartType 검색은
-            // tb_product_component 조인 또는 EXISTS 조건으로 옮겨야 한다.
+            var componentWhere = new List<string>
+            {
+                "pc.product_id = p.id"
+            };
+
+            if (q.SelectedCategory.HasValue)
+            {
+                componentWhere.Add("pc.category = @ComponentCategory");
+                p.Add("ComponentCategory", q.SelectedCategory.Value);
+            }
+
+            if (q.UsageType != ProductUsageType.All)
+            {
+                componentWhere.Add("pc.usage_type = @ComponentUsageType");
+                p.Add("ComponentUsageType", q.UsageType);
+            }
+
+            if (q.MinUsageValue.HasValue)
+            {
+                componentWhere.Add("pc.usage_value >= @MinUsageValue");
+                p.Add("MinUsageValue", q.MinUsageValue.Value);
+            }
+
+            if (q.MaxUsageValue.HasValue)
+            {
+                componentWhere.Add("pc.usage_value <= @MaxUsageValue");
+                p.Add("MaxUsageValue", q.MaxUsageValue.Value);
+            }
+
+            if (q.StartType.HasValue)
+            {
+                componentWhere.Add("pc.start_type = @ComponentStartType");
+                p.Add("ComponentStartType", q.StartType.Value);
+            }
+
+            if (componentWhere.Count > 1)
+            {
+                where.Add($@"
+                    EXISTS (
+                        SELECT 1
+                        FROM tb_product_component pc
+                        WHERE {string.Join(" AND ", componentWhere)}
+                    )");
+            }
 
             string whereSql = where.Count == 0
                 ? ""
@@ -124,7 +160,7 @@ namespace Gymble.Repositories
                     note,
                     created_at AS CreatedAt,
                     updated_at AS UpdatedAt
-                FROM tb_product
+                FROM tb_product p
                 {whereSql}
                 ORDER BY {orderBy} {dir};";
 
