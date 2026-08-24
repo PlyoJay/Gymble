@@ -585,14 +585,16 @@
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
                     <Border x:Name="Bd"
                             Background="{TemplateBinding Background}"
                             BorderThickness="0">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <!-- 마우스 올렸을 때 살짝만 진하게, 싫으면 이 트리거 삭제 -->
@@ -667,27 +669,42 @@
                                 <ColumnDefinition Width="32" />
                             </Grid.ColumnDefinitions>
 
+                            <ToggleButton x:Name="DropDownToggle"
+                                          Grid.ColumnSpan="2"
+                                          Panel.ZIndex="0"
+                                          Style="{StaticResource ComboDropToggleStyle}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                              RelativeSource={RelativeSource TemplatedParent}}">
+                                <Grid IsHitTestVisible="False">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="32" />
+                                    </Grid.ColumnDefinitions>
+                                    <Path Grid.Column="1"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Stroke="{StaticResource ComboBoxArrowBrush}"
+                                          StrokeThickness="1.6"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          Data="M 3 4 L 8 9 L 13 4" />
+                                </Grid>
+                            </ToggleButton>
+
                             <ContentPresenter x:Name="ContentSite"
+                                              Panel.ZIndex="1"
                                               Margin="{TemplateBinding Padding}"
                                               VerticalAlignment="Center"
                                               HorizontalAlignment="Left"
                                               Content="{TemplateBinding SelectionBoxItem}"
                                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              IsHitTestVisible="False"
                                               RecognizesAccessKey="True"/>
 
-                            <ToggleButton x:Name="DropDownToggle"
-                                          Grid.Column="1"
-                                          Style="{StaticResource ComboDropToggleStyle}"
-                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
-                                                              RelativeSource={RelativeSource TemplatedParent}}">
-                                <Path Stroke="{StaticResource ComboBoxArrowBrush}"
-                                      StrokeThickness="1.6"
-                                      StrokeStartLineCap="Round"
-                                      StrokeEndLineCap="Round"
-                                      Data="M 3 4 L 8 9 L 13 4" />
-                            </ToggleButton>
-
                             <Popup x:Name="PART_Popup"
+                                   Panel.ZIndex="2"
                                    Placement="Bottom"
                                    AllowsTransparency="True"
                                    Focusable="False"
